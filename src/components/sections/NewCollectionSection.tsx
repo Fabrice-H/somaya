@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function NewCollectionSection() {
   return (
-    <section id="nouveautes" style={{ background: "#511F29", color: "#fbf3ec", overflow: "hidden" }}>
+    <section id="nouveautes" className="hide-on-mobile" style={{ background: "#511F29", color: "#fbf3ec", overflow: "hidden" }}>
       <div
         className="new-collection-grid"
         style={{
