@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SO'MAYA - Site Vitrine Mode & Accessoires
 
-## Getting Started
+Site vitrine elegant pour SO'MAYA, boutique de mode et accessoires pour femme basee a Abidjan, Cote d'Ivoire.
 
-First, run the development server:
+## Stack Technique
+
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: Tailwind CSS v4
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Fonts**: Playfair Display + Montserrat
+
+## Demarrage
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000) dans le navigateur.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Structure du Projet
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # Pages Next.js
+│   ├── page.tsx           # Page d'accueil
+│   ├── catalogue/         # Pages catalogue
+│   ├── produit/[id]/      # Pages produit
+│   └── a-propos/          # Page A propos
+├── components/
+│   ├── layout/            # Header, Footer
+│   ├── sections/          # Hero, Categories, etc.
+│   └── ui/                # ProductCard, WhatsAppButton
+├── data/
+│   └── products.ts        # Donnees produits
+└── lib/
+    └── utils.ts           # Utilitaires
+```
 
-## Learn More
+## Images Requises
 
-To learn more about Next.js, take a look at the following resources:
+Ajouter les images dans `public/images/`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Hero
+- `hero-somaya.jpg` - Image hero principale (1920x1080 recommande)
+- `about-somaya.jpg` - Image page A propos
+- `about-story.jpg` - Image histoire de la marque
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Categories (public/images/categories/)
+- `bijoux.jpg`
+- `sacs.jpg`
+- `vetements.jpg`
+- `montres.jpg`
+- `accessoires.jpg`
 
-## Deploy on Vercel
+### Produits (public/images/products/)
+- `collier-1.jpg`
+- `sac-1.jpg`
+- `tunique-1.jpg`
+- `montre-1.jpg`
+- `boucles-1.jpg`
+- `pochette-1.jpg`
+- `boubou-1.jpg`
+- `bracelet-1.jpg`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Format recommande**: JPG/WebP, min 1000px de large
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Configuration
+
+### WhatsApp
+Modifier le numero WhatsApp dans `src/lib/utils.ts`:
+```typescript
+export const WHATSAPP_NUMBER = "2250000000000"; // Remplacer par le vrai numero
+```
+
+### Produits
+Ajouter/modifier les produits dans `src/data/products.ts`
+
+### Couleurs
+Palette definie dans `src/app/globals.css`:
+- Or Champagne: #D4AF37
+- Noir Elegant: #1A1A1A
+- Blanc Ivoire: #FFFEF9
+- Rose Nude: #E8D5D5
+- Bordeaux: #722F37
+
+## Deploiement
+
+```bash
+npm run build
+```
+
+Deployer sur Vercel:
+```bash
+npx vercel
+```
+
+## Contact
+
+Realise par [SEGNOX Studio](https://segnox.com)

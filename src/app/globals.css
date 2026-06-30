@@ -1,26 +1,525 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* SO'MAYA Design System - Exact colors from design */
+  --som-burgundy: #511F29;
+  --som-burgundy-dark: #3c161e;
+  --som-burgundy-darker: #241015;
+  --som-peach: #fcd3b4;
+  --som-peach-light: #f6e7dc;
+
+  /* Backgrounds */
+  --som-cream: #faf6f1;
+  --som-cream-alt: #f1e8df;
+  --som-cream-dark: #ece0d3;
+
+  /* Text */
+  --som-text: #2a181d;
+  --som-text-light: #6e5a50;
+  --som-text-muted: #94786b;
+  --som-text-on-dark: #fbf3ec;
+  --som-text-on-dark-muted: rgba(251, 243, 236, 0.78);
+
+  /* Footer */
+  --som-footer: #1f1116;
+  --som-footer-text: #e9dcd3;
+  --som-footer-muted: #9c8579;
+  --som-footer-link: #c9b3a6;
+
+  /* Functional */
+  --som-whatsapp: #1f8a4c;
+  --som-whatsapp-hover: #16713d;
+
+  /* Base */
+  --background: var(--som-cream);
+  --foreground: var(--som-text);
 }
 
 @theme inline {
+  /* Brand Colors */
+  --color-burgundy: var(--som-burgundy);
+  --color-burgundy-dark: var(--som-burgundy-dark);
+  --color-peach: var(--som-peach);
+  --color-peach-light: var(--som-peach-light);
+  --color-cream: var(--som-cream);
+  --color-cream-alt: var(--som-cream-alt);
+  --color-cream-dark: var(--som-cream-dark);
+  --color-text: var(--som-text);
+  --color-text-light: var(--som-text-light);
+  --color-text-muted: var(--som-text-muted);
+  --color-footer: var(--som-footer);
+  --color-whatsapp: var(--som-whatsapp);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Fonts */
+  --font-playfair: var(--font-playfair-display);
+  --font-inter: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--som-burgundy);
+  color: var(--som-peach);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+/* Custom Scrollbar - Minimal */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--som-text-muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--som-text-light);
+}
+
+/* Animations */
+@keyframes somFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(7px);
+  }
+}
+
+@keyframes somMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility Classes */
+.animate-float {
+  animation: somFloat 2.6s ease-in-out infinite;
+}
+
+.animate-marquee {
+  animation: somMarquee 32s linear infinite;
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.9s cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
+}
+
+/* Button Styles - Primary */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: var(--som-burgundy);
+  color: var(--som-peach);
+  padding: 17px 34px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--som-burgundy-dark);
+  transform: translateY(-2px);
+}
+
+/* Button - Primary Light (on dark bg) */
+.btn-primary-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: var(--som-peach);
+  color: var(--som-burgundy);
+  padding: 17px 34px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-light:hover {
+  background-color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Button - Secondary */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--som-text);
+  padding: 17px 34px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid rgba(81, 31, 41, 0.4);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(81, 31, 41, 0.06);
+}
+
+/* Button - Secondary Light (on dark bg) */
+.btn-secondary-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--som-text-on-dark);
+  padding: 17px 34px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid rgba(251, 243, 236, 0.5);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary-light:hover {
+  background: rgba(251, 243, 236, 0.12);
+  border-color: var(--som-text-on-dark);
+}
+
+/* Button - WhatsApp */
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: var(--som-whatsapp);
+  color: #fff;
+  padding: 16px 32px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-whatsapp:hover {
+  background-color: var(--som-whatsapp-hover);
+}
+
+/* Section Title */
+.section-eyebrow {
+  font-size: 11.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--som-text-muted);
+  margin-bottom: 14px;
+}
+
+.section-eyebrow-burgundy {
+  font-size: 11.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--som-burgundy);
+  margin-bottom: 14px;
+}
+
+.section-eyebrow-peach {
+  font-size: 11.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--som-peach);
+  margin-bottom: 18px;
+}
+
+.section-title {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: 1;
+  color: var(--som-text);
+  margin: 0;
+}
+
+.section-title-light {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: 1;
+  color: var(--som-text-on-dark);
+  margin: 0;
+}
+
+/* Container */
+.container-som {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+@media (max-width: 768px) {
+  .container-som {
+    padding: 0 20px;
+  }
+}
+
+/* Link underline effect */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(81, 31, 41, 0.35);
+  padding-bottom: 5px;
+  transition: opacity 0.25s;
+}
+
+.link-underline:hover {
+  opacity: 0.6;
+}
+
+/* Image hover zoom */
+.img-zoom {
+  overflow: hidden;
+}
+
+.img-zoom img {
+  transition: transform 0.8s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+.img-zoom:hover img {
+  transform: scale(1.07);
+}
+
+/* Card hover lift */
+.card-lift {
+  transition: transform 0.3s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-6px);
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-block;
+  padding: 6px 11px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.badge-primary {
+  background: var(--som-burgundy);
+  color: var(--som-peach);
+}
+
+.badge-dark {
+  background: var(--som-text);
+  color: var(--som-cream);
+}
+
+/* Form inputs */
+.input-som {
+  width: 100%;
+  background: var(--som-cream);
+  border: 1px solid rgba(81, 31, 41, 0.16);
+  color: var(--som-text);
+  padding: 13px 14px;
+  font-size: 14px;
+  font-family: var(--font-inter), sans-serif;
+  border-radius: 3px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-som:focus {
+  border-color: var(--som-burgundy);
+}
+
+.input-som::placeholder {
+  color: var(--som-text-muted);
+}
+
+/* Dark input variant */
+.input-som-dark {
+  background: rgba(251, 243, 236, 0.08);
+  border: 1px solid rgba(252, 211, 180, 0.35);
+  color: var(--som-text-on-dark);
+}
+
+.input-som-dark:focus {
+  border-color: var(--som-peach);
+}
+
+.input-som-dark::placeholder {
+  color: rgba(251, 243, 236, 0.5);
+}
+
+/* Radio button */
+.radio-som {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--som-burgundy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.radio-som-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--som-burgundy);
+}
+
+/* Aspect ratios */
+.aspect-4-5 {
+  aspect-ratio: 4/5;
+}
+
+.aspect-3-4 {
+  aspect-ratio: 3/4;
+}
+
+.aspect-1-1 {
+  aspect-ratio: 1/1;
+}
+
+/* Glassmorphism header */
+.glass-header {
+  background: rgba(250, 246, 241, 0.86);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Gradient overlays */
+.gradient-overlay-bottom {
+  background: linear-gradient(180deg, rgba(36, 20, 25, 0) 38%, rgba(36, 20, 25, 0.72) 100%);
+}
+
+.gradient-overlay-full {
+  background: linear-gradient(180deg, rgba(36, 20, 25, 0.28) 0%, rgba(36, 20, 25, 0) 32%, rgba(36, 20, 25, 0.62) 100%);
+}
+
+/* Stars rating */
+.stars {
+  color: var(--som-burgundy);
+  letter-spacing: 0.18em;
+  font-size: 14px;
+}
+
+/* Masonry layout for lookbook */
+.masonry-4 {
+  column-count: 4;
+  column-gap: 16px;
+}
+
+.masonry-4 > * {
+  break-inside: avoid;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 1024px) {
+  .masonry-4 {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .masonry-4 {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .masonry-4 {
+    column-count: 1;
+  }
+}
+
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
