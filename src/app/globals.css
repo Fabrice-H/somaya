@@ -679,10 +679,29 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Add to cart button visible on mobile */
-@media (max-width: 1024px) {
-  .group .opacity-0 {
-    opacity: 1 !important;
+/* Hide add to cart button on mobile - keep hover behavior on desktop only */
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+/* Hero Section - Desktop/Mobile toggle */
+.hero-desktop {
+  display: grid;
+}
+
+.hero-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hero-desktop {
+    display: none;
+  }
+
+  .hero-mobile {
+    display: block;
   }
 }
 

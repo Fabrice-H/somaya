@@ -101,7 +101,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Add to Cart Button */}
         <button
           onClick={handleAddToCart}
-          className="opacity-0 group-hover:opacity-100"
+          className="opacity-0 group-hover:opacity-100 hide-on-mobile"
           style={{
             position: "absolute",
             left: "14px",

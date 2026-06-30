@@ -132,6 +132,7 @@ export function BestSellersSection() {
                 {/* Add to Cart Button */}
                 <button
                   onClick={() => handleAddToCart(product)}
+                  className="hide-on-mobile"
                   style={{
                     position: "absolute",
                     left: "14px",
