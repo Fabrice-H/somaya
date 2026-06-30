@@ -402,7 +402,7 @@ export function getWhatsAppLink(product: Product): string {
   const message = encodeURIComponent(
     `Bonjour SO'MAYA ! Je suis intéressé(e) par ${product.name} à ${formatPrice(product.price)}. Pouvez-vous me donner plus d'informations ?`
   );
-  return `https://wa.me/2250700000000?text=${message}`;
+  return `https://wa.me/2250778784268?text=${message}`;
 }
 
 export function getBestsellers(): Product[] {
@@ -433,7 +433,7 @@ export function searchProducts(query: string): Product[] {
 
 export function createWhatsAppLink(message: string): string {
   const encoded = encodeURIComponent(message);
-  return `https://wa.me/2250700000000?text=${encoded}`;
+  return `https://wa.me/2250778784268?text=${encoded}`;
 }
 
 // Alias for backwards compatibility
