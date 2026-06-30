@@ -11,15 +11,13 @@ export function Footer() {
         style={{
           maxWidth: "1400px",
           margin: "0 auto",
-          padding: "clamp(64px, 7vw, 90px) 40px 0",
+          padding: "clamp(64px, 7vw, 90px) clamp(20px, 4vw, 40px) 0",
         }}
       >
         {/* Main Footer Grid */}
         <div
+          className="footer-grid"
           style={{
-            display: "grid",
-            gridTemplateColumns: "1.6fr 1fr 1fr 1fr",
-            gap: "40px",
             paddingBottom: "56px",
             borderBottom: "1px solid rgba(233,220,211,0.12)",
           }}
@@ -183,12 +181,8 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div
+          className="footer-bottom"
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "20px",
-            flexWrap: "wrap",
             padding: "26px 0",
           }}
         >

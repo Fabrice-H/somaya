@@ -29,7 +29,7 @@ export function CategoryContent({ collection }: CategoryContentProps) {
       style={{
         maxWidth: "1400px",
         margin: "0 auto",
-        padding: "clamp(30px, 4vw, 50px) 40px clamp(60px, 8vw, 100px)",
+        padding: "clamp(30px, 4vw, 50px) clamp(20px, 4vw, 40px) clamp(60px, 8vw, 100px)",
       }}
     >
       {/* Breadcrumb */}
@@ -79,13 +79,7 @@ export function CategoryContent({ collection }: CategoryContentProps) {
       </div>
 
       {/* Products Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "20px",
-        }}
-      >
+      <div className="grid-cols-4-responsive">
         {categoryProducts.map((product, index) => (
           <ProductCard key={product.id} product={product} index={index} />
         ))}

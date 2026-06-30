@@ -9,7 +9,7 @@ export default function WhyChooseSection() {
         style={{
           maxWidth: "1400px",
           margin: "0 auto",
-          padding: "clamp(80px, 9vw, 120px) 40px",
+          padding: "clamp(80px, 9vw, 120px) clamp(20px, 4vw, 40px)",
         }}
       >
         {/* Header */}
@@ -41,10 +41,8 @@ export default function WhyChooseSection() {
 
         {/* Grid */}
         <div
+          className="grid-cols-5-responsive"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(5, 1fr)",
-            gap: 0,
             borderTop: "1px solid rgba(81,31,41,0.16)",
           }}
         >

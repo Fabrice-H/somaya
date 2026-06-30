@@ -11,10 +11,10 @@ export function CollectionsSection() {
   return (
     <section
       id="collections"
+      className="section-padding"
       style={{
         maxWidth: "1400px",
         margin: "0 auto",
-        padding: "clamp(80px, 9vw, 124px) 40px",
       }}
     >
       {/* Header */}
@@ -74,13 +74,7 @@ export function CollectionsSection() {
       </div>
 
       {/* Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "18px",
-        }}
-      >
+      <div className="grid-cols-3-responsive">
         {displayCollections.map((collection) => (
           <Link
             key={collection.id}

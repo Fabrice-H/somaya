@@ -7,10 +7,10 @@ export function LookbookSection() {
   return (
     <section
       id="lookbook"
+      className="section-padding"
       style={{
         maxWidth: "1440px",
         margin: "0 auto",
-        padding: "clamp(80px, 9vw, 124px) 40px",
       }}
     >
       {/* Header */}
@@ -64,7 +64,7 @@ export function LookbookSection() {
       </div>
 
       {/* Masonry Grid */}
-      <div style={{ columnCount: 4, columnGap: "16px" }}>
+      <div className="masonry-4">
         {lookbookItems.map((item) => (
           <div
             key={item.id}

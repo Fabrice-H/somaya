@@ -523,3 +523,238 @@ h1, h2, h3, h4, h5, h6 {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Responsive Grid Utilities */
+.grid-cols-4-responsive {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .grid-cols-4-responsive {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-cols-4-responsive {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+.grid-cols-3-responsive {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 1024px) {
+  .grid-cols-3-responsive {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-cols-3-responsive {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.grid-cols-2-responsive {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(40px, 5vw, 80px);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .grid-cols-2-responsive {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+/* Responsive padding */
+.section-padding {
+  padding: clamp(60px, 8vw, 124px) clamp(20px, 4vw, 40px);
+}
+
+/* Responsive text */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: clamp(28px, 6vw, 40px);
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-primary-light,
+  .btn-secondary-light {
+    padding: 14px 24px;
+    font-size: 11px;
+  }
+}
+
+/* Mobile menu */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+/* Footer Grid */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .footer-bottom {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+}
+
+/* Checkout Grid */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* Form Grid */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+@media (max-width: 640px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Add to cart button visible on mobile */
+@media (max-width: 1024px) {
+  .group .opacity-0 {
+    opacity: 1 !important;
+  }
+}
+
+/* Why Choose Grid (5 columns) */
+.grid-cols-5-responsive {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+}
+
+@media (max-width: 1200px) {
+  .grid-cols-5-responsive {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid-cols-5-responsive > *:nth-child(4),
+  .grid-cols-5-responsive > *:nth-child(5) {
+    border-right: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-cols-5-responsive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-cols-5-responsive > * {
+    border-right: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-cols-5-responsive {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Instagram Grid (6 columns) */
+.grid-cols-6-responsive {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .grid-cols-6-responsive {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-cols-6-responsive {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-cols-6-responsive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* New Collection Section Grid */
+.new-collection-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .new-collection-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}

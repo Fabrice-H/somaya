@@ -47,7 +47,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
         style={{
           maxWidth: "1400px",
           margin: "0 auto",
-          padding: "clamp(30px, 4vw, 50px) 40px clamp(60px, 8vw, 100px)",
+          padding: "clamp(30px, 4vw, 50px) clamp(20px, 4vw, 40px) clamp(60px, 8vw, 100px)",
         }}
       >
         {/* Breadcrumb */}
@@ -60,14 +60,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
         />
 
         {/* Product Content */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "clamp(40px, 5vw, 80px)",
-            alignItems: "start",
-          }}
-        >
+        <div className="grid-cols-2-responsive">
           {/* Images */}
           <div>
             {/* Main Image */}
@@ -328,13 +321,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               </h2>
             </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
-                gap: "20px",
-              }}
-            >
+            <div className="grid-cols-4-responsive">
               {relatedProducts.map((relatedProduct) => (
                 <ProductCard key={relatedProduct.id} product={relatedProduct} />
               ))}

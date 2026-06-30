@@ -357,11 +357,8 @@ Merci de confirmer ma commande ! 🙏
 
         {/* Content Grid */}
         <div
+          className="checkout-grid"
           style={{
-            display: "grid",
-            gridTemplateColumns: "1.55fr 1fr",
-            gap: "32px",
-            alignItems: "start",
             padding: "34px 0 64px",
           }}
         >
@@ -426,13 +423,7 @@ Merci de confirmer ma commande ! 🙏
                 </div>
               </div>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "15px",
-                }}
-              >
+              <div className="form-grid-2">
                 <label style={{ display: "block" }}>
                   <span
                     style={{
@@ -497,14 +488,7 @@ Merci de confirmer ma commande ! 🙏
                 </label>
               </div>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "15px",
-                  marginTop: "15px",
-                }}
-              >
+              <div className="form-grid-2" style={{ marginTop: "15px" }}>
                 <label style={{ display: "block" }}>
                   <span
                     style={{
@@ -684,13 +668,7 @@ Merci de confirmer ma commande ! 🙏
                 />
               </label>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "15px",
-                }}
-              >
+              <div className="form-grid-2">
                 <label style={{ display: "block" }}>
                   <span
                     style={{

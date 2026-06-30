@@ -19,10 +19,10 @@ export function BestSellersSection() {
   return (
     <section
       id="ventes"
+      className="section-padding"
       style={{
         maxWidth: "1400px",
         margin: "0 auto",
-        padding: "clamp(80px, 9vw, 124px) 40px",
       }}
     >
       {/* Header */}
@@ -53,13 +53,7 @@ export function BestSellersSection() {
       </div>
 
       {/* Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "20px",
-        }}
-      >
+      <div className="grid-cols-4-responsive">
         {products.slice(0, 4).map((product) => {
           const isWishlisted = isInWishlist(product.id);
 

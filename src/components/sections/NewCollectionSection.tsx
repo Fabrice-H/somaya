@@ -7,14 +7,11 @@ export default function NewCollectionSection() {
   return (
     <section id="nouveautes" style={{ background: "#511F29", color: "#fbf3ec", overflow: "hidden" }}>
       <div
+        className="new-collection-grid"
         style={{
           maxWidth: "1400px",
           margin: "0 auto",
-          padding: "clamp(80px, 9vw, 128px) 40px",
-          display: "grid",
-          gridTemplateColumns: "1fr 1.15fr",
-          gap: "clamp(32px, 5vw, 80px)",
-          alignItems: "center",
+          padding: "clamp(80px, 9vw, 128px) clamp(20px, 4vw, 40px)",
         }}
       >
         {/* Left Content */}

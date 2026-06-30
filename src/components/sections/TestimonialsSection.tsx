@@ -6,10 +6,10 @@ import { testimonials } from "@/data/products";
 export function TestimonialsSection() {
   return (
     <section
+      className="section-padding"
       style={{
         maxWidth: "1400px",
         margin: "0 auto",
-        padding: "clamp(80px, 9vw, 124px) 40px",
       }}
     >
       {/* Header */}
@@ -40,13 +40,7 @@ export function TestimonialsSection() {
       </div>
 
       {/* Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "24px",
-        }}
-      >
+      <div className="grid-cols-3-responsive">
         {testimonials.map((testimonial) => (
           <div
             key={testimonial.id}

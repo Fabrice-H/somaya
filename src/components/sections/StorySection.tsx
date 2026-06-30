@@ -9,7 +9,7 @@ export default function StorySection() {
         style={{
           maxWidth: "1240px",
           margin: "0 auto",
-          padding: "clamp(90px, 11vw, 150px) 40px",
+          padding: "clamp(90px, 11vw, 150px) clamp(20px, 4vw, 40px)",
           textAlign: "center",
         }}
       >
