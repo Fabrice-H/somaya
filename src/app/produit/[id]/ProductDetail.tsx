@@ -4,9 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageCircle, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { MessageCircle, X, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { useCartStore } from "@/stores/cart-store";
 import {
   type Product,
   formatPrice,
@@ -22,8 +23,13 @@ interface ProductDetailProps {
 export function ProductDetail({ product, relatedProducts }: ProductDetailProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const addItem = useCartStore((state) => state.addItem);
 
   const category = categories.find((c) => c.name.toLowerCase() === product.category.toLowerCase());
+
+  const handleAddToCart = () => {
+    addItem(product.id);
+  };
 
   const nextImage = () => {
     setSelectedImage((prev) => (prev + 1) % product.images.length);
@@ -227,38 +233,65 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               {product.description}
             </p>
 
-            {/* CTA */}
-            <a
-              href={getWhatsAppLink(product)}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "12px",
-                background: "#511F29",
-                color: "#fcd3b4",
-                fontSize: "12.5px",
-                fontWeight: 600,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                padding: "18px 36px",
-                textDecoration: "none",
-                borderRadius: "2px",
-                marginBottom: "20px",
-                transition: "all 0.3s",
-              }}
-            >
-              <MessageCircle size={20} />
-              <span>Commander sur WhatsApp</span>
-            </a>
+            {/* CTA Buttons */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <button
+                onClick={handleAddToCart}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "12px",
+                  background: "#511F29",
+                  color: "#fcd3b4",
+                  fontSize: "12.5px",
+                  fontWeight: 600,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  padding: "18px 36px",
+                  border: "none",
+                  borderRadius: "2px",
+                  cursor: "pointer",
+                  transition: "all 0.3s",
+                }}
+              >
+                <ShoppingBag size={20} />
+                <span>Ajouter au panier</span>
+              </button>
+
+              <a
+                href={getWhatsAppLink(product)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "12px",
+                  background: "transparent",
+                  color: "#511F29",
+                  fontSize: "12.5px",
+                  fontWeight: 600,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  padding: "16px 36px",
+                  textDecoration: "none",
+                  borderRadius: "2px",
+                  border: "1px solid rgba(81,31,41,0.3)",
+                  transition: "all 0.3s",
+                }}
+              >
+                <MessageCircle size={20} />
+                <span>Commander sur WhatsApp</span>
+              </a>
+            </div>
 
             <p
               style={{
                 fontSize: "13px",
                 color: "#94786b",
                 textAlign: "center",
+                marginTop: "20px",
               }}
             >
               Livraison disponible à Abidjan et environs
