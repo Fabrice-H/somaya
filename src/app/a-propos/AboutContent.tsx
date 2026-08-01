@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { MessageCircle, Award, Heart, Sparkles, Users, Truck, Shield } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { createWhatsAppLink } from "@/data/products";
@@ -11,19 +10,19 @@ const values = [
     icon: <Award className="w-8 h-8" />,
     title: "Qualité Premium",
     description:
-      "Chaque article est soigneusement sélectionné pour sa qualité exceptionnelle et son élégance intemporelle. Nous ne faisons aucun compromis sur la qualité.",
+      "Chaque article est soigneusement sélectionné pour sa qualité exceptionnelle et son élégance intemporelle.",
   },
   {
     icon: <Heart className="w-8 h-8" />,
     title: "Style Africain Moderne",
     description:
-      "Nous célébrons la beauté et l'héritage de la femme africaine tout en embrassant les tendances contemporaines. Un mélange unique de tradition et modernité.",
+      "Nous célébrons la beauté et l'héritage africain tout en embrassant les tendances contemporaines.",
   },
   {
     icon: <Sparkles className="w-8 h-8" />,
     title: "Élégance Quotidienne",
     description:
-      "Des pièces pour toutes les occasions - du bureau aux cérémonies. Parce que chaque femme mérite de se sentir belle chaque jour.",
+      "Des pièces pour toutes les occasions - du bureau aux cérémonies. Chaque femme mérite de se sentir belle.",
   },
 ];
 
@@ -53,232 +52,311 @@ export function AboutContent() {
   return (
     <div>
       {/* Breadcrumb */}
-      <div
-        style={{
-          maxWidth: "1400px",
-          margin: "0 auto",
-          padding: "clamp(30px, 4vw, 50px) 40px 0",
-        }}
-      >
+      <div className="container-som" style={{ paddingTop: "clamp(30px, 4vw, 50px)" }}>
         <Breadcrumb items={[{ label: "À propos" }]} />
       </div>
 
-      {/* Hero Section */}
+      {/* Hero Section with Image */}
       <section
         style={{
-          padding: "clamp(40px, 6vw, 80px) 40px",
-          background: "#faf6f1",
+          position: "relative",
+          minHeight: "500px",
+          marginTop: "30px",
+          overflow: "hidden",
         }}
       >
-        <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
-          <div
-            style={{
-              fontSize: "11.5px",
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              color: "#94786b",
-              marginBottom: "14px",
-            }}
-          >
-            Notre Histoire
+        <Image
+          src="/images/so_maya_ci_1763665764_3770224151622122471_13316418128.jpg"
+          alt="SO'MAYA - Mode africaine"
+          fill
+          style={{ objectFit: "cover", objectPosition: "center 30%" }}
+          priority
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(180deg, rgba(81,31,41,0.4) 0%, rgba(81,31,41,0.7) 100%)",
+          }}
+        />
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "500px",
+            padding: "60px 20px",
+            textAlign: "center",
+          }}
+        >
+          <div style={{ maxWidth: "700px" }}>
+            <div
+              style={{
+                fontSize: "11.5px",
+                letterSpacing: "0.3em",
+                textTransform: "uppercase",
+                color: "var(--som-peach)",
+                marginBottom: "20px",
+              }}
+            >
+              Notre Histoire
+            </div>
+            <h1
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontWeight: 500,
+                fontSize: "clamp(38px, 5vw, 64px)",
+                lineHeight: 1.1,
+                color: "#fff",
+                margin: "0 0 24px",
+              }}
+            >
+              Bienvenue chez SO&apos;MAYA
+            </h1>
+            <p
+              style={{
+                fontSize: "18px",
+                lineHeight: 1.7,
+                color: "rgba(255,255,255,0.9)",
+                margin: 0,
+                fontWeight: 300,
+              }}
+            >
+              Votre boutique de référence pour sublimer votre style au quotidien.
+              Découvrez notre passion pour la mode féminine africaine.
+            </p>
           </div>
-          <h1
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontWeight: 500,
-              fontSize: "clamp(34px, 4vw, 56px)",
-              lineHeight: 1.1,
-              color: "#2a181d",
-              margin: "0 0 20px",
-            }}
-          >
-            Bienvenue chez SO&apos;MAYA
-          </h1>
-          <p
-            style={{
-              fontSize: "17px",
-              lineHeight: 1.7,
-              color: "#6e5a50",
-              margin: 0,
-            }}
-          >
-            Votre boutique de référence pour sublimer votre style au quotidien.
-            Découvrez notre passion pour la mode féminine africaine.
-          </p>
         </div>
       </section>
 
       {/* Story Section */}
-      <section className="py-20 lg:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <section className="section-padding" style={{ background: "var(--som-cream)" }}>
+        <div className="container-som">
+          <div className="grid-cols-2-responsive" style={{ gap: "clamp(40px, 6vw, 100px)" }}>
             {/* Image */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="relative"
-            >
-              <div className="relative aspect-[4/5] overflow-hidden">
+            <div style={{ position: "relative" }}>
+              <div
+                style={{
+                  position: "relative",
+                  aspectRatio: "4/5",
+                  overflow: "hidden",
+                }}
+              >
                 <Image
-                  src="/images/about-story.jpg"
+                  src="/images/so_maya_ci_1776781082_3880233341219782649_13316418128.jpg"
                   alt="L'histoire de SO'MAYA"
                   fill
-                  className="object-cover"
+                  style={{ objectFit: "cover" }}
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               </div>
-              <div className="absolute -bottom-6 -right-6 w-48 h-48 border border-[var(--burgundy)]/20 -z-10" />
-            </motion.div>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "-20px",
+                  right: "-20px",
+                  width: "180px",
+                  height: "180px",
+                  border: "1px solid var(--som-burgundy)",
+                  opacity: 0.2,
+                  zIndex: -1,
+                }}
+              />
+            </div>
 
             {/* Content */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <p className="text-[var(--burgundy)] uppercase tracking-[0.2em] text-sm font-medium mb-4">
-                Qui Sommes-Nous
-              </p>
-              <h2 className="font-[family-name:var(--font-cormorant-garamond)] text-3xl md:text-4xl text-[var(--charcoal)] font-light mb-8">
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <div className="section-eyebrow-burgundy">Qui Sommes-Nous</div>
+              <h2
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontWeight: 500,
+                  fontSize: "clamp(28px, 3.5vw, 44px)",
+                  lineHeight: 1.15,
+                  color: "var(--som-text)",
+                  margin: "0 0 28px",
+                }}
+              >
                 Une Passion pour l&apos;Élégance
               </h2>
-              <div className="space-y-5 text-[var(--charcoal)]/70 text-lg leading-relaxed">
-                <p>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "18px",
+                  fontSize: "16px",
+                  lineHeight: 1.75,
+                  color: "var(--som-text-light)",
+                }}
+              >
+                <p style={{ margin: 0 }}>
                   Chez SO&apos;MAYA, nous croyons que chaque femme mérite de se sentir
                   belle et confiante. C&apos;est pourquoi nous avons créé une collection
                   unique d&apos;articles de mode et d&apos;accessoires soigneusement
                   sélectionnés.
                 </p>
-                <p>
+                <p style={{ margin: 0 }}>
                   Notre mission est simple : vous offrir des pièces de qualité
                   qui subliment votre style au quotidien, que ce soit pour une
                   journée au bureau, une sortie entre amies ou une cérémonie
                   spéciale.
                 </p>
-                <p>
+                <p style={{ margin: 0 }}>
                   Basée à Abidjan, notre boutique s&apos;inspire de l&apos;élégance africaine
                   moderne tout en restant accessible. Chaque bijou, sac, tunique
-                  ou accessoire que nous proposons est choisi avec soin pour
-                  répondre aux attentes des femmes exigeantes.
+                  ou accessoire est choisi avec soin pour répondre aux attentes
+                  des femmes exigeantes.
                 </p>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Values Section */}
-      <section className="py-20 lg:py-32 bg-[var(--burgundy)] text-white">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <p className="text-[var(--peach)] uppercase tracking-[0.2em] text-sm font-medium mb-4">
-              Nos Valeurs
-            </p>
-            <h2 className="font-[family-name:var(--font-cormorant-garamond)] text-3xl md:text-4xl text-white font-light">
-              Ce Qui Nous Définit
-            </h2>
-          </motion.div>
+      <section
+        className="section-padding"
+        style={{ background: "var(--som-burgundy)" }}
+      >
+        <div className="container-som">
+          <div style={{ textAlign: "center", marginBottom: "60px" }}>
+            <div className="section-eyebrow-peach">Nos Valeurs</div>
+            <h2 className="section-title-light">Ce Qui Nous Définit</h2>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-            {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center"
-              >
-                <div className="w-16 h-16 bg-white/10 flex items-center justify-center text-[var(--peach)] mx-auto mb-6">
+          <div className="grid-cols-3-responsive" style={{ gap: "40px" }}>
+            {values.map((value) => (
+              <div key={value.title} style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    width: "64px",
+                    height: "64px",
+                    background: "rgba(255,255,255,0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--som-peach)",
+                    margin: "0 auto 24px",
+                  }}
+                >
                   {value.icon}
                 </div>
-                <h3 className="font-[family-name:var(--font-cormorant-garamond)] text-xl text-[var(--peach)] mb-4">
+                <h3
+                  style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontSize: "20px",
+                    fontWeight: 500,
+                    color: "var(--som-peach)",
+                    marginBottom: "14px",
+                  }}
+                >
                   {value.title}
                 </h3>
-                <p className="text-white/70 leading-relaxed">{value.description}</p>
-              </motion.div>
+                <p
+                  style={{
+                    fontSize: "15px",
+                    lineHeight: 1.7,
+                    color: "rgba(255,255,255,0.75)",
+                    margin: 0,
+                  }}
+                >
+                  {value.description}
+                </p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 lg:py-32 bg-[var(--cream)]">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <p className="text-[var(--burgundy)] uppercase tracking-[0.2em] text-sm font-medium mb-4">
-              Pourquoi Nous Choisir
-            </p>
-            <h2 className="font-[family-name:var(--font-cormorant-garamond)] text-3xl md:text-4xl text-[var(--charcoal)] font-light">
-              L&apos;Expérience SO&apos;MAYA
-            </h2>
-          </motion.div>
+      <section className="section-padding" style={{ background: "var(--som-cream)" }}>
+        <div className="container-som">
+          <div style={{ textAlign: "center", marginBottom: "60px" }}>
+            <div className="section-eyebrow-burgundy">Pourquoi Nous Choisir</div>
+            <h2 className="section-title">L&apos;Expérience SO&apos;MAYA</h2>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <motion.div
+          <div className="grid-cols-3-responsive" style={{ gap: "24px" }}>
+            {features.map((feature) => (
+              <div
                 key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white p-8"
+                style={{
+                  background: "#fff",
+                  padding: "32px",
+                }}
               >
-                <div className="w-12 h-12 bg-[var(--peach)]/30 flex items-center justify-center text-[var(--burgundy)] mb-5">
+                <div
+                  style={{
+                    width: "48px",
+                    height: "48px",
+                    background: "var(--som-peach-light)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--som-burgundy)",
+                    marginBottom: "20px",
+                  }}
+                >
                   {feature.icon}
                 </div>
-                <h3 className="font-[family-name:var(--font-cormorant-garamond)] text-lg text-[var(--charcoal)] mb-3">
+                <h3
+                  style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontSize: "18px",
+                    fontWeight: 500,
+                    color: "var(--som-text)",
+                    marginBottom: "10px",
+                  }}
+                >
                   {feature.title}
                 </h3>
-                <p className="text-[var(--charcoal)]/60 text-sm leading-relaxed">{feature.description}</p>
-              </motion.div>
+                <p
+                  style={{
+                    fontSize: "14px",
+                    lineHeight: 1.7,
+                    color: "var(--som-text-light)",
+                    margin: 0,
+                  }}
+                >
+                  {feature.description}
+                </p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 lg:py-32 bg-white">
-        <div className="max-w-3xl mx-auto px-4 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+      <section className="section-padding" style={{ background: "#fff" }}>
+        <div style={{ maxWidth: "600px", margin: "0 auto", textAlign: "center", padding: "0 20px" }}>
+          <div className="section-eyebrow-burgundy">Contactez-Nous</div>
+          <h2 className="section-title" style={{ marginBottom: "20px" }}>
+            Prête à Sublimer Votre Style ?
+          </h2>
+          <p
+            style={{
+              fontSize: "16px",
+              lineHeight: 1.7,
+              color: "var(--som-text-light)",
+              marginBottom: "36px",
+            }}
           >
-            <p className="text-[var(--burgundy)] uppercase tracking-[0.2em] text-sm font-medium mb-4">
-              Contactez-Nous
-            </p>
-            <h2 className="font-[family-name:var(--font-cormorant-garamond)] text-3xl md:text-4xl text-[var(--charcoal)] font-light mb-6">
-              Prête à Sublimer Votre Style ?
-            </h2>
-            <p className="text-[var(--charcoal)]/70 text-lg mb-10">
-              N&apos;hésitez pas à nous contacter pour toute question ou pour
-              découvrir nos dernières nouveautés. Notre équipe est là pour vous
-              accompagner.
-            </p>
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary inline-flex items-center gap-3 text-base py-4 px-8"
-            >
-              <MessageCircle className="w-5 h-5" />
-              <span>Discuter sur WhatsApp</span>
-            </a>
-          </motion.div>
+            N&apos;hésitez pas à nous contacter pour toute question ou pour
+            découvrir nos dernières nouveautés. Notre équipe est là pour vous
+            accompagner.
+          </p>
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-whatsapp"
+            style={{ display: "inline-flex", alignItems: "center", gap: "10px" }}
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span>Discuter sur WhatsApp</span>
+          </a>
         </div>
       </section>
     </div>

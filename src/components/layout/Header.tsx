@@ -24,19 +24,19 @@ export function Header() {
         <nav className="hidden md:flex items-center gap-[30px]">
           <Link
             href="/catalogue"
-            className="text-[12.5px] tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
+            className="font-[family-name:var(--font-inter)] text-[12.5px] font-medium tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
           >
             Boutique
           </Link>
           <Link
             href="/a-propos"
-            className="text-[12.5px] tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
+            className="font-[family-name:var(--font-inter)] text-[12.5px] font-medium tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
           >
             À propos
           </Link>
           <Link
-            href="#contact"
-            className="text-[12.5px] tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
+            href="/contact"
+            className="font-[family-name:var(--font-inter)] text-[12.5px] font-medium tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
           >
             Contact
           </Link>
@@ -103,21 +103,21 @@ export function Header() {
             <Link
               href="/catalogue"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-[12.5px] tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
+              className="font-[family-name:var(--font-inter)] text-[12.5px] font-medium tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
             >
               Boutique
             </Link>
             <Link
               href="/a-propos"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-[12.5px] tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
+              className="font-[family-name:var(--font-inter)] text-[12.5px] font-medium tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
             >
               À propos
             </Link>
             <Link
-              href="#contact"
+              href="/contact"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-[12.5px] tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
+              className="font-[family-name:var(--font-inter)] text-[12.5px] font-medium tracking-[0.13em] uppercase text-[var(--som-text)] hover:text-[var(--som-burgundy)] transition-colors no-underline"
             >
               Contact
             </Link>

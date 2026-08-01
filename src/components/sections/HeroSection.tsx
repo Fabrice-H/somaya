@@ -10,7 +10,6 @@ export default function HeroSection() {
       <section
         className="hero-desktop"
         style={{
-          display: "grid",
           gridTemplateColumns: "1.05fr 1fr",
           minHeight: "600px",
           height: "88vh",
@@ -73,44 +72,24 @@ export default function HeroSection() {
               Des pièces sélectionnées pour accompagner chaque femme et chaque homme au quotidien.
             </p>
 
-            {/* Buttons */}
-            <div style={{ display: "flex", gap: "14px", flexWrap: "wrap" }}>
-              <Link
-                href="#collections"
-                style={{
-                  background: "#fcd3b4",
-                  color: "#511F29",
-                  fontSize: "12.5px",
-                  fontWeight: 600,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  padding: "17px 34px",
-                  textDecoration: "none",
-                  borderRadius: "2px",
-                  transition: "all 0.3s",
-                }}
-              >
-                Découvrir la collection
-              </Link>
-              <Link
-                href="#nouveautes"
-                style={{
-                  background: "transparent",
-                  color: "#fbf3ec",
-                  fontSize: "12.5px",
-                  fontWeight: 600,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  padding: "17px 34px",
-                  textDecoration: "none",
-                  borderRadius: "2px",
-                  border: "1px solid rgba(251,243,236,0.45)",
-                  transition: "all 0.3s",
-                }}
-              >
-                Nos nouveautés
-              </Link>
-            </div>
+            {/* Button */}
+            <Link
+              href="#collections"
+              style={{
+                background: "#fcd3b4",
+                color: "#511F29",
+                fontSize: "12.5px",
+                fontWeight: 600,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                padding: "17px 34px",
+                textDecoration: "none",
+                borderRadius: "2px",
+                transition: "all 0.3s",
+              }}
+            >
+              Découvrir la collection
+            </Link>
           </div>
         </div>
 
@@ -131,9 +110,9 @@ export default function HeroSection() {
         className="hero-mobile"
         style={{
           position: "relative",
-          height: "100vh",
-          minHeight: "600px",
-          maxHeight: "900px",
+          height: "85vh",
+          minHeight: "500px",
+          maxHeight: "700px",
           overflow: "hidden",
         }}
       >
