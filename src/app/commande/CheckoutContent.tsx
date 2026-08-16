@@ -13,8 +13,10 @@ import {
   ShieldCheck,
   ArrowLeft,
   Check,
+  Loader2,
 } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
+import { createOrder } from "@/features/admin/orders/actions";
 
 function formatPrice(price: number): string {
   return (
@@ -55,6 +57,8 @@ export function CheckoutContent() {
   const [address, setAddress] = useState("");
   const [commune, setCommune] = useState("");
   const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -70,23 +74,73 @@ export function CheckoutContent() {
 
   const isFormValid = firstName && lastName && phone && commune;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!isFormValid) return;
+    if (!isFormValid || isSubmitting) return;
 
-    const itemsList = cartItems
-      .map((item) => {
-        const displayName = item.lotName
-          ? `${item.productName} - ${item.lotName}`
-          : item.productName;
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Prepare order items for database
+      const orderItems = cartItems.map((item) => {
         const displayPrice = item.lotPrice ?? item.price;
-        return `• ${displayName} x${item.quantity} - ${formatPrice(displayPrice * item.quantity)}`;
-      })
-      .join("\n");
+        return {
+          product_id: item.lotId ? null : item.productId,
+          product_name: item.productName,
+          product_price: displayPrice,
+          product_image: item.productImage || null,
+          quantity: item.quantity,
+          lot_id: item.lotId || null,
+          lot_name: item.lotName || null,
+          line_total: displayPrice * item.quantity,
+        };
+      });
 
-    const message = `
+      console.log("Order items prepared:", orderItems);
+
+      // Create order in database
+      const orderData = {
+        customer_first_name: firstName,
+        customer_last_name: lastName,
+        customer_phone: phone,
+        customer_address: address || "",
+        customer_commune: commune,
+        customer_notes: notes || undefined,
+        payment_method: "cash" as const,
+        subtotal,
+        delivery_fee: shippingCost,
+        total,
+        items: orderItems,
+      };
+
+      console.log("Creating order with data:", orderData);
+
+      const result = await createOrder(orderData);
+
+      console.log("Order creation result:", result);
+
+      if (!result.success) {
+        setError(result.error || "Erreur lors de la commande");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Build WhatsApp message
+      const itemsList = cartItems
+        .map((item) => {
+          const displayName = item.lotName
+            ? `${item.productName} - ${item.lotName}`
+            : item.productName;
+          const displayPrice = item.lotPrice ?? item.price;
+          return `• ${displayName} x${item.quantity} - ${formatPrice(displayPrice * item.quantity)}`;
+        })
+        .join("\n");
+
+      const message = `
 🛍️ *NOUVELLE COMMANDE SO'MAYA*
+📋 N° ${result.order_number}
 
 👤 *Client*
 ${firstName} ${lastName}
@@ -101,14 +155,19 @@ ${itemsList}
 
 📦 Livraison: ${formatPrice(shippingCost)}
 💰 *TOTAL: ${formatPrice(total)}*
-    `.trim();
+      `.trim();
 
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
 
-    clearCart();
-    window.open(whatsappUrl, "_blank");
-    router.push("/");
+      clearCart();
+      window.open(whatsappUrl, "_blank");
+      router.push("/");
+    } catch (err) {
+      console.error("Checkout error:", err);
+      setError("Une erreur est survenue. Veuillez réessayer.");
+      setIsSubmitting(false);
+    }
   };
 
   if (!isMounted) {
@@ -171,7 +230,7 @@ ${itemsList}
               Renseignez vos informations pour recevoir votre colis
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form id="checkout-form" onSubmit={handleSubmit} className="space-y-8">
               {/* Contact Section */}
               <section>
                 <h2 className="text-xs font-medium tracking-[0.15em] uppercase text-[#511F29]/60 mb-5">
@@ -293,15 +352,31 @@ ${itemsList}
                 </div>
               </section>
 
+              {/* Error message */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm rounded">
+                  {error}
+                </div>
+              )}
+
               {/* Submit - Mobile */}
               <div className="lg:hidden">
                 <button
                   type="submit"
-                  disabled={!isFormValid}
+                  disabled={!isFormValid || isSubmitting}
                   className="w-full h-14 flex items-center justify-center gap-3 bg-[#511F29] text-white text-sm font-medium tracking-wide transition-all disabled:bg-[#511F29]/30 disabled:cursor-not-allowed hover:bg-[#3d171f]"
                 >
-                  <MessageCircle className="w-5 h-5" />
-                  {isFormValid ? `Commander via WhatsApp` : "Remplissez le formulaire"}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Envoi en cours...
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle className="w-5 h-5" />
+                      {isFormValid ? `Commander via WhatsApp` : "Remplissez le formulaire"}
+                    </>
+                  )}
                 </button>
               </div>
             </form>
@@ -383,12 +458,20 @@ ${itemsList}
                 <button
                   type="submit"
                   form="checkout-form"
-                  onClick={handleSubmit}
-                  disabled={!isFormValid}
+                  disabled={!isFormValid || isSubmitting}
                   className="w-full h-14 flex items-center justify-center gap-3 bg-[#511F29] text-white text-sm font-medium tracking-wide transition-all disabled:bg-[#511F29]/30 disabled:cursor-not-allowed hover:bg-[#3d171f]"
                 >
-                  <MessageCircle className="w-5 h-5" />
-                  Commander via WhatsApp
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Envoi en cours...
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle className="w-5 h-5" />
+                      Commander via WhatsApp
+                    </>
+                  )}
                 </button>
               </div>
             </div>

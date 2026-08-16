@@ -61,7 +61,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover [transform-style:preserve-3d]"
           style={{ objectPosition: mediaPosition }}
         >
           <source src={mediaUrl} type="video/mp4" />
