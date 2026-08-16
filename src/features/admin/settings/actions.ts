@@ -3,7 +3,7 @@
 import { db, storeSettings } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/actions";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import type { StoreSettings as DbStoreSettings } from "@/lib/db/schema";
 import DOMPurify from "isomorphic-dompurify";
@@ -247,7 +247,7 @@ export async function updateSettings(
 
     // Revalidate cached pages
     revalidatePath("/admin/reglages");
-    revalidatePath("/");
+    revalidateTag("store-settings", "max"); // Invalidate store settings cache
 
     return { success: true };
   } catch (error) {

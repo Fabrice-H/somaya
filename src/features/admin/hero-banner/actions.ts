@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { db, heroBanner } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/actions";
@@ -118,8 +118,8 @@ export async function updateHeroBanner(
       });
     }
 
-    revalidatePath("/", "layout"); // Force full page revalidation
     revalidatePath("/admin/hero-banner");
+    revalidateTag("hero-banner", "max");
 
     return { success: true };
   } catch (error) {

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { db, instagramPosts, storeSettings } from "@/lib/db";
 import { eq, asc } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/actions";
@@ -82,8 +82,8 @@ export async function createInstagramPost(
       })
       .returning({ id: instagramPosts.id });
 
-    revalidatePath("/");
     revalidatePath("/admin/instagram");
+    revalidateTag("instagram", "max");
 
     return { success: true, id: result.id };
   } catch (error) {
@@ -108,8 +108,8 @@ export async function updateInstagramPost(
       .set(data)
       .where(eq(instagramPosts.id, id));
 
-    revalidatePath("/");
     revalidatePath("/admin/instagram");
+    revalidateTag("instagram", "max");
 
     return { success: true };
   } catch (error) {
@@ -130,8 +130,8 @@ export async function deleteInstagramPost(
   try {
     await db.delete(instagramPosts).where(eq(instagramPosts.id, id));
 
-    revalidatePath("/");
     revalidatePath("/admin/instagram");
+    revalidateTag("instagram", "max");
 
     return { success: true };
   } catch (error) {
@@ -157,8 +157,8 @@ export async function reorderInstagramPosts(
         .where(eq(instagramPosts.id, item.id));
     }
 
-    revalidatePath("/");
     revalidatePath("/admin/instagram");
+    revalidateTag("instagram", "max");
 
     return { success: true };
   } catch (error) {

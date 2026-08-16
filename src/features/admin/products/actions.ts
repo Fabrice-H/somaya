@@ -3,7 +3,7 @@
 import { db, products } from "@/lib/db";
 import { eq, desc } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/actions";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type { Product as DbProduct, Category } from "@/lib/db/schema";
 import { productSchema, productUpdateSchema } from "./schemas";
 import { deleteImage } from "@/features/admin/storage/actions";
@@ -153,7 +153,7 @@ export async function createProduct(
 
     revalidatePath("/admin/produits");
     revalidatePath("/catalogue");
-    revalidatePath("/"); // Invalidate home page
+    revalidateTag("products", "max"); // Invalidate all product caches
 
     return { success: true, id: result.id };
   } catch (error: unknown) {
@@ -225,6 +225,7 @@ export async function updateProduct(
     revalidatePath("/admin/produits");
     revalidatePath(`/admin/produits/${id}`);
     revalidatePath("/catalogue");
+    revalidateTag("products", "max"); // Invalidate all product caches
 
     return { success: true };
   } catch (error: unknown) {
@@ -283,7 +284,7 @@ export async function deleteProduct(
 
     revalidatePath("/admin/produits");
     revalidatePath("/catalogue");
-    revalidatePath("/"); // Invalidate home page
+    revalidateTag("products", "max"); // Invalidate all product caches
 
     return { success: true };
   } catch (error) {
@@ -307,7 +308,7 @@ export async function toggleProductActive(
 
     revalidatePath("/admin/produits");
     revalidatePath("/catalogue");
-    revalidatePath("/"); // Invalidate home page
+    revalidateTag("products", "max"); // Invalidate all product caches
 
     return { success: true };
   } catch (error) {

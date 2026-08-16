@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { db, testimonials } from "@/lib/db";
 import { eq, asc } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/actions";
@@ -85,8 +85,8 @@ export async function createTestimonial(
       })
       .returning({ id: testimonials.id });
 
-    revalidatePath("/");
     revalidatePath("/admin/temoignages");
+    revalidateTag("testimonials", "max");
 
     return { success: true, id: result.id };
   } catch (error) {
@@ -114,8 +114,8 @@ export async function updateTestimonial(
       })
       .where(eq(testimonials.id, id));
 
-    revalidatePath("/");
     revalidatePath("/admin/temoignages");
+    revalidateTag("testimonials", "max");
 
     return { success: true };
   } catch (error) {
@@ -136,8 +136,8 @@ export async function deleteTestimonial(
   try {
     await db.delete(testimonials).where(eq(testimonials.id, id));
 
-    revalidatePath("/");
     revalidatePath("/admin/temoignages");
+    revalidateTag("testimonials", "max");
 
     return { success: true };
   } catch (error) {
@@ -163,8 +163,8 @@ export async function reorderTestimonials(
         .where(eq(testimonials.id, item.id));
     }
 
-    revalidatePath("/");
     revalidatePath("/admin/temoignages");
+    revalidateTag("testimonials", "max");
 
     return { success: true };
   } catch (error) {
