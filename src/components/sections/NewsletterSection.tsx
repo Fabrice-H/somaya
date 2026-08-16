@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PartyPopper } from "lucide-react";
 
 export function NewsletterSection() {
   const [email, setEmail] = useState("");
@@ -37,7 +38,7 @@ export function NewsletterSection() {
         </div>
         <h2
           style={{
-            fontFamily: "'Playfair Display', serif",
+            fontFamily: "var(--font-serif), serif",
             fontWeight: 500,
             fontSize: "clamp(34px, 4.4vw, 60px)",
             lineHeight: 1.05,
@@ -95,7 +96,7 @@ export function NewsletterSection() {
                 color: "#511F29",
                 border: "none",
                 cursor: "pointer",
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "var(--font-sans), sans-serif",
                 fontSize: "12px",
                 fontWeight: 600,
                 letterSpacing: "0.14em",
@@ -119,8 +120,9 @@ export function NewsletterSection() {
               margin: "0 auto",
             }}
           >
-            <p style={{ margin: 0, fontSize: "15px" }}>
-              Merci ! Vous êtes inscrit(e) à notre newsletter. 🎉
+            <p style={{ margin: 0, fontSize: "15px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+              <PartyPopper size={18} />
+              Merci ! Vous êtes inscrit(e) à notre newsletter.
             </p>
           </div>
         )}

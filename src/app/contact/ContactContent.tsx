@@ -1,525 +1,207 @@
 "use client";
 
-import { MapPin, Phone, MessageCircle, Clock, Truck, ShoppingBag, Calendar, Store } from "lucide-react";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { MapPin, Phone, MessageCircle, Clock, ArrowUpRight } from "lucide-react";
+import type { StoreSettings } from "@/features/admin/settings/actions";
 
-const services = [
-  {
-    icon: <Truck className="w-6 h-6" />,
-    title: "Livraison",
-    description: "Livraison rapide dans tout Abidjan",
-  },
-  {
-    icon: <ShoppingBag className="w-6 h-6" />,
-    title: "Retrait en boutique",
-    description: "Récupérez votre commande en magasin",
-  },
-  {
-    icon: <Calendar className="w-6 h-6" />,
-    title: "Réservation en ligne",
-    description: "Réservez vos articles à l'avance",
-  },
-  {
-    icon: <Store className="w-6 h-6" />,
-    title: "Shopping en boutique",
-    description: "Venez découvrir notre collection",
-  },
-];
+interface Props {
+  settings: StoreSettings | null;
+}
 
-export function ContactContent() {
+export function ContactContent({ settings }: Props) {
+  const phone = settings?.phone_number || "+225 07 78 78 42 68";
+  const whatsapp = settings?.whatsapp_number || "+225 05 08 90 56 66";
+  const address = settings?.address || "Angré Château\nNon loin du Collège International les Vallées d'Angré\n08 BP 2190 Abj 08";
+  const instagram = settings?.instagram_handle || "so_maya_ci";
+  const facebook = settings?.facebook_url || "https://www.facebook.com/MadeyaCado";
+  const tiktok = settings?.tiktok_handle || "somayashop";
+  const deliveryHours = settings?.delivery_hours || "Lun - Sam : 9h00 - 19h00\nDimanche : Fermé";
+
+  const phoneUrl = phone.replace(/\s/g, "");
+  const whatsappClean = whatsapp.replace(/\s/g, "").replace(/^\+/, "");
+
   return (
-    <div>
-      {/* Breadcrumb */}
-      <div className="container-som" style={{ paddingTop: "clamp(30px, 4vw, 50px)" }}>
-        <Breadcrumb items={[{ label: "Contact" }]} />
-      </div>
-
-      {/* Hero Section */}
-      <section
-        style={{
-          padding: "clamp(40px, 6vw, 80px) 40px",
-          background: "var(--som-cream)",
-        }}
-      >
-        <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
-          <div className="section-eyebrow-burgundy">Nous Contacter</div>
-          <h1 className="section-title" style={{ marginBottom: "20px" }}>
-            Rendez-nous visite
+    <div className="min-h-screen bg-[#faf6f1]">
+      {/* Hero */}
+      <section className="pt-12 pb-16 md:pt-16 md:pb-24 px-5 md:px-8">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-[11px] tracking-[0.2em] uppercase text-[#511F29]/60 mb-4">
+            Contact
+          </p>
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal text-[#2a181d] mb-6">
+            Parlons ensemble
           </h1>
-          <p
-            style={{
-              fontSize: "17px",
-              lineHeight: 1.7,
-              color: "var(--som-text-light)",
-              margin: 0,
-            }}
-          >
-            Notre équipe est à votre disposition pour vous accompagner dans vos choix
-            et répondre à toutes vos questions.
+          <p className="text-base md:text-lg text-[#511F29]/70 leading-relaxed max-w-xl mx-auto">
+            Une question, une commande ou simplement envie de nous dire bonjour ?
+            On est là pour vous.
           </p>
         </div>
       </section>
 
-      {/* Contact Info + Map Section */}
-      <section className="section-padding" style={{ background: "#fff" }}>
-        <div className="container-som">
-          <div className="grid-cols-2-responsive" style={{ gap: "clamp(40px, 5vw, 80px)" }}>
-            {/* Contact Information */}
-            <div>
-              <h2
-                style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontWeight: 500,
-                  fontSize: "clamp(24px, 3vw, 32px)",
-                  color: "var(--som-text)",
-                  marginBottom: "32px",
-                }}
-              >
-                Informations de contact
-              </h2>
-
-              {/* Address */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "16px",
-                  marginBottom: "28px",
-                  paddingBottom: "28px",
-                  borderBottom: "1px solid rgba(81, 31, 41, 0.1)",
-                }}
-              >
-                <div
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    background: "var(--som-peach-light)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "var(--som-burgundy)",
-                    flexShrink: 0,
-                  }}
-                >
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: 600,
-                      color: "var(--som-text)",
-                      marginBottom: "6px",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Adresse
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: "15px",
-                      lineHeight: 1.6,
-                      color: "var(--som-text-light)",
-                      margin: 0,
-                    }}
-                  >
-                    Angré Château<br />
-                    Non loin du Collège International les Vallées d&apos;Angré<br />
-                    08 BP 2190 Abj 08
-                  </p>
+      {/* Main Content */}
+      <section className="px-5 md:px-8 pb-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
+            {/* Contact Info */}
+            <div className="space-y-8">
+              {/* Address Card */}
+              <div className="bg-white p-8 border border-[#511F29]/10">
+                <div className="flex items-start gap-5">
+                  <div className="w-12 h-12 bg-[#fcd3b4]/30 flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5 text-[#511F29]" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs tracking-[0.15em] uppercase text-[#511F29]/60 mb-3">
+                      Adresse
+                    </h3>
+                    <p className="text-[15px] leading-relaxed text-[#2a181d]">
+                      {address.split("\n").map((line, i) => (
+                        <span key={i}>
+                          {line}
+                          {i < address.split("\n").length - 1 && <br />}
+                        </span>
+                      ))}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* Phone */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "16px",
-                  marginBottom: "28px",
-                  paddingBottom: "28px",
-                  borderBottom: "1px solid rgba(81, 31, 41, 0.1)",
-                }}
-              >
-                <div
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    background: "var(--som-peach-light)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "var(--som-burgundy)",
-                    flexShrink: 0,
-                  }}
-                >
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: 600,
-                      color: "var(--som-text)",
-                      marginBottom: "6px",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Téléphone
-                  </h3>
-                  <a
-                    href="tel:+2250778784268"
-                    style={{
-                      fontSize: "15px",
-                      color: "var(--som-burgundy)",
-                      textDecoration: "none",
-                      display: "block",
-                    }}
-                  >
-                    +225 07 78 78 42 68
-                  </a>
+              {/* Hours Card */}
+              <div className="bg-white p-8 border border-[#511F29]/10">
+                <div className="flex items-start gap-5">
+                  <div className="w-12 h-12 bg-[#fcd3b4]/30 flex items-center justify-center flex-shrink-0">
+                    <Clock className="w-5 h-5 text-[#511F29]" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs tracking-[0.15em] uppercase text-[#511F29]/60 mb-3">
+                      Horaires
+                    </h3>
+                    <p className="text-[15px] leading-relaxed text-[#2a181d]">
+                      {deliveryHours.split("\n").map((line, i) => (
+                        <span key={i}>
+                          {line}
+                          {i < deliveryHours.split("\n").length - 1 && <br />}
+                        </span>
+                      ))}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* WhatsApp */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "16px",
-                  marginBottom: "28px",
-                  paddingBottom: "28px",
-                  borderBottom: "1px solid rgba(81, 31, 41, 0.1)",
-                }}
-              >
-                <div
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    background: "var(--som-peach-light)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "var(--som-burgundy)",
-                    flexShrink: 0,
-                  }}
-                >
-                  <MessageCircle className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: 600,
-                      color: "var(--som-text)",
-                      marginBottom: "6px",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    WhatsApp
-                  </h3>
-                  <a
-                    href="https://wa.me/2250508905666"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      fontSize: "15px",
-                      color: "var(--som-burgundy)",
-                      textDecoration: "none",
-                      display: "block",
-                    }}
-                  >
-                    +225 05 08 90 56 66
-                  </a>
-                </div>
-              </div>
-
-              {/* Hours */}
-              <div style={{ display: "flex", gap: "16px" }}>
-                <div
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    background: "var(--som-peach-light)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "var(--som-burgundy)",
-                    flexShrink: 0,
-                  }}
-                >
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3
-                    style={{
-                      fontSize: "14px",
-                      fontWeight: 600,
-                      color: "var(--som-text)",
-                      marginBottom: "6px",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Horaires
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: "15px",
-                      lineHeight: 1.6,
-                      color: "var(--som-text-light)",
-                      margin: 0,
-                    }}
-                  >
-                    Lun - Sam : 9h00 - 19h00<br />
-                    Dimanche : Fermé
-                  </p>
-                </div>
-              </div>
-
-              {/* CTA Buttons */}
-              <div style={{ display: "flex", gap: "14px", marginTop: "40px", flexWrap: "wrap" }}>
+              {/* Contact Actions */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                {/* Phone */}
                 <a
-                  href="https://wa.me/2250508905666?text=Bonjour%20SO'MAYA%20!%20Je%20souhaite%20avoir%20des%20informations."
+                  href={`tel:${phoneUrl}`}
+                  className="group bg-white p-6 border border-[#511F29]/10 hover:border-[#511F29]/30 transition-colors"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <Phone className="w-5 h-5 text-[#511F29]/70" />
+                    <ArrowUpRight className="w-4 h-4 text-[#511F29]/40 group-hover:text-[#511F29] transition-colors" />
+                  </div>
+                  <p className="text-xs tracking-[0.15em] uppercase text-[#511F29]/60 mb-1">
+                    Téléphone
+                  </p>
+                  <p className="text-[15px] text-[#2a181d] font-medium">
+                    {phone}
+                  </p>
+                </a>
+
+                {/* WhatsApp */}
+                <a
+                  href={`https://wa.me/${whatsappClean}?text=Bonjour%20SO'MAYA%20!`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-whatsapp"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "10px" }}
+                  className="group bg-[#511F29] p-6 hover:bg-[#3d171f] transition-colors"
                 >
-                  <MessageCircle className="w-5 h-5" />
-                  <span>Écrire sur WhatsApp</span>
-                </a>
-                <a
-                  href="tel:+2250778784268"
-                  className="btn-secondary"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "10px" }}
-                >
-                  <Phone className="w-5 h-5" />
-                  <span>Appeler</span>
+                  <div className="flex items-center justify-between mb-4">
+                    <MessageCircle className="w-5 h-5 text-white" />
+                    <ArrowUpRight className="w-4 h-4 text-[#fcd3b4]/70 group-hover:text-white transition-colors" />
+                  </div>
+                  <p className="text-xs tracking-[0.15em] uppercase text-[#fcd3b4]/80 mb-1">
+                    WhatsApp
+                  </p>
+                  <p className="text-[15px] text-white font-medium">
+                    {whatsapp}
+                  </p>
                 </a>
               </div>
             </div>
 
             {/* Map */}
-            <div>
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  paddingBottom: "75%",
-                  background: "var(--som-cream-dark)",
-                  overflow: "hidden",
-                }}
-              >
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3971.9631550495205!2d-3.9620294!3d5.4225692!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfc1930016d4bcdf%3A0x566d63be49c7de8d!2sSO'MAYA!5e0!3m2!1sfr!2sci!4v1785570866631!5m2!1sfr!2sci"
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    border: 0,
-                  }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  title="Localisation SO'MAYA - Angré Château, Abidjan"
-                />
-              </div>
-              <a
-                href="https://maps.google.com/?q=SO'MAYA+Angré+Château+Abidjan"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  marginTop: "16px",
-                  fontSize: "13px",
-                  color: "var(--som-burgundy)",
-                  textDecoration: "none",
-                }}
-              >
-                <MapPin className="w-4 h-4" />
-                Ouvrir dans Google Maps
-              </a>
+            <div className="h-[400px] lg:h-auto lg:min-h-[500px] bg-[#fcd3b4]/20 relative">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3971.9631550495205!2d-3.9620294!3d5.4225692!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfc1930016d4bcdf%3A0x566d63be49c7de8d!2sSO'MAYA!5e0!3m2!1sfr!2sci!4v1785570866631!5m2!1sfr!2sci"
+                className="absolute inset-0 w-full h-full border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                title="Localisation SO'MAYA"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="section-padding" style={{ background: "var(--som-burgundy)" }}>
-        <div className="container-som">
-          <div style={{ textAlign: "center", marginBottom: "50px" }}>
-            <div className="section-eyebrow-peach">Nos Services</div>
-            <h2 className="section-title-light">Ce que nous proposons</h2>
-          </div>
+      {/* Social Section */}
+      <section className="py-16 md:py-24 px-5 md:px-8 bg-white border-t border-[#511F29]/10">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-[11px] tracking-[0.2em] uppercase text-[#511F29]/60 mb-4">
+            Réseaux sociaux
+          </p>
+          <h2 className="font-serif text-2xl md:text-3xl font-normal text-[#2a181d] mb-12">
+            Suivez-nous
+          </h2>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-              gap: "24px",
-            }}
-          >
-            {services.map((service) => (
-              <div
-                key={service.title}
-                style={{
-                  background: "rgba(255,255,255,0.08)",
-                  padding: "32px 24px",
-                  textAlign: "center",
-                }}
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+            {instagram && (
+              <a
+                href={`https://www.instagram.com/${instagram}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-4 border border-[#511F29]/20 text-sm tracking-[0.1em] uppercase text-[#511F29] hover:bg-[#511F29] hover:text-white hover:border-[#511F29] transition-all"
               >
-                <div
-                  style={{
-                    width: "56px",
-                    height: "56px",
-                    background: "rgba(252, 211, 180, 0.15)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "var(--som-peach)",
-                    margin: "0 auto 20px",
-                  }}
-                >
-                  {service.icon}
-                </div>
-                <h3
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontSize: "18px",
-                    fontWeight: 500,
-                    color: "var(--som-peach)",
-                    marginBottom: "10px",
-                  }}
-                >
-                  {service.title}
-                </h3>
-                <p
-                  style={{
-                    fontSize: "14px",
-                    lineHeight: 1.6,
-                    color: "rgba(255,255,255,0.7)",
-                    margin: 0,
-                  }}
-                >
-                  {service.description}
-                </p>
-              </div>
-            ))}
+                Instagram
+              </a>
+            )}
+            {tiktok && (
+              <a
+                href={`https://www.tiktok.com/@${tiktok}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-4 border border-[#511F29]/20 text-sm tracking-[0.1em] uppercase text-[#511F29] hover:bg-[#511F29] hover:text-white hover:border-[#511F29] transition-all"
+              >
+                TikTok
+              </a>
+            )}
+            {facebook && (
+              <a
+                href={facebook.startsWith("http") ? facebook : `https://www.facebook.com/${facebook}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-4 border border-[#511F29]/20 text-sm tracking-[0.1em] uppercase text-[#511F29] hover:bg-[#511F29] hover:text-white hover:border-[#511F29] transition-all"
+              >
+                Facebook
+              </a>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Social Links Section */}
-      <section className="section-padding" style={{ background: "var(--som-cream)" }}>
-        <div style={{ maxWidth: "600px", margin: "0 auto", textAlign: "center", padding: "0 20px" }}>
-          <div className="section-eyebrow-burgundy">Suivez-nous</div>
-          <h2 className="section-title" style={{ marginBottom: "20px" }}>
-            Restez connectés
-          </h2>
-          <p
-            style={{
-              fontSize: "16px",
-              lineHeight: 1.7,
-              color: "var(--som-text-light)",
-              marginBottom: "32px",
-            }}
-          >
-            Suivez-nous sur les réseaux sociaux pour découvrir nos dernières collections,
-            nos offres exclusives et les coulisses de SO&apos;MAYA.
+      {/* CTA Banner */}
+      <section className="py-12 px-5 md:px-8 bg-[#511F29]">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="font-serif text-xl md:text-2xl text-white text-center md:text-left">
+            Une question ? On vous répond rapidement.
           </p>
-          <div style={{ display: "flex", justifyContent: "center", gap: "16px", flexWrap: "wrap" }}>
-            <a
-              href="https://www.instagram.com/so_maya_ci/"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                width: "50px",
-                height: "50px",
-                background: "var(--som-burgundy)",
-                color: "var(--som-peach)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textDecoration: "none",
-                transition: "transform 0.2s",
-              }}
-              aria-label="Instagram"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <rect x="2" y="2" width="20" height="20" rx="5" />
-                <circle cx="12" cy="12" r="4" />
-                <circle cx="18" cy="6" r="1.5" fill="currentColor" stroke="none" />
-              </svg>
-            </a>
-            <a
-              href="https://www.facebook.com/MadeyaCado"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                width: "50px",
-                height: "50px",
-                background: "var(--som-burgundy)",
-                color: "var(--som-peach)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textDecoration: "none",
-                transition: "transform 0.2s",
-              }}
-              aria-label="Facebook"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-              </svg>
-            </a>
-            <a
-              href="https://www.tiktok.com/@somayashop"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                width: "50px",
-                height: "50px",
-                background: "var(--som-burgundy)",
-                color: "var(--som-peach)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textDecoration: "none",
-                transition: "transform 0.2s",
-              }}
-              aria-label="TikTok"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
-              </svg>
-            </a>
-            <a
-              href="https://wa.me/2250508905666"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                width: "50px",
-                height: "50px",
-                background: "var(--som-whatsapp)",
-                color: "#fff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textDecoration: "none",
-                transition: "transform 0.2s",
-              }}
-              aria-label="WhatsApp"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5.6a8.5 8.5 0 1 1 16.1-3.9z" />
-              </svg>
-            </a>
-          </div>
+          <a
+            href={`https://wa.me/${whatsappClean}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-[#fcd3b4] text-[#511F29] text-sm font-medium tracking-wide hover:bg-white transition-colors"
+          >
+            <MessageCircle className="w-5 h-5" />
+            Écrire sur WhatsApp
+          </a>
         </div>
       </section>
     </div>

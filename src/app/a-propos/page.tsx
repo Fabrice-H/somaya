@@ -1,7 +1,8 @@
 import { Metadata } from "next";
-import { Header } from "@/components/layout/Header";
+import { HeaderWrapper } from "@/components/layout/HeaderWrapper";
 import { Footer } from "@/components/layout/Footer";
 import { AboutContent } from "./AboutContent";
+import { getAboutCollectionsPublic } from "@/features/admin/about-collections/actions";
 
 export const metadata: Metadata = {
   title: "Notre Histoire | SO'MAYA - Mode & Accessoires",
@@ -9,12 +10,14 @@ export const metadata: Metadata = {
     "Découvrez l'histoire de SO'MAYA, votre boutique de référence pour sublimer votre style au quotidien à Abidjan.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const collections = await getAboutCollectionsPublic();
+
   return (
     <>
-      <Header />
+      <HeaderWrapper />
       <main style={{ paddingTop: "20px" }}>
-        <AboutContent />
+        <AboutContent collections={collections} />
       </main>
       <Footer />
     </>

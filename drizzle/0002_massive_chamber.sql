@@ -1,0 +1,1 @@
+ALTER TABLE "products" ADD COLUMN "material" varchar(255);

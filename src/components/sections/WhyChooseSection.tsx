@@ -27,7 +27,7 @@ export default function WhyChooseSection() {
           </div>
           <h2
             style={{
-              fontFamily: "'Playfair Display', serif",
+              fontFamily: "var(--font-serif), serif",
               fontWeight: 500,
               fontSize: "clamp(32px, 3.8vw, 52px)",
               lineHeight: 1.05,
@@ -56,7 +56,7 @@ export default function WhyChooseSection() {
             >
               <div
                 style={{
-                  fontFamily: "'Playfair Display', serif",
+                  fontFamily: "var(--font-serif), serif",
                   fontStyle: "italic",
                   fontSize: "34px",
                   color: "#511F29",
@@ -68,7 +68,7 @@ export default function WhyChooseSection() {
               </div>
               <h3
                 style={{
-                  fontFamily: "'Playfair Display', serif",
+                  fontFamily: "var(--font-serif), serif",
                   fontWeight: 500,
                   fontSize: "20px",
                   margin: "0 0 12px",

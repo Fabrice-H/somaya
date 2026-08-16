@@ -1,74 +1,72 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ShoppingBag,
-  User,
-  MapPin,
+  MessageCircle,
+  ChevronDown,
   Truck,
   CreditCard,
-  MessageCircle,
-} from 'lucide-react';
-import { useCartStore } from '@/stores/cart-store';
-import { getProductById, formatPrice } from '@/data/products';
+  ShieldCheck,
+  ArrowLeft,
+  Check,
+} from "lucide-react";
+import { useCartStore } from "@/stores/cart-store";
 
-const WHATSAPP_NUMBER = '2250508905666';
+function formatPrice(price: number): string {
+  return (
+    new Intl.NumberFormat("fr-CI", {
+      style: "decimal",
+      minimumFractionDigits: 0,
+    }).format(price) + " FCFA"
+  );
+}
+
+const WHATSAPP_NUMBER = "2250508905666";
 
 const COMMUNES_ABIDJAN = [
-  'Abobo',
-  'Adjamé',
-  'Anyama',
-  'Attécoubé',
-  'Bingerville',
-  'Cocody',
-  'Koumassi',
-  'Marcory',
-  'Plateau',
-  'Port-Bouët',
-  'Songon',
-  'Treichville',
-  'Yopougon',
+  "Abobo",
+  "Adjamé",
+  "Anyama",
+  "Attécoubé",
+  "Bingerville",
+  "Cocody",
+  "Koumassi",
+  "Marcory",
+  "Plateau",
+  "Port-Bouët",
+  "Songon",
+  "Treichville",
+  "Yopougon",
 ];
 
 export function CheckoutContent() {
   const router = useRouter();
-  const { items, getItemCount, clearCart } = useCartStore();
+  const { getItemCount, getSubtotal, clearCart, getItems } = useCartStore();
   const [isMounted, setIsMounted] = useState(false);
 
   // Form state
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [commune, setCommune] = useState('');
-  const [notes, setNotes] = useState('');
-  const [payment, setPayment] = useState<'livraison' | 'momo' | 'virement'>(
-    'livraison',
-  );
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [commune, setCommune] = useState("");
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const cartItems = Object.entries(items)
-    .map(([productId, quantity]) => {
-      const product = getProductById(productId);
-      return { product, quantity };
-    })
-    .filter((item) => item.product !== undefined);
-
-  const subtotal = cartItems.reduce((acc, { product, quantity }) => {
-    if (!product) return acc;
-    return acc + product.price * quantity;
-  }, 0);
-
-  const shippingCost = 1500; // Livraison uniquement Abidjan
-  const total = subtotal + shippingCost;
+  const cartItems = getItems();
+  const subtotal = getSubtotal();
   const itemCount = getItemCount();
+  const hasItems = cartItems.length > 0;
+
+  const shippingCost = 1500;
+  const total = subtotal + shippingCost;
 
   const isFormValid = firstName && lastName && phone && commune;
 
@@ -77,1335 +75,338 @@ export function CheckoutContent() {
 
     if (!isFormValid) return;
 
-    // Build WhatsApp message
     const itemsList = cartItems
-      .map(({ product, quantity }) => {
-        if (!product) return '';
-        return `• ${product.name} x${quantity} - ${formatPrice(product.price * quantity)}`;
+      .map((item) => {
+        const displayName = item.lotName
+          ? `${item.productName} - ${item.lotName}`
+          : item.productName;
+        const displayPrice = item.lotPrice ?? item.price;
+        return `• ${displayName} x${item.quantity} - ${formatPrice(displayPrice * item.quantity)}`;
       })
-      .join('\n');
-
-    const paymentLabel =
-      payment === 'livraison'
-        ? 'Paiement à la livraison'
-        : payment === 'momo'
-          ? 'Mobile Money'
-          : 'Virement bancaire';
+      .join("\n");
 
     const message = `
 🛍️ *NOUVELLE COMMANDE SO'MAYA*
 
 👤 *Client*
-Nom: ${firstName} ${lastName}
-Téléphone: +225 ${phone}
-${email ? `Email: ${email}` : ''}
+${firstName} ${lastName}
+📞 +225 ${phone}
 
-📍 *Adresse de livraison*
-${address ? `${address}\n` : ''}${commune}, Abidjan - Côte d'Ivoire
-${notes ? `\nInstructions: ${notes}` : ''}
+📍 *Livraison*
+${address ? `${address}\n` : ""}${commune}, Abidjan
+${notes ? `\n📝 Note: ${notes}` : ""}
 
-🛒 *Articles commandés*
+🛒 *Articles*
 ${itemsList}
 
-📦 *Livraison Abidjan (1 500 FCFA)*
-💳 *${paymentLabel}*
-
+📦 Livraison: ${formatPrice(shippingCost)}
 💰 *TOTAL: ${formatPrice(total)}*
-
-Merci de confirmer ma commande ! 🙏
     `.trim();
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
 
-    // Clear cart and redirect
     clearCart();
-    window.open(whatsappUrl, '_blank');
-    router.push('/');
+    window.open(whatsappUrl, "_blank");
+    router.push("/");
   };
 
   if (!isMounted) {
     return null;
   }
 
-  if (cartItems.length === 0) {
+  // Empty cart state
+  if (!hasItems) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#faf6f1',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {/* Header */}
-        <header
-          style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 5,
-            background: 'rgba(250,246,241,0.92)',
-            backdropFilter: 'blur(12px)',
-            borderBottom: '1px solid rgba(81,31,41,0.1)',
-          }}
-        >
-          <div
-            style={{
-              maxWidth: '1180px',
-              margin: '0 auto',
-              padding: '0 32px',
-              height: '70px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Link href='/'>
-              <Image
-                src='/images/logo_header.png'
-                alt="SO'MAYA"
-                width={136}
-                height={34}
-                style={{ height: '34px', width: 'auto' }}
-              />
-            </Link>
-          </div>
-        </header>
-
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '60px 40px',
-            textAlign: 'center',
-          }}
-        >
-          <ShoppingBag size={60} color='#c7ab9b' strokeWidth={1} />
-          <h1
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: '32px',
-              fontWeight: 500,
-              color: '#2a181d',
-              margin: '24px 0 12px',
-            }}
-          >
-            Votre panier est vide
-          </h1>
-          <p
-            style={{ fontSize: '15px', color: '#6e5a50', marginBottom: '32px' }}
-          >
-            Découvrez nos collections et trouvez la pièce parfaite.
-          </p>
-          <Link
-            href='/catalogue'
-            style={{
-              background: '#511F29',
-              color: '#fcd3b4',
-              fontSize: '12px',
-              fontWeight: 600,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              padding: '16px 32px',
-              borderRadius: '2px',
-              textDecoration: 'none',
-            }}
-          >
-            Découvrir la collection
-          </Link>
+      <div className="min-h-screen bg-[#faf6f1] flex flex-col items-center justify-center px-6 py-20">
+        <div className="w-20 h-20 bg-[#fcd3b4]/30 rounded-full flex items-center justify-center mb-8">
+          <ShoppingBag className="w-10 h-10 text-[#511F29]/50" strokeWidth={1.5} />
         </div>
+        <h1 className="font-serif text-3xl text-[#2a181d] mb-3">
+          Votre panier est vide
+        </h1>
+        <p className="text-[#511F29]/60 mb-10 text-center max-w-sm">
+          Découvrez nos collections et trouvez la pièce parfaite pour sublimer votre style.
+        </p>
+        <Link
+          href="/catalogue"
+          className="inline-flex items-center gap-2 bg-[#511F29] text-white px-8 py-4 text-sm font-medium tracking-wide hover:bg-[#3d171f] transition-colors"
+        >
+          Découvrir la collection
+        </Link>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#faf6f1' }}>
+    <div className="min-h-screen bg-[#faf6f1]">
       {/* Header */}
-      <header
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 5,
-          background: 'rgba(250,246,241,0.92)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(81,31,41,0.1)',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1180px',
-            margin: '0 auto',
-            padding: '0 32px',
-            height: '70px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Link href='/'>
+      <header className="bg-white border-b border-[#511F29]/10">
+        <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+          <Link href="/catalogue" className="inline-flex items-center gap-2 text-sm text-[#511F29]/70 hover:text-[#511F29] transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Retour
+          </Link>
+          <Link href="/">
             <Image
-              src='/images/logo_header.png'
+              src="/images/logo_header.png"
               alt="SO'MAYA"
-              width={136}
-              height={34}
-              style={{ height: '34px', width: 'auto' }}
+              width={100}
+              height={25}
+              className="h-6 w-auto"
             />
           </Link>
-          <Link
-            href='/catalogue'
-            style={{
-              position: 'relative',
-              color: '#2a181d',
-              display: 'inline-flex',
-            }}
-          >
-            <ShoppingBag size={20} strokeWidth={1.5} />
-            <span
-              style={{
-                position: 'absolute',
-                top: '-7px',
-                right: '-9px',
-                background: '#511F29',
-                color: '#fcd3b4',
-                fontSize: '9px',
-                fontWeight: 600,
-                minWidth: '15px',
-                height: '15px',
-                borderRadius: '999px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '0 3px',
-              }}
-            >
-              {itemCount}
-            </span>
-          </Link>
+          <div className="w-16" />
         </div>
       </header>
 
-      <div style={{ maxWidth: '1180px', margin: '0 auto', padding: '0 32px' }}>
-        {/* Breadcrumb */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '9px',
-            fontSize: '11px',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: '#94786b',
-            padding: '26px 0 0',
-          }}
-        >
-          <Link href='/' style={{ color: '#94786b', textDecoration: 'none' }}>
-            Accueil
-          </Link>
-          <span style={{ opacity: 0.5 }}>/</span>
-          <Link
-            href='/catalogue'
-            style={{ color: '#94786b', textDecoration: 'none' }}
-          >
-            Boutique
-          </Link>
-          <span style={{ opacity: 0.5 }}>/</span>
-          <span style={{ color: '#511F29' }}>Commande</span>
-        </div>
+      <main className="max-w-6xl mx-auto px-5 py-10 lg:py-16">
+        <div className="grid lg:grid-cols-[1fr_420px] gap-12 lg:gap-16">
+          {/* Left Column - Form */}
+          <div>
+            <h1 className="font-serif text-3xl lg:text-4xl text-[#2a181d] mb-2">
+              Finaliser la commande
+            </h1>
+            <p className="text-[#511F29]/60 mb-10">
+              Renseignez vos informations pour recevoir votre colis
+            </p>
 
-        {/* Title */}
-        <div
-          style={{
-            padding: '18px 0 30px',
-            borderBottom: '1px solid rgba(81,31,41,0.1)',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '11.5px',
-              letterSpacing: '0.3em',
-              textTransform: 'uppercase',
-              color: '#94786b',
-              marginBottom: '13px',
-            }}
-          >
-            Étape finale
-          </div>
-          <h1
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontWeight: 500,
-              fontSize: 'clamp(34px,4.5vw,52px)',
-              lineHeight: 1,
-              margin: 0,
-              color: '#2a181d',
-            }}
-          >
-            Finalisez votre commande
-          </h1>
-          <p
-            style={{
-              fontSize: '15px',
-              lineHeight: 1.7,
-              color: '#6e5a50',
-              fontWeight: 300,
-              maxWidth: '540px',
-              margin: '17px 0 0',
-            }}
-          >
-            Renseignez vos coordonnées et validez. Votre commande sera envoyée{' '}
-            <strong style={{ fontWeight: 600, color: '#2a181d' }}>
-              directement sur WhatsApp
-            </strong>
-            , prête à être confirmée.
-          </p>
-        </div>
-
-        {/* Content Grid */}
-        <div
-          className='checkout-grid'
-          style={{
-            padding: '34px 0 64px',
-          }}
-        >
-          {/* Form */}
-          <form
-            onSubmit={handleSubmit}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
-              minWidth: 0,
-            }}
-          >
-            {/* Personal Info */}
-            <div
-              style={{
-                background: '#fff',
-                border: '1px solid rgba(81,31,41,0.1)',
-                borderRadius: '5px',
-                padding: '26px 28px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '13px',
-                  marginBottom: '22px',
-                }}
-              >
-                <span
-                  style={{
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '5px',
-                    background: '#511F29',
-                    color: '#fcd3b4',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <User size={17} strokeWidth={1.6} />
-                </span>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: "'Playfair Display', serif",
-                      fontSize: '19px',
-                      color: '#2a181d',
-                      lineHeight: 1.1,
-                    }}
-                  >
-                    Vos informations
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Contact Section */}
+              <section>
+                <h2 className="text-xs font-medium tracking-[0.15em] uppercase text-[#511F29]/60 mb-5">
+                  Vos coordonnées
+                </h2>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-[#2a181d] mb-2">Prénom</label>
+                      <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="Marie"
+                        required
+                        className="w-full h-12 px-4 bg-white border border-[#511F29]/20 text-[#2a181d] text-[15px] outline-none transition-colors focus:border-[#511F29] placeholder:text-[#511F29]/40"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-[#2a181d] mb-2">Nom</label>
+                      <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Koné"
+                        required
+                        className="w-full h-12 px-4 bg-white border border-[#511F29]/20 text-[#2a181d] text-[15px] outline-none transition-colors focus:border-[#511F29] placeholder:text-[#511F29]/40"
+                      />
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#94786b',
-                      marginTop: '2px',
-                    }}
-                  >
-                    Pour vous contacter si besoin
+                  <div>
+                    <label className="block text-sm text-[#2a181d] mb-2">Téléphone</label>
+                    <div className="flex h-12 bg-white border border-[#511F29]/20 focus-within:border-[#511F29] transition-colors">
+                      <span className="flex items-center gap-2 px-4 bg-[#fcd3b4]/30 border-r border-[#511F29]/20 text-[#511F29]/70 text-sm">
+                        🇨🇮 +225
+                      </span>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="07 00 00 00 00"
+                        required
+                        className="flex-1 h-full px-4 bg-transparent text-[#2a181d] text-[15px] outline-none placeholder:text-[#511F29]/40"
+                      />
+                      {phone.length >= 10 && (
+                        <span className="flex items-center pr-4 text-[#511F29]">
+                          <Check className="w-5 h-5" />
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </section>
 
-              <div className='form-grid-2'>
-                <label style={{ display: 'block' }}>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: '10.5px',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      color: '#94786b',
-                      marginBottom: '7px',
-                    }}
-                  >
-                    Prénom *
-                  </span>
-                  <input
-                    type='text'
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder='Aïcha'
-                    required
-                    style={{
-                      width: '100%',
-                      background: '#faf6f1',
-                      border: '1px solid rgba(81,31,41,0.16)',
-                      color: '#2a181d',
-                      padding: '13px 14px',
-                      fontSize: '14px',
-                      borderRadius: '3px',
-                      outline: 'none',
-                    }}
-                  />
-                </label>
-                <label style={{ display: 'block' }}>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: '10.5px',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      color: '#94786b',
-                      marginBottom: '7px',
-                    }}
-                  >
-                    Nom *
-                  </span>
-                  <input
-                    type='text'
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder='Koné'
-                    required
-                    style={{
-                      width: '100%',
-                      background: '#faf6f1',
-                      border: '1px solid rgba(81,31,41,0.16)',
-                      color: '#2a181d',
-                      padding: '13px 14px',
-                      fontSize: '14px',
-                      borderRadius: '3px',
-                      outline: 'none',
-                    }}
-                  />
-                </label>
-              </div>
-
-              <div className='form-grid-2' style={{ marginTop: '15px' }}>
-                <label style={{ display: 'block' }}>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: '10.5px',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      color: '#94786b',
-                      marginBottom: '7px',
-                    }}
-                  >
-                    Téléphone WhatsApp *
-                  </span>
-                  <div
-                    style={{
-                      display: 'flex',
-                      border: '1px solid rgba(81,31,41,0.16)',
-                      borderRadius: '3px',
-                      overflow: 'hidden',
-                      background: '#faf6f1',
-                    }}
-                  >
-                    <span
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '0 12px',
-                        background: '#f1e8df',
-                        fontSize: '13px',
-                        color: '#511F29',
-                        borderRight: '1px solid rgba(81,31,41,0.16)',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      +225
-                    </span>
+              {/* Delivery Section */}
+              <section>
+                <h2 className="text-xs font-medium tracking-[0.15em] uppercase text-[#511F29]/60 mb-5">
+                  Adresse de livraison
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-[#2a181d] mb-2">Commune</label>
+                    <div className="relative">
+                      <select
+                        value={commune}
+                        onChange={(e) => setCommune(e.target.value)}
+                        required
+                        className="w-full h-12 px-4 bg-white border border-[#511F29]/20 text-[#2a181d] text-[15px] outline-none transition-colors focus:border-[#511F29] appearance-none cursor-pointer"
+                      >
+                        <option value="" className="text-[#511F29]/40">Sélectionner une commune</option>
+                        {COMMUNES_ABIDJAN.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#511F29]/40 pointer-events-none" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-[#2a181d] mb-2">
+                      Adresse complète <span className="text-[#511F29]/40">(optionnel)</span>
+                    </label>
                     <input
-                      type='tel'
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder='07 00 00 00 00'
-                      required
-                      style={{
-                        flex: 1,
-                        minWidth: 0,
-                        background: 'transparent',
-                        border: 'none',
-                        color: '#2a181d',
-                        padding: '13px 14px',
-                        fontSize: '14px',
-                        outline: 'none',
-                      }}
+                      type="text"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Quartier, rue, repère..."
+                      className="w-full h-12 px-4 bg-white border border-[#511F29]/20 text-[#2a181d] text-[15px] outline-none transition-colors focus:border-[#511F29] placeholder:text-[#511F29]/40"
                     />
                   </div>
-                </label>
-                <label style={{ display: 'block' }}>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: '10.5px',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      color: '#94786b',
-                      marginBottom: '7px',
-                    }}
-                  >
-                    Email{' '}
-                    <span
-                      style={{
-                        textTransform: 'none',
-                        letterSpacing: 0,
-                        color: '#b09a8d',
-                      }}
-                    >
-                      (optionnel)
-                    </span>
-                  </span>
-                  <input
-                    type='email'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder='vous@exemple.com'
-                    style={{
-                      width: '100%',
-                      background: '#faf6f1',
-                      border: '1px solid rgba(81,31,41,0.16)',
-                      color: '#2a181d',
-                      padding: '13px 14px',
-                      fontSize: '14px',
-                      borderRadius: '3px',
-                      outline: 'none',
-                    }}
-                  />
-                </label>
-              </div>
-            </div>
-
-            {/* Address */}
-            <div
-              style={{
-                background: '#fff',
-                border: '1px solid rgba(81,31,41,0.1)',
-                borderRadius: '5px',
-                padding: '26px 28px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '13px',
-                  marginBottom: '22px',
-                }}
-              >
-                <span
-                  style={{
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '5px',
-                    background: '#511F29',
-                    color: '#fcd3b4',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <MapPin size={17} strokeWidth={1.6} />
-                </span>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: "'Playfair Display', serif",
-                      fontSize: '19px',
-                      color: '#2a181d',
-                      lineHeight: 1.1,
-                    }}
-                  >
-                    Adresse de livraison
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#94786b',
-                      marginTop: '2px',
-                    }}
-                  >
-                    Où devons-nous livrer ?
+                  <div>
+                    <label className="block text-sm text-[#2a181d] mb-2">
+                      Instructions <span className="text-[#511F29]/40">(optionnel)</span>
+                    </label>
+                    <textarea
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      rows={2}
+                      placeholder="Instructions pour la livraison..."
+                      className="w-full px-4 py-3 bg-white border border-[#511F29]/20 text-[#2a181d] text-[15px] outline-none transition-colors focus:border-[#511F29] placeholder:text-[#511F29]/40 resize-none"
+                    />
                   </div>
                 </div>
-              </div>
+              </section>
 
-              <label style={{ display: 'block', marginBottom: '15px' }}>
-                <span
-                  style={{
-                    display: 'block',
-                    fontSize: '10.5px',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    color: '#94786b',
-                    marginBottom: '7px',
-                  }}
-                >
-                  Adresse complète
-                </span>
-                <input
-                  type='text'
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder='Quartier, rue, numéro de porte…'
-                  style={{
-                    width: '100%',
-                    background: '#faf6f1',
-                    border: '1px solid rgba(81,31,41,0.16)',
-                    color: '#2a181d',
-                    padding: '13px 14px',
-                    fontSize: '14px',
-                    borderRadius: '3px',
-                    outline: 'none',
-                  }}
-                />
-              </label>
-
-              <div className='form-grid-2'>
-                <label style={{ display: 'block' }}>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: '10.5px',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      color: '#94786b',
-                      marginBottom: '7px',
-                    }}
-                  >
-                    Commune *
-                  </span>
-                  <select
-                    value={commune}
-                    onChange={(e) => setCommune(e.target.value)}
-                    required
-                    style={{
-                      width: '100%',
-                      background: '#faf6f1',
-                      border: '1px solid rgba(81,31,41,0.16)',
-                      color: commune ? '#2a181d' : '#94786b',
-                      padding: '13px 14px',
-                      fontSize: '14px',
-                      borderRadius: '3px',
-                      outline: 'none',
-                    }}
-                  >
-                    <option value=''>Sélectionner une commune</option>
-                    {COMMUNES_ABIDJAN.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label style={{ display: 'block' }}>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: '10.5px',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      color: '#94786b',
-                      marginBottom: '7px',
-                    }}
-                  >
-                    Ville / Pays
-                  </span>
-                  <input
-                    type='text'
-                    value="Abidjan, Côte d'Ivoire"
-                    disabled
-                    style={{
-                      width: '100%',
-                      background: '#f1e8df',
-                      border: '1px solid rgba(81,31,41,0.16)',
-                      color: '#6e5a50',
-                      padding: '13px 14px',
-                      fontSize: '14px',
-                      borderRadius: '3px',
-                      outline: 'none',
-                      cursor: 'not-allowed',
-                    }}
-                  />
-                </label>
-              </div>
-
-              <label style={{ display: 'block', marginTop: '15px' }}>
-                <span
-                  style={{
-                    display: 'block',
-                    fontSize: '10.5px',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    color: '#94786b',
-                    marginBottom: '7px',
-                  }}
-                >
-                  Instructions{' '}
-                  <span
-                    style={{
-                      textTransform: 'none',
-                      letterSpacing: 0,
-                      color: '#b09a8d',
-                    }}
-                  >
-                    (optionnel)
-                  </span>
-                </span>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={2}
-                  placeholder="Point de repère, code d'entrée, taille, couleur…"
-                  style={{
-                    width: '100%',
-                    background: '#faf6f1',
-                    border: '1px solid rgba(81,31,41,0.16)',
-                    color: '#2a181d',
-                    padding: '13px 14px',
-                    fontSize: '14px',
-                    borderRadius: '3px',
-                    outline: 'none',
-                    resize: 'vertical',
-                    fontFamily: "'Inter', sans-serif",
-                  }}
-                />
-              </label>
-            </div>
-
-            {/* Shipping */}
-            <div
-              style={{
-                background: '#fff',
-                border: '1px solid rgba(81,31,41,0.1)',
-                borderRadius: '5px',
-                padding: '26px 28px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '13px',
-                  marginBottom: '20px',
-                }}
-              >
-                <span
-                  style={{
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '5px',
-                    background: '#511F29',
-                    color: '#fcd3b4',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Truck size={17} strokeWidth={1.6} />
-                </span>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: "'Playfair Display', serif",
-                      fontSize: '19px',
-                      color: '#2a181d',
-                      lineHeight: 1.1,
-                    }}
-                  >
-                    Livraison
+              {/* Payment Info */}
+              <section className="bg-white border border-[#511F29]/10 p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-[#fcd3b4]/40 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CreditCard className="w-5 h-5 text-[#511F29]" />
                   </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#94786b',
-                      marginTop: '2px',
-                    }}
-                  >
-                    Uniquement à Abidjan
-                  </div>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '14px',
-                  background: '#faf6f1',
-                  border: '1px solid rgba(81,31,41,0.16)',
-                  borderRadius: '4px',
-                  padding: '15px 17px',
-                }}
-              >
-                <span
-                  style={{
-                    width: '18px',
-                    height: '18px',
-                    borderRadius: '999px',
-                    border: '1.5px solid #511F29',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <span
-                    style={{
-                      width: '9px',
-                      height: '9px',
-                      borderRadius: '999px',
-                      background: '#511F29',
-                    }}
-                  />
-                </span>
-                <span style={{ flex: 1 }}>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: '12px',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      color: '#2a181d',
-                      fontWeight: 600,
-                    }}
-                  >
-                    Livraison Abidjan
-                  </span>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: '12px',
-                      color: '#94786b',
-                      marginTop: '3px',
-                    }}
-                  >
-                    Du lundi au samedi, entre 14h et 20h
-                  </span>
-                </span>
-                <span
-                  style={{
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    color: '#511F29',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  1 500 FCFA
-                </span>
-              </div>
-            </div>
-
-            {/* Payment */}
-            <div
-              style={{
-                background: '#fff',
-                border: '1px solid rgba(81,31,41,0.1)',
-                borderRadius: '5px',
-                padding: '26px 28px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '13px',
-                  marginBottom: '20px',
-                }}
-              >
-                <span
-                  style={{
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '5px',
-                    background: '#511F29',
-                    color: '#fcd3b4',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <CreditCard size={17} strokeWidth={1.6} />
-                </span>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: "'Playfair Display', serif",
-                      fontSize: '19px',
-                      color: '#2a181d',
-                      lineHeight: 1.1,
-                    }}
-                  >
-                    Paiement
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: '#94786b',
-                      marginTop: '2px',
-                    }}
-                  >
-                    Choisissez votre mode de paiement
-                  </div>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                }}
-              >
-                <button
-                  type='button'
-                  onClick={() => setPayment('livraison')}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '14px',
-                    textAlign: 'left',
-                    background: '#faf6f1',
-                    border: '1px solid rgba(81,31,41,0.16)',
-                    borderRadius: '4px',
-                    padding: '15px 17px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <span
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      borderRadius: '999px',
-                      border: '1.5px solid #511F29',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {payment === 'livraison' && (
-                      <span
-                        style={{
-                          width: '9px',
-                          height: '9px',
-                          borderRadius: '999px',
-                          background: '#511F29',
-                        }}
-                      />
-                    )}
-                  </span>
-                  <span style={{ flex: 1 }}>
-                    <span
-                      style={{
-                        display: 'block',
-                        fontSize: '12px',
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
-                        color: '#2a181d',
-                        fontWeight: 600,
-                      }}
-                    >
+                  <div>
+                    <h3 className="text-sm font-medium text-[#2a181d] mb-1">
                       Paiement à la livraison
-                    </span>
-                    <span
-                      style={{
-                        display: 'block',
-                        fontSize: '12px',
-                        color: '#94786b',
-                        marginTop: '3px',
-                      }}
-                    >
-                      Réglez en espèces à la réception de votre commande
-                    </span>
-                  </span>
-                </button>
-
-                <button
-                  type='button'
-                  onClick={() => setPayment('momo')}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '14px',
-                    textAlign: 'left',
-                    background: '#faf6f1',
-                    border: '1px solid rgba(81,31,41,0.16)',
-                    borderRadius: '4px',
-                    padding: '15px 17px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <span
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      borderRadius: '999px',
-                      border: '1.5px solid #511F29',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {payment === 'momo' && (
-                      <span
-                        style={{
-                          width: '9px',
-                          height: '9px',
-                          borderRadius: '999px',
-                          background: '#511F29',
-                        }}
-                      />
-                    )}
-                  </span>
-                  <span style={{ flex: 1 }}>
-                    <span
-                      style={{
-                        display: 'block',
-                        fontSize: '12px',
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
-                        color: '#2a181d',
-                        fontWeight: 600,
-                      }}
-                    >
-                      Mobile Money
-                    </span>
-                    <span
-                      style={{
-                        display: 'block',
-                        fontSize: '12px',
-                        color: '#94786b',
-                        marginTop: '3px',
-                      }}
-                    >
-                      Orange, MTN, Moov ou Wave — détails sur WhatsApp
-                    </span>
-                  </span>
-                </button>
-
-                <button
-                  type='button'
-                  onClick={() => setPayment('virement')}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '14px',
-                    textAlign: 'left',
-                    background: '#faf6f1',
-                    border: '1px solid rgba(81,31,41,0.16)',
-                    borderRadius: '4px',
-                    padding: '15px 17px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <span
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      borderRadius: '999px',
-                      border: '1.5px solid #511F29',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {payment === 'virement' && (
-                      <span
-                        style={{
-                          width: '9px',
-                          height: '9px',
-                          borderRadius: '999px',
-                          background: '#511F29',
-                        }}
-                      />
-                    )}
-                  </span>
-                  <span style={{ flex: 1 }}>
-                    <span
-                      style={{
-                        display: 'block',
-                        fontSize: '12px',
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
-                        color: '#2a181d',
-                        fontWeight: 600,
-                      }}
-                    >
-                      Virement bancaire
-                    </span>
-                    <span
-                      style={{
-                        display: 'block',
-                        fontSize: '12px',
-                        color: '#94786b',
-                        marginTop: '3px',
-                      }}
-                    >
-                      Coordonnées communiquées après confirmation
-                    </span>
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type='submit'
-              disabled={!isFormValid}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '11px',
-                background: isFormValid ? '#1f8a4c' : '#94786b',
-                color: '#fff',
-                border: 'none',
-                cursor: isFormValid ? 'pointer' : 'not-allowed',
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '13px',
-                fontWeight: 600,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                padding: '19px',
-                borderRadius: '3px',
-                transition: 'all 0.25s',
-              }}
-            >
-              <MessageCircle size={20} strokeWidth={1.6} />
-              Confirmer — {formatPrice(total)}
-            </button>
-
-            {!isFormValid && (
-              <p
-                style={{
-                  fontSize: '12px',
-                  color: '#b09a8d',
-                  textAlign: 'center',
-                }}
-              >
-                Veuillez remplir tous les champs obligatoires (*)
-              </p>
-            )}
-          </form>
-
-          {/* Order Summary */}
-          <div
-            style={{
-              position: 'sticky',
-              top: '90px',
-              background: '#fff',
-              border: '1px solid rgba(81,31,41,0.1)',
-              borderRadius: '5px',
-              padding: '26px 28px',
-            }}
-          >
-            <div
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: '21px',
-                color: '#2a181d',
-                marginBottom: '20px',
-                paddingBottom: '16px',
-                borderBottom: '1px solid rgba(81,31,41,0.1)',
-              }}
-            >
-              Récapitulatif
-            </div>
-
-            {/* Cart Items */}
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px',
-                marginBottom: '20px',
-                paddingBottom: '20px',
-                borderBottom: '1px solid rgba(81,31,41,0.1)',
-              }}
-            >
-              {cartItems.map(({ product, quantity }) => {
-                if (!product) return null;
-                return (
-                  <div
-                    key={product.id}
-                    style={{ display: 'flex', gap: '14px' }}
-                  >
-                    <div
-                      style={{
-                        width: '60px',
-                        height: '75px',
-                        flexShrink: 0,
-                        overflow: 'hidden',
-                        borderRadius: '2px',
-                        background: '#ece0d3',
-                        position: 'relative',
-                      }}
-                    >
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        style={{
-                          objectFit: 'cover',
-                          objectPosition: 'center 20%',
-                        }}
-                        sizes='60px'
-                      />
-                      <span
-                        style={{
-                          position: 'absolute',
-                          top: '-6px',
-                          right: '-6px',
-                          background: '#511F29',
-                          color: '#fcd3b4',
-                          fontSize: '9px',
-                          fontWeight: 600,
-                          width: '18px',
-                          height: '18px',
-                          borderRadius: '999px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        {quantity}
-                      </span>
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          fontSize: '9px',
-                          letterSpacing: '0.14em',
-                          textTransform: 'uppercase',
-                          color: '#94786b',
-                        }}
-                      >
-                        {product.category}
-                      </div>
-                      <div
-                        style={{
-                          fontFamily: "'Playfair Display', serif",
-                          fontSize: '14px',
-                          color: '#2a181d',
-                          marginTop: '2px',
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        {product.name}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          color: '#511F29',
-                          marginTop: '6px',
-                        }}
-                      >
-                        {formatPrice(product.price * quantity)}
-                      </div>
-                    </div>
+                    </h3>
+                    <p className="text-sm text-[#511F29]/60">
+                      Vous payez uniquement lorsque vous recevez votre commande. Nous vous appellerons avant la livraison.
+                    </p>
                   </div>
-                );
-              })}
+                </div>
+              </section>
+
+              {/* Submit - Mobile */}
+              <div className="lg:hidden">
+                <button
+                  type="submit"
+                  disabled={!isFormValid}
+                  className="w-full h-14 flex items-center justify-center gap-3 bg-[#511F29] text-white text-sm font-medium tracking-wide transition-all disabled:bg-[#511F29]/30 disabled:cursor-not-allowed hover:bg-[#3d171f]"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  {isFormValid ? `Commander via WhatsApp` : "Remplissez le formulaire"}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Right Column - Summary */}
+          <div className="lg:sticky lg:top-8 lg:self-start">
+            <div className="bg-white border border-[#511F29]/10">
+              {/* Header */}
+              <div className="px-6 py-5 border-b border-[#511F29]/10">
+                <h2 className="text-sm font-medium tracking-[0.1em] uppercase text-[#2a181d]">
+                  Récapitulatif
+                </h2>
+              </div>
+
+              {/* Items */}
+              <div className="px-6 py-5 space-y-5 border-b border-[#511F29]/10 max-h-[300px] overflow-y-auto">
+                {cartItems.map((item) => {
+                  const uniqueKey = item.lotId
+                    ? `${item.productId}:${item.lotId}`
+                    : item.productId;
+                  const displayName = item.lotName
+                    ? `${item.productName} - ${item.lotName}`
+                    : item.productName;
+                  const displayPrice = item.lotPrice ?? item.price;
+
+                  return (
+                    <div key={uniqueKey} className="flex gap-4">
+                      <div className="relative w-16 h-20 flex-shrink-0 bg-[#fcd3b4]/20">
+                        <Image
+                          src={item.productImage}
+                          alt={displayName}
+                          fill
+                          className="object-cover"
+                          sizes="64px"
+                        />
+                        <span className="absolute -top-2 -right-2 w-5 h-5 bg-[#511F29] text-white text-[10px] font-medium rounded-full flex items-center justify-center">
+                          {item.quantity}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-[#2a181d] font-medium leading-snug line-clamp-2">
+                          {displayName}
+                        </p>
+                        <p className="text-xs text-[#511F29]/50 mt-1">{item.categoryName}</p>
+                        <p className="text-sm font-medium text-[#511F29] mt-2">
+                          {formatPrice(displayPrice * item.quantity)}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Totals */}
+              <div className="px-6 py-5 space-y-3 border-b border-[#511F29]/10">
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#511F29]/60">Sous-total</span>
+                  <span className="text-[#2a181d]">{formatPrice(subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#511F29]/60">Livraison</span>
+                  <span className="text-[#2a181d]">{formatPrice(shippingCost)}</span>
+                </div>
+              </div>
+
+              {/* Total */}
+              <div className="px-6 py-5">
+                <div className="flex justify-between items-center">
+                  <span className="text-base font-medium text-[#2a181d]">Total</span>
+                  <span className="text-xl font-semibold text-[#511F29]">
+                    {formatPrice(total)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Submit - Desktop */}
+              <div className="px-6 pb-6 hidden lg:block">
+                <button
+                  type="submit"
+                  form="checkout-form"
+                  onClick={handleSubmit}
+                  disabled={!isFormValid}
+                  className="w-full h-14 flex items-center justify-center gap-3 bg-[#511F29] text-white text-sm font-medium tracking-wide transition-all disabled:bg-[#511F29]/30 disabled:cursor-not-allowed hover:bg-[#3d171f]"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Commander via WhatsApp
+                </button>
+              </div>
             </div>
 
-            {/* Totals */}
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  fontSize: '13px',
-                }}
-              >
-                <span style={{ color: '#6e5a50' }}>Sous-total</span>
-                <span style={{ color: '#2a181d' }}>
-                  {formatPrice(subtotal)}
-                </span>
+            {/* Trust badges */}
+            <div className="mt-6 grid grid-cols-2 gap-4">
+              <div className="flex items-center gap-3 text-sm text-[#511F29]/70">
+                <Truck className="w-5 h-5 text-[#511F29]/50" />
+                <span>Livraison Abidjan</span>
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  fontSize: '13px',
-                }}
-              >
-                <span style={{ color: '#6e5a50' }}>Livraison</span>
-                <span style={{ color: '#2a181d' }}>
-                  {formatPrice(shippingCost)}
-                </span>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  paddingTop: '12px',
-                  borderTop: '1px solid rgba(81,31,41,0.1)',
-                  marginTop: '4px',
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontSize: '18px',
-                    color: '#2a181d',
-                  }}
-                >
-                  Total
-                </span>
-                <span
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontSize: '22px',
-                    fontWeight: 500,
-                    color: '#511F29',
-                  }}
-                >
-                  {formatPrice(total)}
-                </span>
+              <div className="flex items-center gap-3 text-sm text-[#511F29]/70">
+                <ShieldCheck className="w-5 h-5 text-[#511F29]/50" />
+                <span>Paiement sécurisé</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

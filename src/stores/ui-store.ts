@@ -22,11 +22,6 @@ interface UIState {
   openQuickView: (productId: string) => void;
   closeQuickView: () => void;
 
-  // Wishlist
-  wishlist: Set<string>;
-  toggleWishlist: (productId: string) => void;
-  isInWishlist: (productId: string) => boolean;
-
   // Mobile menu
   isMobileMenuOpen: boolean;
   openMobileMenu: () => void;
@@ -57,20 +52,6 @@ export const useUIStore = create<UIState>((set, get) => ({
   quickViewProductId: null,
   openQuickView: (productId) => set({ quickViewProductId: productId }),
   closeQuickView: () => set({ quickViewProductId: null }),
-
-  // Wishlist
-  wishlist: new Set(),
-  toggleWishlist: (productId) =>
-    set((state) => {
-      const newWishlist = new Set(state.wishlist);
-      if (newWishlist.has(productId)) {
-        newWishlist.delete(productId);
-      } else {
-        newWishlist.add(productId);
-      }
-      return { wishlist: newWishlist };
-    }),
-  isInWishlist: (productId) => get().wishlist.has(productId),
 
   // Mobile menu
   isMobileMenuOpen: false,

@@ -3,27 +3,14 @@
 import Link from "next/link";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { products, type Collection } from "@/data/products";
+import type { Category, ProductWithCategory } from "@/lib/db/schema";
 
 interface CategoryContentProps {
-  collection: Collection;
+  category: Category;
+  products: ProductWithCategory[];
 }
 
-export function CategoryContent({ collection }: CategoryContentProps) {
-  // Map collection slug to product category
-  const categoryMap: Record<string, string> = {
-    femmes: "Femmes",
-    hommes: "Hommes",
-    bijoux: "Bijoux",
-    sacs: "Sacs",
-    montres: "Montres",
-    boubous: "Boubous",
-  };
-
-  const categoryProducts = products.filter(
-    (p) => p.category === categoryMap[collection.slug]
-  );
-
+export function CategoryContent({ category, products }: CategoryContentProps) {
   return (
     <div
       style={{
@@ -36,7 +23,7 @@ export function CategoryContent({ collection }: CategoryContentProps) {
       <Breadcrumb
         items={[
           { label: "Catalogue", href: "/catalogue" },
-          { label: collection.name },
+          { label: category.name },
         ]}
       />
 
@@ -51,11 +38,11 @@ export function CategoryContent({ collection }: CategoryContentProps) {
             marginBottom: "14px",
           }}
         >
-          {collection.label}
+          Collection
         </div>
         <h1
           style={{
-            fontFamily: "'Playfair Display', serif",
+            fontFamily: "var(--font-serif), serif",
             fontWeight: 500,
             fontSize: "clamp(34px, 4vw, 56px)",
             lineHeight: 1,
@@ -63,30 +50,32 @@ export function CategoryContent({ collection }: CategoryContentProps) {
             margin: "0 0 16px",
           }}
         >
-          {collection.name}
+          {category.name}
         </h1>
-        <p
-          style={{
-            fontSize: "16px",
-            lineHeight: 1.6,
-            color: "#6e5a50",
-            maxWidth: "600px",
-            margin: "0 auto",
-          }}
-        >
-          {collection.subtitle}
-        </p>
+        {category.description && (
+          <p
+            style={{
+              fontSize: "16px",
+              lineHeight: 1.6,
+              color: "#6e5a50",
+              maxWidth: "600px",
+              margin: "0 auto",
+            }}
+          >
+            {category.description}
+          </p>
+        )}
       </div>
 
       {/* Products Grid */}
       <div className="grid-cols-4-responsive">
-        {categoryProducts.map((product, index) => (
+        {products.map((product, index) => (
           <ProductCard key={product.id} product={product} index={index} />
         ))}
       </div>
 
       {/* Empty State */}
-      {categoryProducts.length === 0 && (
+      {products.length === 0 && (
         <div style={{ textAlign: "center", padding: "80px 0" }}>
           <p style={{ color: "#94786b", fontSize: "16px", marginBottom: "24px" }}>
             Aucun produit dans cette catégorie pour le moment.

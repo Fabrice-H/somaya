@@ -1,0 +1,40 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "somaya",
+  "compatibility_date": "2025-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Build configuration
+  "main": ".open-next/worker.js",
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  // Environment variables (will be set in Cloudflare Dashboard)
+  // These are just placeholders
+  "vars": {
+    "NODE_ENV": "production"
+  },
+
+  // KV Namespaces (optional - for caching)
+  // "kv_namespaces": [
+  //   { "binding": "CACHE", "id": "your-kv-namespace-id" }
+  // ],
+
+  // Observability
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+
+  // Preview environment
+  "env": {
+    "preview": {
+      "name": "somaya-preview",
+      "vars": {
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}

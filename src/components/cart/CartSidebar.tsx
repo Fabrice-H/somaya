@@ -6,17 +6,24 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
-import { getProductById, formatPrice } from "@/data/products";
+
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat("fr-CI", {
+    style: "decimal",
+    minimumFractionDigits: 0,
+  }).format(price) + " FCFA";
+}
 
 export function CartSidebar() {
   const {
-    items,
     isOpen,
     closeCart,
     incrementItem,
     decrementItem,
     removeItem,
     getItemCount,
+    getSubtotal,
+    getItems,
   } = useCartStore();
 
   const [isMounted, setIsMounted] = useState(false);
@@ -25,18 +32,8 @@ export function CartSidebar() {
     setIsMounted(true);
   }, []);
 
-  const cartItems = Object.entries(items)
-    .map(([productId, quantity]) => {
-      const product = getProductById(productId);
-      return { product, quantity };
-    })
-    .filter((item) => item.product !== undefined);
-
-  const subtotal = cartItems.reduce((acc, { product, quantity }) => {
-    if (!product) return acc;
-    return acc + product.price * quantity;
-  }, 0);
-
+  const cartItems = getItems();
+  const subtotal = getSubtotal();
   const itemCount = getItemCount();
   const hasItems = cartItems.length > 0;
 
@@ -92,7 +89,7 @@ export function CartSidebar() {
             >
               <div
                 style={{
-                  fontFamily: "'Playfair Display', serif",
+                  fontFamily: "var(--font-serif), serif",
                   fontSize: "23px",
                   color: "#2a181d",
                 }}
@@ -144,24 +141,26 @@ export function CartSidebar() {
                   <br />
                   Découvrez nos pièces d&apos;exception.
                 </div>
-                <button
+                <Link
+                  href="/catalogue"
                   onClick={closeCart}
                   style={{
                     background: "#511F29",
                     color: "#fcd3b4",
                     border: "none",
                     cursor: "pointer",
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: "var(--font-sans), sans-serif",
                     fontSize: "11.5px",
                     fontWeight: 600,
                     letterSpacing: "0.14em",
                     textTransform: "uppercase",
                     padding: "14px 28px",
                     borderRadius: "2px",
+                    textDecoration: "none",
                   }}
                 >
-                  Découvrir la collection
-                </button>
+                  Découvrir la boutique
+                </Link>
               </div>
             )}
 
@@ -175,11 +174,27 @@ export function CartSidebar() {
                     padding: "4px 26px",
                   }}
                 >
-                  {cartItems.map(({ product, quantity }) => {
-                    if (!product) return null;
+                  {cartItems.map((item) => {
+                    const uniqueKey = item.itemId
+                      ? `${item.productId}:${item.lotId}:${item.itemId}`
+                      : item.lotId
+                        ? `${item.productId}:${item.lotId}`
+                        : item.productId;
+
+                    // Display: Product - Lot - Item Label
+                    let displayName = item.productName;
+                    if (item.lotName) {
+                      displayName += ` - ${item.lotName}`;
+                    }
+                    if (item.itemLabel) {
+                      displayName += ` (${item.itemLabel})`;
+                    }
+
+                    const displayPrice = item.lotPrice ?? item.price;
+
                     return (
                       <div
-                        key={product.id}
+                        key={uniqueKey}
                         style={{
                           display: "flex",
                           gap: "14px",
@@ -188,7 +203,9 @@ export function CartSidebar() {
                         }}
                       >
                         {/* Image */}
-                        <div
+                        <Link
+                          href={`/produit/${item.productSlug}`}
+                          onClick={closeCart}
                           style={{
                             width: "70px",
                             height: "88px",
@@ -200,8 +217,8 @@ export function CartSidebar() {
                           }}
                         >
                           <Image
-                            src={product.image}
-                            alt={product.name}
+                            src={item.productImage}
+                            alt={displayName}
                             fill
                             style={{
                               objectFit: "cover",
@@ -209,7 +226,7 @@ export function CartSidebar() {
                             }}
                             sizes="70px"
                           />
-                        </div>
+                        </Link>
 
                         {/* Info */}
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -221,19 +238,23 @@ export function CartSidebar() {
                               color: "#94786b",
                             }}
                           >
-                            {product.category}
+                            {item.categoryName}
                           </div>
-                          <div
+                          <Link
+                            href={`/produit/${item.productSlug}`}
+                            onClick={closeCart}
                             style={{
-                              fontFamily: "'Playfair Display', serif",
+                              fontFamily: "var(--font-serif), serif",
                               fontSize: "15.5px",
                               color: "#2a181d",
+                              display: "block",
                               margin: "3px 0 10px",
                               lineHeight: 1.2,
+                              textDecoration: "none",
                             }}
                           >
-                            {product.name}
-                          </div>
+                            {displayName}
+                          </Link>
                           <div
                             style={{
                               display: "flex",
@@ -252,7 +273,7 @@ export function CartSidebar() {
                               }}
                             >
                               <button
-                                onClick={() => decrementItem(product.id)}
+                                onClick={() => decrementItem(item.productId, item.lotId, item.itemId)}
                                 aria-label="Moins"
                                 style={{
                                   width: "28px",
@@ -275,10 +296,10 @@ export function CartSidebar() {
                                   color: "#2a181d",
                                 }}
                               >
-                                {quantity}
+                                {item.quantity}
                               </span>
                               <button
-                                onClick={() => incrementItem(product.id)}
+                                onClick={() => incrementItem(item.productId, item.lotId, item.itemId)}
                                 aria-label="Plus"
                                 style={{
                                   width: "28px",
@@ -301,14 +322,14 @@ export function CartSidebar() {
                                 color: "#511F29",
                               }}
                             >
-                              {formatPrice(product.price * quantity)}
+                              {formatPrice(displayPrice * item.quantity)}
                             </div>
                           </div>
                         </div>
 
                         {/* Remove */}
                         <button
-                          onClick={() => removeItem(product.id)}
+                          onClick={() => removeItem(item.productId, item.lotId, item.itemId)}
                           aria-label="Retirer"
                           style={{
                             background: "none",
@@ -347,7 +368,7 @@ export function CartSidebar() {
                     </span>
                     <span
                       style={{
-                        fontFamily: "'Playfair Display', serif",
+                        fontFamily: "var(--font-serif), serif",
                         fontSize: "21px",
                         color: "#2a181d",
                       }}
@@ -374,7 +395,7 @@ export function CartSidebar() {
                       color: "#fcd3b4",
                       border: "none",
                       cursor: "pointer",
-                      fontFamily: "'Inter', sans-serif",
+                      fontFamily: "var(--font-sans), sans-serif",
                       fontSize: "12px",
                       fontWeight: 600,
                       letterSpacing: "0.14em",
@@ -397,7 +418,7 @@ export function CartSidebar() {
                       color: "#511F29",
                       border: "1px solid rgba(81,31,41,0.3)",
                       cursor: "pointer",
-                      fontFamily: "'Inter', sans-serif",
+                      fontFamily: "var(--font-sans), sans-serif",
                       fontSize: "11.5px",
                       fontWeight: 600,
                       letterSpacing: "0.13em",

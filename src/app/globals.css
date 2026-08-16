@@ -53,9 +53,9 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Fonts */
-  --font-playfair: var(--font-playfair-display);
-  --font-inter: var(--font-inter);
+  /* Fonts - Modern & Harmonious */
+  --font-serif: var(--font-heading);
+  --font-sans: var(--font-body);
 }
 
 /* Base Styles */
@@ -70,9 +70,10 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -87,9 +88,10 @@ body {
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: var(--font-serif), Georgia, serif;
   font-weight: 500;
-  line-height: 1.1;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
 /* Custom Scrollbar - Minimal */
@@ -162,7 +164,7 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--som-burgundy);
   color: var(--som-peach);
   padding: 17px 34px;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 12.5px;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -188,7 +190,7 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--som-peach);
   color: var(--som-burgundy);
   padding: 17px 34px;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 12.5px;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -214,7 +216,7 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
   color: var(--som-text);
   padding: 17px 34px;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 12.5px;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -239,7 +241,7 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
   color: var(--som-text-on-dark);
   padding: 17px 34px;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 12.5px;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -265,7 +267,7 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--som-whatsapp);
   color: #fff;
   padding: 16px 32px;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   font-size: 12.5px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -307,7 +309,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section-title {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: var(--font-serif), Georgia, serif;
   font-weight: 500;
   font-size: clamp(34px, 4vw, 56px);
   line-height: 1;
@@ -316,7 +318,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section-title-light {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: var(--font-serif), Georgia, serif;
   font-weight: 500;
   font-size: clamp(34px, 4vw, 56px);
   line-height: 1;
@@ -328,12 +330,12 @@ h1, h2, h3, h4, h5, h6 {
 .container-som {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 clamp(20px, 4vw, 48px);
 }
 
 @media (max-width: 768px) {
   .container-som {
-    padding: 0 20px;
+    padding: 0 16px;
   }
 }
 
@@ -401,7 +403,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--som-text);
   padding: 13px 14px;
   font-size: 14px;
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   border-radius: 3px;
   outline: none;
   transition: border-color 0.2s;
@@ -524,7 +526,180 @@ h1, h2, h3, h4, h5, h6 {
   display: none;
 }
 
-/* Responsive Grid Utilities */
+/* ============================================================
+   ANIMATIONS - Fluid & Professional
+   ============================================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  opacity: 0;
+  animation: slideUp 0.7s ease-out forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+
+/* ============================================================
+   GRIDS - Responsive & Clean
+   ============================================================ */
+
+/* Products Grid - 4 columns */
+.products-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+  width: 100%;
+  overflow: hidden;
+}
+
+.products-grid-4 > * {
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .products-grid-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .products-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* Testimonials Grid */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+}
+
+@media (max-width: 1024px) {
+  .testimonials-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Instagram Grid - 6 columns */
+.instagram-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(8px, 1.5vw, 16px);
+}
+
+@media (max-width: 1024px) {
+  .instagram-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .instagram-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .instagram-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Hero Container - Responsive */
+.hero-container {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: clamp(12px, 2vw, 24px);
+}
+
+@media (max-width: 900px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    min-height: auto !important;
+  }
+
+  .hero-content-card {
+    order: 2;
+    min-height: 400px;
+  }
+
+  .hero-media-card {
+    order: 1;
+    aspect-ratio: 16/10;
+  }
+}
+
+/* New Collection Container - Responsive */
+.new-collection-container {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: clamp(12px, 2vw, 24px);
+}
+
+@media (max-width: 900px) {
+  .new-collection-container {
+    grid-template-columns: 1fr;
+    min-height: auto !important;
+  }
+
+  .new-collection-container > div:first-child {
+    order: 2;
+    min-height: 400px;
+  }
+
+  .new-collection-container > div:last-child {
+    order: 1;
+    min-height: 350px;
+  }
+}
+
+/* Legacy Grid Classes - Keep for compatibility */
 .grid-cols-4-responsive {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -775,5 +950,71 @@ h1, h2, h3, h4, h5, h6 {
   .new-collection-grid {
     grid-template-columns: 1fr;
     gap: 40px;
+  }
+}
+
+/* Collections Telo Style Grid */
+.collections-telo-top {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: clamp(8px, 1.5vw, 16px);
+}
+
+.collections-telo-bottom {
+  display: grid;
+  gap: clamp(8px, 1.5vw, 16px);
+}
+
+@media (max-width: 900px) {
+  .collections-telo-top {
+    grid-template-columns: 1fr 1fr;
+    height: auto !important;
+  }
+
+  .collections-telo-top > *:first-child {
+    grid-row: span 2;
+    min-height: 400px;
+  }
+
+  .collections-telo-bottom {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .collections-telo-top {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .collections-telo-top > *:first-child {
+    grid-row: span 1;
+    aspect-ratio: 4/5;
+    min-height: auto;
+  }
+
+  .collections-telo-top > *:nth-child(2),
+  .collections-telo-top > *:nth-child(3) {
+    aspect-ratio: 16/10;
+  }
+
+  .collections-telo-bottom {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .collections-telo-bottom > * {
+    aspect-ratio: 1 !important;
+  }
+}
+
+/* Magazine-style responsive grid */
+.grid-cols-1-mobile {
+  display: grid;
+}
+
+@media (max-width: 900px) {
+  .grid-cols-1-mobile {
+    grid-template-columns: 1fr !important;
   }
 }

@@ -1,297 +1,207 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { collections } from '@/data/products';
+import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
     <footer
-      id='contact'
       style={{
-        background: '#1f1116',
-        color: '#e9dcd3',
-        fontFamily: 'var(--font-inter), system-ui, sans-serif',
+        background: "#f8f5f2",
+        color: "#2a181d",
+        fontFamily: "var(--font-body), system-ui, sans-serif",
       }}
     >
       <div
         style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          padding: 'clamp(64px, 7vw, 90px) clamp(20px, 4vw, 40px) 0',
+          maxWidth: "1400px",
+          margin: "0 auto",
+          padding: "clamp(60px, 7vw, 90px) clamp(20px, 4vw, 48px) 0",
         }}
       >
         {/* Main Footer Grid */}
         <div
-          className='footer-grid'
+          className="footer-grid"
           style={{
-            paddingBottom: '56px',
-            borderBottom: '1px solid rgba(233,220,211,0.12)',
+            display: "grid",
+            gridTemplateColumns: "1.5fr 1fr 1fr 1fr",
+            gap: "clamp(32px, 5vw, 80px)",
+            paddingBottom: "60px",
+            borderBottom: "1px solid rgba(42, 24, 29, 0.1)",
           }}
         >
           {/* Brand Column */}
           <div>
             <Image
-              src='/images/logo_transparent.png'
-              alt="SO'MAYA — La qualité, notre référence"
-              width={168}
-              height={78}
-              style={{ height: '78px', width: 'auto', display: 'block' }}
+              src="/images/logo_header.png"
+              alt="SO'MAYA"
+              width={140}
+              height={35}
+              style={{ height: "35px", width: "auto", display: "block" }}
             />
             <p
               style={{
-                fontSize: '13px',
+                fontSize: "14px",
                 lineHeight: 1.7,
-                color: '#9c8579',
-                fontWeight: 300,
-                maxWidth: '300px',
-                margin: '22px 0 0',
+                color: "#6b5a52",
+                maxWidth: "280px",
+                margin: "24px 0 0",
               }}
             >
-              Prêt-à-porter Made in Africa. Afro-moderne, classe.
+              Le luxe accessible, depuis Abidjan. Des pièces d&apos;exception confectionnées avec soin dans notre atelier.
             </p>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '9px',
-                marginTop: '18px',
-              }}
-            >
-              <a
-                href='https://wa.me/2250508905666'
-                target='_blank'
-                rel='noopener noreferrer'
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '9px',
-                  fontSize: '13.5px',
-                  color: '#fcd3b4',
-                  textDecoration: 'none',
-                  transition: 'color 0.25s',
-                }}
-              >
-                <svg
-                  width='16'
-                  height='16'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  stroke='currentColor'
-                  strokeWidth='1.6'
-                >
-                  <path d='M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5.6a8.5 8.5 0 1 1 16.1-3.9z' />
-                </svg>
-                +225 05 08 90 56 66
-              </a>
-              <a
-                href='tel:+2250778784268'
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '9px',
-                  fontSize: '13.5px',
-                  color: '#c9b3a6',
-                  textDecoration: 'none',
-                  transition: 'color 0.25s',
-                }}
-              >
-                <svg
-                  width='16'
-                  height='16'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  stroke='currentColor'
-                  strokeWidth='1.6'
-                >
-                  <path d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z' />
-                </svg>
-                +225 07 78 78 42 68
-              </a>
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '9px',
-                  fontSize: '13px',
-                  color: '#9c8579',
-                }}
-              >
-                <svg
-                  width='16'
-                  height='16'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  stroke='currentColor'
-                  strokeWidth='1.6'
-                >
-                  <path d='M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11z' />
-                  <circle cx='12' cy='10' r='2.5' />
-                </svg>
-                Abidjan, Côte d&apos;Ivoire 🇨🇮
-              </span>
-            </div>
           </div>
 
-          {/* Boutique Column */}
+          {/* Navigation Column */}
           <div>
             <div
               style={{
-                fontSize: '11px',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                color: '#fcd3b4',
-                marginBottom: '20px',
+                fontSize: "11px",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "#2a181d",
+                marginBottom: "24px",
+                fontWeight: 500,
               }}
             >
-              Boutique
+              Navigation
             </div>
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '13px' }}
-            >
-              {collections.slice(0, 5).map((collection) => (
-                <Link
-                  key={collection.id}
-                  href={`/catalogue/${collection.slug}`}
-                  style={{
-                    fontSize: '13.5px',
-                    color: '#c9b3a6',
-                    textDecoration: 'none',
-                    transition: 'color 0.25s',
-                  }}
-                >
-                  {collection.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Aide Column */}
-          <div>
-            <div
-              style={{
-                fontSize: '11px',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                color: '#fcd3b4',
-                marginBottom: '20px',
-              }}
-            >
-              Aide
-            </div>
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '13px' }}
-            >
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <Link
-                href='#'
+                href="/catalogue"
                 style={{
-                  fontSize: '13.5px',
-                  color: '#c9b3a6',
-                  textDecoration: 'none',
+                  fontSize: "14px",
+                  color: "#6b5a52",
+                  textDecoration: "none",
+                  transition: "color 0.2s",
                 }}
               >
-                Livraison
+                Boutique
               </Link>
               <Link
-                href='#'
+                href="/a-propos"
                 style={{
-                  fontSize: '13.5px',
-                  color: '#c9b3a6',
-                  textDecoration: 'none',
+                  fontSize: "14px",
+                  color: "#6b5a52",
+                  textDecoration: "none",
+                  transition: "color 0.2s",
                 }}
               >
-                Retours
+                Notre Histoire
               </Link>
               <Link
-                href='#'
+                href="/contact"
                 style={{
-                  fontSize: '13.5px',
-                  color: '#c9b3a6',
-                  textDecoration: 'none',
-                }}
-              >
-                Guide des tailles
-              </Link>
-              <Link
-                href='#'
-                style={{
-                  fontSize: '13.5px',
-                  color: '#c9b3a6',
-                  textDecoration: 'none',
+                  fontSize: "14px",
+                  color: "#6b5a52",
+                  textDecoration: "none",
+                  transition: "color 0.2s",
                 }}
               >
                 Contact
               </Link>
+            </div>
+          </div>
+
+          {/* Informations Column */}
+          <div>
+            <div
+              style={{
+                fontSize: "11px",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "#2a181d",
+                marginBottom: "24px",
+                fontWeight: 500,
+              }}
+            >
+              Informations
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <Link
-                href='#'
+                href="/livraison-retours"
                 style={{
-                  fontSize: '13.5px',
-                  color: '#c9b3a6',
-                  textDecoration: 'none',
+                  fontSize: "14px",
+                  color: "#6b5a52",
+                  textDecoration: "none",
+                  transition: "color 0.2s",
                 }}
               >
-                FAQ
+                Livraison & Retours
+              </Link>
+              <Link
+                href="/conditions-generales"
+                style={{
+                  fontSize: "14px",
+                  color: "#6b5a52",
+                  textDecoration: "none",
+                  transition: "color 0.2s",
+                }}
+              >
+                Conditions Générales
+              </Link>
+              <Link
+                href="/politique-confidentialite"
+                style={{
+                  fontSize: "14px",
+                  color: "#6b5a52",
+                  textDecoration: "none",
+                  transition: "color 0.2s",
+                }}
+              >
+                Politique de Confidentialité
               </Link>
             </div>
           </div>
 
-          {/* La maison Column */}
+          {/* Contact Column */}
           <div>
             <div
               style={{
-                fontSize: '11px',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                color: '#fcd3b4',
-                marginBottom: '20px',
+                fontSize: "11px",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "#2a181d",
+                marginBottom: "24px",
+                fontWeight: 500,
               }}
             >
-              La maison
+              Contact
             </div>
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '13px' }}
-            >
-              <Link
-                href='#histoire'
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <p
                 style={{
-                  fontSize: '13.5px',
-                  color: '#c9b3a6',
-                  textDecoration: 'none',
+                  fontSize: "14px",
+                  color: "#6b5a52",
+                  margin: 0,
+                  lineHeight: 1.6,
                 }}
               >
-                Notre histoire
-              </Link>
-              <Link
-                href='#'
-                style={{
-                  fontSize: '13.5px',
-                  color: '#c9b3a6',
-                  textDecoration: 'none',
-                }}
-              >
-                Boutique Abidjan
-              </Link>
-              <Link
-                href='#lookbook'
-                style={{
-                  fontSize: '13.5px',
-                  color: '#c9b3a6',
-                  textDecoration: 'none',
-                }}
-              >
-                Lookbook
-              </Link>
+                Angré Château
+                <br />
+                Abidjan, Côte d&apos;Ivoire
+              </p>
               <a
-                href='https://www.instagram.com/so_maya_ci/'
-                target='_blank'
-                rel='noopener noreferrer'
+                href="tel:+2250778784268"
                 style={{
-                  fontSize: '13.5px',
-                  color: '#c9b3a6',
-                  textDecoration: 'none',
+                  fontSize: "14px",
+                  color: "#6b5a52",
+                  textDecoration: "none",
                 }}
               >
-                Instagram
+                +225 07 78 78 42 68
+              </a>
+              <a
+                href="https://wa.me/2250508905666"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: "14px",
+                  color: "#6b5a52",
+                  textDecoration: "none",
+                }}
+              >
+                +225 05 08 90 56 66
               </a>
             </div>
           </div>
@@ -299,86 +209,92 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div
-          className='footer-bottom'
+          className="footer-bottom"
           style={{
-            padding: '26px 0',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "28px 0",
+            flexWrap: "wrap",
+            gap: "16px",
           }}
         >
-          <div style={{ fontSize: '12px', color: '#8a7468' }}>
-            © 2026 SO&apos;MAYA · Tous droits réservés · Conçu à Abidjan
-          </div>
-          <div style={{ display: 'flex', gap: '24px' }}>
+          <p
+            style={{
+              fontSize: "12px",
+              color: "#9c8a82",
+              margin: 0,
+              letterSpacing: "0.02em",
+            }}
+          >
+            © 2026 SO&apos;MAYA. TOUS DROITS RÉSERVÉS.
+          </p>
+          <div style={{ display: "flex", gap: "32px" }}>
             <a
-              href='https://www.instagram.com/so_maya_ci/'
-              target='_blank'
-              rel='noopener noreferrer'
+              href="https://www.instagram.com/so_maya_ci/"
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
-                fontSize: '12px',
-                letterSpacing: '0.06em',
-                color: '#c9b3a6',
-                textDecoration: 'none',
-                transition: 'color 0.25s',
+                fontSize: "11px",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: "#6b5a52",
+                textDecoration: "none",
+                transition: "color 0.2s",
               }}
             >
               Instagram
             </a>
             <a
-              href='https://wa.me/2250508905666'
-              target='_blank'
-              rel='noopener noreferrer'
+              href="https://www.facebook.com/MadeyaCado"
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
-                fontSize: '12px',
-                letterSpacing: '0.06em',
-                color: '#c9b3a6',
-                textDecoration: 'none',
-                transition: 'color 0.25s',
-              }}
-            >
-              WhatsApp
-            </a>
-            <a
-              href='https://www.facebook.com/MadeyaCado'
-              target='_blank'
-              rel='noopener noreferrer'
-              style={{
-                fontSize: '12px',
-                letterSpacing: '0.06em',
-                color: '#c9b3a6',
-                textDecoration: 'none',
-                transition: 'color 0.25s',
+                fontSize: "11px",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: "#6b5a52",
+                textDecoration: "none",
+                transition: "color 0.2s",
               }}
             >
               Facebook
             </a>
             <a
-              href='https://www.tiktok.com/@somayashop'
-              target='_blank'
-              rel='noopener noreferrer'
+              href="https://www.tiktok.com/@somayashop"
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
-                fontSize: '12px',
-                letterSpacing: '0.06em',
-                color: '#c9b3a6',
-                textDecoration: 'none',
-                transition: 'color 0.25s',
+                fontSize: "11px",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: "#6b5a52",
+                textDecoration: "none",
+                transition: "color 0.2s",
               }}
             >
               TikTok
             </a>
-            <Link
-              href='#'
-              style={{
-                fontSize: '12px',
-                letterSpacing: '0.06em',
-                color: '#c9b3a6',
-                textDecoration: 'none',
-                transition: 'color 0.25s',
-              }}
-            >
-              CGV
-            </Link>
           </div>
         </div>
       </div>
+
+      {/* Responsive Styles */}
+      <style jsx>{`
+        .footer-grid {
+          grid-template-columns: 1.5fr 1fr 1fr 1fr;
+        }
+        @media (max-width: 900px) {
+          .footer-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </footer>
   );
 }

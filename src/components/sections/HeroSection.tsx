@@ -1,215 +1,269 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import type { HomeHeroBanner } from "@/lib/queries/home";
 
-export default function HeroSection() {
-  return (
+// ============================================================
+// Types
+// ============================================================
+
+interface HeroSectionProps {
+  data?: HomeHeroBanner | null;
+}
+
+// Default values
+const DEFAULTS = {
+  layout: "split",
+  eyebrow: "Maison de mode · Abidjan",
+  title: "L'élégance",
+  title_highlight: "africaine",
+  title_suffix: "sublimée",
+  description: "Des pièces uniques pour accompagner chaque femme et chaque homme au quotidien.",
+  button_text: "Découvrir",
+  button_link: "#collections",
+  media_type: "image",
+  media_url: "/images/so_maya_ci_1776781082_3880233341219782649_13316418128.jpg",
+  media_position: "center center",
+  background_color: "#511F29",
+  text_color: "#fbf3ec",
+  accent_color: "#fcd3b4",
+};
+
+// ============================================================
+// Client Component - HeroSection
+// Supports 3 layouts: split, centered, fullscreen
+// ============================================================
+
+export default function HeroSection({ data }: HeroSectionProps) {
+  const layout = data?.layout || DEFAULTS.layout;
+  const eyebrow = data?.eyebrow || DEFAULTS.eyebrow;
+  const title = data?.title || DEFAULTS.title;
+  const titleHighlight = data?.title_highlight || DEFAULTS.title_highlight;
+  const titleSuffix = data?.title_suffix || DEFAULTS.title_suffix;
+  const description = data?.description || DEFAULTS.description;
+  const buttonText = data?.button_text || DEFAULTS.button_text;
+  const buttonLink = data?.button_link || DEFAULTS.button_link;
+  const mediaType = data?.media_type || DEFAULTS.media_type;
+  const mediaUrl = data?.media_url || DEFAULTS.media_url;
+  const mediaPosition = data?.media_position || DEFAULTS.media_position;
+  const bgColor = data?.background_color || DEFAULTS.background_color;
+  const textColor = data?.text_color || DEFAULTS.text_color;
+  const accentColor = data?.accent_color || DEFAULTS.accent_color;
+
+  // Render media element
+  const renderMedia = () => (
     <>
-      {/* Desktop Hero - 2 columns */}
-      <section
-        className="hero-desktop"
-        style={{
-          gridTemplateColumns: "1.05fr 1fr",
-          minHeight: "600px",
-          height: "88vh",
-          maxHeight: "880px",
-        }}
-      >
-        {/* Left Side - Content */}
-        <div
-          style={{
-            background: "#511F29",
-            display: "flex",
-            alignItems: "center",
-            padding: "60px clamp(40px, 6vw, 96px)",
-          }}
+      {mediaType === "video" ? (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: mediaPosition }}
         >
-          <div style={{ maxWidth: "520px" }}>
-            {/* Eyebrow */}
-            <div
-              style={{
-                display: "inline-block",
-                fontSize: "11.5px",
-                letterSpacing: "0.3em",
-                textTransform: "uppercase",
-                color: "#fcd3b4",
-                marginBottom: "26px",
-                borderBottom: "1px solid rgba(252,211,180,0.4)",
-                paddingBottom: "7px",
-              }}
-            >
-              Maison de mode · Abidjan
-            </div>
+          <source src={mediaUrl} type="video/mp4" />
+        </video>
+      ) : (
+        <Image
+          src={mediaUrl}
+          alt="Hero"
+          fill
+          priority
+          className="object-cover"
+          style={{ objectPosition: mediaPosition }}
+        />
+      )}
+    </>
+  );
 
-            {/* Title */}
-            <h1
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontWeight: 500,
-                color: "#fbf3ec",
-                fontSize: "clamp(40px, 4.6vw, 76px)",
-                lineHeight: 1.04,
-                margin: 0,
-                letterSpacing: "-0.01em",
-              }}
+  // ============================================================
+  // Layout: SPLIT - Text on left, media on right
+  // ============================================================
+  if (layout === "split") {
+    return (
+      <section className="bg-[#faf6f1] p-4 md:p-6 lg:p-8">
+        <div className="max-w-[1400px] mx-auto flex flex-col-reverse md:grid md:grid-cols-[1fr_1.3fr] gap-4 md:gap-6 md:min-h-[500px] lg:min-h-[600px]">
+          {/* Content Card */}
+          <div
+            className="rounded-2xl p-6 md:p-8 lg:p-12 flex flex-col justify-center animate-fade-in"
+            style={{ background: bgColor }}
+          >
+            <span
+              className="text-[11px] tracking-[0.2em] uppercase mb-5"
+              style={{ color: `${accentColor}99` }}
             >
-              L&apos;élégance
-              <br />
-              <em style={{ fontStyle: "italic", color: "#fcd3b4" }}>commence</em> ici.
+              {eyebrow}
+            </span>
+
+            <h1
+              className="font-serif font-normal text-[28px] md:text-[36px] lg:text-[52px] leading-[1.1] mb-4 tracking-tight animate-slide-up"
+              style={{ color: textColor }}
+            >
+              {title}
+              {titleHighlight && (
+                <>
+                  <br />
+                  <em style={{ fontStyle: "italic", color: accentColor }}>{titleHighlight}</em>
+                </>
+              )}
+              {titleSuffix && (
+                <>
+                  <br />
+                  {titleSuffix}
+                </>
+              )}
             </h1>
 
-            {/* Description */}
             <p
-              style={{
-                color: "rgba(251,243,236,0.8)",
-                fontSize: "17px",
-                lineHeight: 1.65,
-                margin: "28px 0 38px",
-                fontWeight: 300,
-              }}
+              className="text-[14px] md:text-[15px] leading-relaxed mb-6 md:mb-8 max-w-[380px] animate-slide-up delay-1"
+              style={{ color: `${textColor}cc` }}
             >
-              Des pièces sélectionnées pour accompagner chaque femme et chaque homme au quotidien.
+              {description}
             </p>
 
-            {/* Button */}
             <Link
-              href="#collections"
-              style={{
-                background: "#fcd3b4",
-                color: "#511F29",
-                fontSize: "12.5px",
-                fontWeight: 600,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                padding: "17px 34px",
-                textDecoration: "none",
-                borderRadius: "2px",
-                transition: "all 0.3s",
-              }}
+              href={buttonLink}
+              className="group inline-flex items-center gap-2.5 text-[12px] font-semibold tracking-wide uppercase py-4 px-6 md:px-8 rounded self-start transition-all animate-slide-up delay-2"
+              style={{ background: accentColor, color: bgColor }}
             >
-              Découvrir la collection
+              {buttonText}
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          {/* Media Card */}
+          <div className="relative rounded-2xl overflow-hidden bg-[#ece0d3] min-h-[280px] md:min-h-0 aspect-[4/3] md:aspect-auto animate-fade-in">
+            {renderMedia()}
+            <div
+              className="absolute bottom-0 left-0 right-0 h-[30%] pointer-events-none"
+              style={{ background: `linear-gradient(to top, ${bgColor}66, transparent)` }}
+            />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ============================================================
+  // Layout: CENTERED - Text centered on the media (overlay)
+  // ============================================================
+  if (layout === "centered") {
+    return (
+      <section className="bg-[#faf6f1] p-4 md:p-6 lg:p-8">
+        <div className="relative max-w-[1400px] mx-auto min-h-[450px] md:min-h-[550px] lg:min-h-[650px] rounded-2xl overflow-hidden animate-fade-in">
+          {/* Media Background */}
+          {renderMedia()}
+
+          {/* Overlay */}
+          <div
+            className="absolute inset-0"
+            style={{ background: `linear-gradient(to bottom, ${bgColor}40 0%, ${bgColor}80 50%, ${bgColor}cc 100%)` }}
+          />
+
+          {/* Content - Centered */}
+          <div className="relative h-full flex flex-col items-center justify-center text-center p-6 md:p-10 lg:p-14">
+            <span
+              className="text-[11px] tracking-[0.2em] uppercase mb-5 animate-slide-up"
+              style={{ color: accentColor }}
+            >
+              {eyebrow}
+            </span>
+
+            <h1
+              className="font-serif font-normal text-[32px] md:text-[48px] lg:text-[64px] leading-[1.1] mb-4 tracking-tight max-w-[800px] animate-slide-up delay-1"
+              style={{ color: textColor }}
+            >
+              {title}
+              {titleHighlight && (
+                <>
+                  {" "}
+                  <em style={{ fontStyle: "italic", color: accentColor }}>{titleHighlight}</em>
+                </>
+              )}
+              {titleSuffix && <> {titleSuffix}</>}
+            </h1>
+
+            <p
+              className="text-[15px] md:text-[16px] leading-relaxed mb-8 max-w-[500px] animate-slide-up delay-2"
+              style={{ color: `${textColor}cc` }}
+            >
+              {description}
+            </p>
+
+            <Link
+              href={buttonLink}
+              className="group inline-flex items-center gap-2.5 text-[12px] font-semibold tracking-wide uppercase py-4 px-8 rounded transition-all animate-slide-up delay-3"
+              style={{ background: accentColor, color: bgColor }}
+            >
+              {buttonText}
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
-
-        {/* Right Side - Image */}
-        <div style={{ position: "relative", overflow: "hidden", background: "#ece0d3" }}>
-          <Image
-            src="/images/products/so_maya_ci_1718189738_3388743601078095746_13316418128.jpg"
-            alt="SO'MAYA — boubou de cérémonie"
-            fill
-            style={{ objectFit: "cover", objectPosition: "center 22%" }}
-            priority
-          />
-        </div>
       </section>
+    );
+  }
 
-      {/* Mobile Hero - Full screen with overlay */}
-      <section
-        className="hero-mobile"
-        style={{
-          position: "relative",
-          height: "85vh",
-          minHeight: "500px",
-          maxHeight: "700px",
-          overflow: "hidden",
-        }}
-      >
-        {/* Background Image */}
-        <Image
-          src="/images/products/so_maya_ci_1718189738_3388743601078095746_13316418128.jpg"
-          alt="SO'MAYA — boubou de cérémonie"
-          fill
-          style={{ objectFit: "cover", objectPosition: "center 20%" }}
-          priority
+  // ============================================================
+  // Layout: FULLWIDTH - Media with text at bottom (default)
+  // ============================================================
+  return (
+    <section className="bg-[#faf6f1] p-4 md:p-6 lg:p-8">
+      <div className="relative max-w-[1400px] mx-auto min-h-[450px] md:min-h-[600px] lg:min-h-[700px] rounded-2xl overflow-hidden animate-fade-in">
+        {/* Media Background */}
+        {renderMedia()}
+
+        {/* Bottom Gradient */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-[60%] pointer-events-none"
+          style={{ background: `linear-gradient(to top, ${bgColor}ee 0%, ${bgColor}99 40%, transparent 100%)` }}
         />
 
-        {/* Gradient Overlay */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(180deg, rgba(42,24,29,0.3) 0%, rgba(42,24,29,0.1) 40%, rgba(42,24,29,0.6) 100%)",
-          }}
-        />
+        {/* Content - Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-14">
+          <div className="max-w-[600px]">
+            <span
+              className="block text-[11px] tracking-[0.2em] uppercase mb-4 animate-slide-up"
+              style={{ color: accentColor }}
+            >
+              {eyebrow}
+            </span>
 
-        {/* Content */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            textAlign: "center",
-          }}
-        >
-          {/* Eyebrow */}
-          <div
-            style={{
-              fontSize: "11px",
-              letterSpacing: "0.35em",
-              textTransform: "uppercase",
-              color: "rgba(251,243,236,0.85)",
-              marginBottom: "20px",
-            }}
-          >
-            Collection 2026
+            <h1
+              className="font-serif font-normal text-[28px] md:text-[40px] lg:text-[52px] leading-[1.15] mb-4 tracking-tight animate-slide-up delay-1"
+              style={{ color: textColor }}
+            >
+              {title}
+              {titleHighlight && (
+                <>
+                  {" "}
+                  <em style={{ fontStyle: "italic", color: accentColor }}>{titleHighlight}</em>
+                </>
+              )}
+              {titleSuffix && <> {titleSuffix}</>}
+            </h1>
+
+            <p
+              className="text-[14px] md:text-[15px] leading-relaxed mb-6 max-w-[450px] animate-slide-up delay-2"
+              style={{ color: `${textColor}bb` }}
+            >
+              {description}
+            </p>
+
+            <Link
+              href={buttonLink}
+              className="group inline-flex items-center gap-2.5 text-[12px] font-semibold tracking-wide uppercase py-4 px-6 md:px-8 rounded transition-all animate-slide-up delay-3"
+              style={{ background: accentColor, color: bgColor }}
+            >
+              {buttonText}
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
-
-          {/* Title */}
-          <h1
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontWeight: 400,
-              color: "#fbf3ec",
-              fontSize: "clamp(42px, 12vw, 72px)",
-              lineHeight: 1,
-              margin: 0,
-              letterSpacing: "0.04em",
-            }}
-          >
-            L&apos;Élégance
-          </h1>
-
-          {/* Subtitle */}
-          <p
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontStyle: "italic",
-              fontSize: "clamp(20px, 5vw, 28px)",
-              color: "rgba(251,243,236,0.9)",
-              margin: "8px 0 0",
-              fontWeight: 300,
-            }}
-          >
-            est une attitude
-          </p>
-
-          {/* CTA Button */}
-          <Link
-            href="#collections"
-            style={{
-              marginTop: "40px",
-              background: "transparent",
-              color: "#fbf3ec",
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              padding: "18px 40px",
-              textDecoration: "none",
-              border: "1px solid rgba(251,243,236,0.5)",
-              transition: "all 0.3s",
-            }}
-          >
-            Découvrir la collection
-          </Link>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

@@ -42,50 +42,33 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
       />
 
       {/* Visible Breadcrumb */}
-      <nav aria-label="Fil d'Ariane" style={{ marginBottom: "24px" }}>
-        <ol
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            listStyle: "none",
-            margin: 0,
-            padding: 0,
-            fontSize: "13px",
-            color: "#94786b",
-          }}
-        >
+      <nav
+        aria-label="Fil d'Ariane"
+        className="mb-6 overflow-x-auto scrollbar-hide"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        <ol className="flex items-center gap-2 text-[13px] text-[#94786b] whitespace-nowrap py-1">
           <li>
             <Link
               href="/"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                color: "#94786b",
-                textDecoration: "none",
-                transition: "color 0.2s",
-              }}
+              className="inline-flex items-center text-[#94786b] hover:text-[#511F29] transition-colors"
               aria-label="Accueil"
             >
               <Home size={14} />
             </Link>
           </li>
           {items.map((item, index) => (
-            <li key={index} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <ChevronRight size={14} style={{ opacity: 0.5 }} />
+            <li key={index} className="flex items-center gap-2">
+              <ChevronRight size={14} className="opacity-50" />
               {item.href ? (
                 <Link
                   href={item.href}
-                  style={{
-                    color: "#94786b",
-                    textDecoration: "none",
-                    transition: "color 0.2s",
-                  }}
+                  className="text-[#94786b] hover:text-[#511F29] transition-colors"
                 >
                   {item.label}
                 </Link>
               ) : (
-                <span style={{ color: "#2a181d" }}>{item.label}</span>
+                <span className="text-[#2a181d]">{item.label}</span>
               )}
             </li>
           ))}

@@ -1,7 +1,9 @@
 import { Metadata } from "next";
-import { Header } from "@/components/layout/Header";
+import { HeaderWrapper } from "@/components/layout/HeaderWrapper";
 import { Footer } from "@/components/layout/Footer";
 import { CatalogueContent } from "./CatalogueContent";
+import { getCategories } from "@/lib/queries/categories";
+import { getProducts } from "@/lib/queries/products";
 
 export const metadata: Metadata = {
   title: "Catalogue | SO'MAYA - Mode & Accessoires",
@@ -9,12 +11,27 @@ export const metadata: Metadata = {
     "Découvrez notre collection complète de bijoux, sacs, vêtements, montres et accessoires. Livraison à Abidjan.",
 };
 
-export default function CataloguePage() {
+interface PageProps {
+  searchParams: Promise<{ q?: string }>;
+}
+
+export default async function CataloguePage({ searchParams }: PageProps) {
+  const { q: searchQuery } = await searchParams;
+
+  const [categories, { products }] = await Promise.all([
+    getCategories(),
+    getProducts({ isActive: true, limit: 100 }),
+  ]);
+
   return (
     <>
-      <Header />
-      <main style={{ paddingTop: "20px" }}>
-        <CatalogueContent />
+      <HeaderWrapper />
+      <main>
+        <CatalogueContent
+          categories={categories}
+          products={products}
+          initialSearchQuery={searchQuery || ""}
+        />
       </main>
       <Footer />
     </>

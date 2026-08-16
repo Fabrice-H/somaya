@@ -26,7 +26,7 @@ export default function StorySection() {
         </div>
         <h2
           style={{
-            fontFamily: "'Playfair Display', serif",
+            fontFamily: "var(--font-serif), serif",
             fontWeight: 500,
             fontSize: "clamp(34px, 5vw, 72px)",
             lineHeight: 1.08,
