@@ -13,6 +13,23 @@ interface CollectionsSectionProps {
   categories: HomePageCategory[];
 }
 
+// Default fallback images based on category slug
+const FALLBACK_IMAGES: Record<string, string> = {
+  sacs: "/images/so_maya_ci_1780747898_3913519226406721244_13316418128.jpg",
+  femmes: "/images/so_maya_ci_1718012343_3387255504255434625_13316418128-1819c16c.jpg",
+  hommes: "/images/boss.jpg",
+  boubous: "/images/so_maya_ci_1780747898_3913519226406721244_13316418128.jpg",
+  bijoux: "/images/646052596_1498385462288033_6860984962415097710_n.jpg",
+  montres: "/images/646052596_1498385462288033_6860984962415097710_n.jpg",
+  default: "/images/so_maya_ci_1780747898_3913519226406721244_13316418128.jpg",
+};
+
+// Get image URL with fallback
+function getCategoryImage(category: HomePageCategory): string | null {
+  if (category.imageUrl) return category.imageUrl;
+  return FALLBACK_IMAGES[category.slug] || FALLBACK_IMAGES.default;
+}
+
 // ============================================================
 // Client Component - CollectionsSection
 // SO'MAYA Brand Colors - Clean, Modern, Mobile-first with Tailwind
@@ -38,18 +55,14 @@ export function CollectionsSection({ categories }: CollectionsSectionProps) {
               href={`/catalogue/${hero.slug}`}
               className="group relative block rounded-xl overflow-hidden aspect-[4/5] md:aspect-auto md:row-span-2"
             >
-              {hero.imageUrl ? (
-                <Image
-                  src={hero.imageUrl}
-                  alt={hero.name}
-                  fill
-                  className="object-cover object-[center_15%] transition-transform duration-700 ease-out group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 55vw"
-                  priority
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-[#ece0d3] to-[#d4c4b0]" />
-              )}
+              <Image
+                src={getCategoryImage(hero)!}
+                alt={hero.name}
+                fill
+                className="object-cover object-[center_15%] transition-transform duration-700 ease-out group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, 55vw"
+                priority
+              />
               <div className="absolute inset-0 bg-gradient-to-b from-[#511F29]/5 to-[#511F29]/60" />
               <div className="absolute left-4 md:left-6 lg:left-8 bottom-4 md:bottom-6 lg:bottom-8 right-4 md:right-6 lg:right-8">
                 <h2 className="font-serif font-normal text-[28px] md:text-[36px] lg:text-[48px] text-[#fbf3ec] mb-2 leading-[1.1] tracking-tight">
@@ -73,18 +86,14 @@ export function CollectionsSection({ categories }: CollectionsSectionProps) {
                 href={`/catalogue/${second.slug}`}
                 className="group relative block rounded-xl overflow-hidden aspect-[3/4] md:aspect-auto"
               >
-                {second.imageUrl ? (
-                  <Image
-                    src={second.imageUrl}
-                    alt={second.name}
-                    fill
-                    className="object-cover object-[center_20%] transition-transform duration-500 ease-out group-hover:scale-105"
-                    sizes="(max-width: 768px) 50vw, 35vw"
-                    priority
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-[#f6e7dc]" />
-                )}
+                <Image
+                  src={getCategoryImage(second)!}
+                  alt={second.name}
+                  fill
+                  className="object-cover object-[center_20%] transition-transform duration-500 ease-out group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, 35vw"
+                  priority
+                />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#511F29]/5 to-[#511F29]/40" />
                 <div className="absolute top-3 md:top-5 left-3 md:left-5">
                   <h3 className="font-serif font-normal text-[18px] md:text-[24px] lg:text-[28px] text-[#fbf3ec] drop-shadow-lg">
@@ -100,17 +109,13 @@ export function CollectionsSection({ categories }: CollectionsSectionProps) {
                 href={`/catalogue/${third.slug}`}
                 className="group relative block rounded-xl overflow-hidden aspect-[3/4] md:aspect-auto"
               >
-                {third.imageUrl ? (
-                  <Image
-                    src={third.imageUrl}
-                    alt={third.name}
-                    fill
-                    className="object-cover object-[center_20%] transition-transform duration-500 ease-out group-hover:scale-105"
-                    sizes="(max-width: 768px) 50vw, 35vw"
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-[#ece0d3]" />
-                )}
+                <Image
+                  src={getCategoryImage(third)!}
+                  alt={third.name}
+                  fill
+                  className="object-cover object-[center_20%] transition-transform duration-500 ease-out group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, 35vw"
+                />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#511F29]/5 to-[#511F29]/40" />
                 <div className="absolute top-3 md:top-5 left-3 md:left-5">
                   <h3 className="font-serif font-normal text-[18px] md:text-[24px] lg:text-[28px] text-[#fbf3ec] drop-shadow-lg">
@@ -131,17 +136,13 @@ export function CollectionsSection({ categories }: CollectionsSectionProps) {
               href={`/catalogue/${category.slug}`}
               className="group relative block rounded-xl overflow-hidden aspect-[3/4]"
             >
-              {category.imageUrl ? (
-                <Image
-                  src={category.imageUrl}
-                  alt={category.name}
-                  fill
-                  className="object-cover object-[center_20%] transition-transform duration-500 ease-out group-hover:scale-105"
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-[#ece0d3] to-[#d4c4b0]" />
-              )}
+              <Image
+                src={getCategoryImage(category)!}
+                alt={category.name}
+                fill
+                className="object-cover object-[center_20%] transition-transform duration-500 ease-out group-hover:scale-105"
+                sizes="(max-width: 768px) 50vw, 25vw"
+              />
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#511F29]/65" />
               <div className="absolute left-3 md:left-5 right-3 md:right-5 bottom-3 md:bottom-5 flex items-end justify-between">
                 <h3 className="font-serif font-normal italic text-[16px] md:text-[20px] text-[#fbf3ec] leading-tight">

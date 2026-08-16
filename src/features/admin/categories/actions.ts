@@ -3,7 +3,7 @@
 import { db, categories } from "@/lib/db";
 import { eq, asc } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/actions";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import type { Category as DbCategory } from "@/lib/db/schema";
 
@@ -119,6 +119,7 @@ export async function createCategory(
     revalidatePath("/admin/categories");
     revalidatePath("/catalogue");
     revalidatePath("/"); // Invalidate home page
+    revalidateTag("categories", "max"); // Invalidate unstable_cache
 
     return { success: true, id: result.id };
   } catch (error: unknown) {
@@ -158,6 +159,7 @@ export async function updateCategory(
     revalidatePath("/admin/categories");
     revalidatePath("/catalogue");
     revalidatePath("/"); // Invalidate home page
+    revalidateTag("categories", "max"); // Invalidate unstable_cache
 
     return { success: true };
   } catch (error) {
@@ -178,6 +180,7 @@ export async function deleteCategory(
     revalidatePath("/admin/categories");
     revalidatePath("/catalogue");
     revalidatePath("/"); // Invalidate home page
+    revalidateTag("categories", "max"); // Invalidate unstable_cache
 
     return { success: true };
   } catch (error) {
@@ -206,6 +209,7 @@ export async function reorderCategories(
     revalidatePath("/admin/categories");
     revalidatePath("/catalogue");
     revalidatePath("/"); // Invalidate home page
+    revalidateTag("categories", "max"); // Invalidate unstable_cache
 
     return { success: true };
   } catch (error) {
