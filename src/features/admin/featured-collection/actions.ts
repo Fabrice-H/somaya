@@ -3,7 +3,7 @@
 import { db, featuredCollection } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/actions";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import type { FeaturedCollection as DbFeaturedCollection } from "@/lib/db/schema";
 
@@ -147,7 +147,9 @@ export async function updateFeaturedCollection(
     }
 
     revalidatePath("/admin/reglages");
+    revalidatePath("/admin/collection-vedette");
     revalidatePath("/", "layout"); // Force full page revalidation
+    revalidateTag("featured-collection", "max"); // Invalidate unstable_cache
 
     return { success: true };
   } catch (error) {

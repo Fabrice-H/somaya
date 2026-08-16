@@ -5,11 +5,11 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { FeaturedCollectionData } from "@/features/admin/featured-collection/actions";
 
-// Default images for fallback
+// Default images for fallback (using existing images)
 const DEFAULT_IMAGES = [
-  "/images/products/so_maya_ci_1776781082_3880233341219782649_13316418128.jpg",
-  "/images/products/so_maya_ci_1762182114_3757778391685137651_13316418128.jpg",
-  "/images/products/so_maya_ci_1763665764_3770224151630499569_13316418128.jpg",
+  "/images/so_maya_ci_1780747898_3913519226406721244_13316418128.jpg",
+  "/images/so_maya_ci_1718012343_3387255504255434625_13316418128-1819c16c.jpg",
+  "/images/646052596_1498385462288033_6860984962415097710_n.jpg",
 ];
 
 interface NewCollectionSectionProps {
