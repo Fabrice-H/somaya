@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { db, products, categories, storeSettings, productLots, featuredCollection, heroBanner, testimonials, instagramPosts } from "@/lib/db";
+import { db, products, categories, storeSettings, productLots, featuredCollection, heroBanner, testimonials, instagramPosts, priceLots } from "@/lib/db";
 import { eq, desc, asc, and } from "drizzle-orm";
 import type { Category, StoreSettings, ProductWithCategoryAndLots, FeaturedCollection, HeroBanner, Testimonial, InstagramPost } from "@/lib/db/schema";
 
@@ -97,6 +97,27 @@ export type HomeInstagramData = {
   profileUrl: string;
 };
 
+export type HomePriceLotItem = {
+  id: string;
+  image: string;
+  stock: number;
+  label?: string;
+};
+
+export type HomePriceLot = {
+  id: string;
+  name: string;
+  price: number;
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
+  items: HomePriceLotItem[];
+  totalItems: number;
+  totalStock: number;
+};
+
 export type HomePageData = {
   storeSettings: StoreSettings | null;
   categories: HomePageCategory[];
@@ -109,6 +130,7 @@ export type HomePageData = {
   heroBanner: HomeHeroBanner | null;
   testimonials: HomeTestimonial[];
   instagram: HomeInstagramData;
+  priceLots: HomePriceLot[];
 };
 
 // ============================================================
@@ -447,6 +469,44 @@ export const getHomeInstagramData = unstable_cache(
 );
 
 // ============================================================
+// Price Lots - For home page "Par Budget" section
+// ============================================================
+
+/**
+ * Get price lots for home page - cached for 2 minutes
+ * Shows first items from each price lot, limited to 8 lots
+ */
+export const getHomePriceLots = unstable_cache(
+  async (limit = 8): Promise<HomePriceLot[]> => {
+    const result = await db.query.priceLots.findMany({
+      where: eq(priceLots.isActive, true),
+      with: {
+        category: true,
+      },
+      orderBy: [asc(priceLots.sortOrder), asc(priceLots.price)],
+      limit,
+    });
+
+    return result.map((lot) => {
+      const items = (lot.items as HomePriceLotItem[]) || [];
+      return {
+        id: lot.id,
+        name: lot.name,
+        price: Number(lot.price),
+        category: lot.category
+          ? { id: lot.category.id, name: lot.category.name, slug: lot.category.slug }
+          : null,
+        items: items.slice(0, 4), // Only first 4 items for home page
+        totalItems: items.length,
+        totalStock: items.reduce((sum, item) => sum + item.stock, 0),
+      };
+    });
+  },
+  ["home-price-lots"],
+  { revalidate: 120, tags: ["price-lots"] }
+);
+
+// ============================================================
 // Main Home Page Data Fetcher - Parallel fetch all data
 // ============================================================
 
@@ -468,6 +528,7 @@ export async function getHomePageData(): Promise<HomePageData> {
     heroBannerData,
     testimonialsData,
     instagramData,
+    priceLotsData,
   ] = await Promise.all([
     getStoreSettings(),
     getHomeCategories(6),
@@ -480,6 +541,7 @@ export async function getHomePageData(): Promise<HomePageData> {
     getHeroBannerData(),
     getHomeTestimonials(6),
     getHomeInstagramData(6),
+    getHomePriceLots(8),
   ]);
 
   return {
@@ -494,6 +556,7 @@ export async function getHomePageData(): Promise<HomePageData> {
     heroBanner: heroBannerData,
     testimonials: testimonialsData,
     instagram: instagramData,
+    priceLots: priceLotsData,
   };
 }
 

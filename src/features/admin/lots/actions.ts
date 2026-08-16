@@ -3,7 +3,7 @@
 import { db, priceLots, categories } from "@/lib/db";
 import { eq, desc, asc } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/actions";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { priceLotSchema, priceLotUpdateSchema } from "./schemas";
 import { deleteImage } from "@/features/admin/storage/actions";
 import type { PriceLot, PriceLotInput, PriceLotItem } from "./types";
@@ -103,6 +103,7 @@ export async function createPriceLot(
 
     revalidatePath("/admin/lots");
     revalidatePath("/lots");
+    revalidateTag("price-lots", "max");
 
     return { success: true, id: result.id };
   } catch (error) {
@@ -136,6 +137,7 @@ export async function updatePriceLot(
     revalidatePath("/admin/lots");
     revalidatePath(`/admin/lots/${id}`);
     revalidatePath("/lots");
+    revalidateTag("price-lots", "max");
 
     return { success: true };
   } catch (error) {
@@ -173,6 +175,7 @@ export async function deletePriceLot(
 
     revalidatePath("/admin/lots");
     revalidatePath("/lots");
+    revalidateTag("price-lots", "max");
 
     return { success: true };
   } catch (error) {
@@ -197,6 +200,7 @@ export async function togglePriceLotActive(
 
     revalidatePath("/admin/lots");
     revalidatePath("/lots");
+    revalidateTag("price-lots", "max");
 
     return { success: true };
   } catch (error) {
