@@ -6,7 +6,6 @@ import HeroSection from "@/components/sections/HeroSection";
 import { CollectionsSection } from "@/components/sections/CollectionsSection";
 import { BestSellersSection } from "@/components/sections/BestSellersSection";
 import NewCollectionSection from "@/components/sections/NewCollectionSection";
-import { PriceLotsSection } from "@/components/sections/PriceLotsSection";
 import { CategoryProductsSection } from "@/components/sections/CategoryProductsSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { InstagramSection } from "@/components/sections/InstagramSection";
@@ -58,9 +57,6 @@ export default async function HomePage() {
 
         {/* Featured Collection - From DB */}
         <NewCollectionSection data={data.featuredCollection} />
-
-        {/* Price Lots - Par Budget */}
-        <PriceLotsSection lots={data.priceLots} />
 
         {/* Hommes Products */}
         <Suspense fallback={<SectionSkeleton height="500px" />}>
