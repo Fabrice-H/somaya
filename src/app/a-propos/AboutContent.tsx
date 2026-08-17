@@ -5,7 +5,6 @@ import Link from "next/link";
 import { MessageCircle, ArrowRight } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { createWhatsAppLink } from "@/data/products";
-import type { AboutCollectionData } from "@/features/admin/about-collections/actions";
 
 const stats = [
   { value: "1", label: "Année", prefix: "" },
@@ -14,19 +13,7 @@ const stats = [
   { value: "1", label: "Showroom", prefix: "" },
 ];
 
-// Fallback collections if none in database
-const defaultCollections: AboutCollectionData[] = [
-  { id: "1", name: "Élégance", year: "2024", backgroundColor: "#511F29", isActive: true, sortOrder: 0 },
-  { id: "2", name: "Soleil d'Hiver", year: "2024", backgroundColor: "#2a181d", isActive: true, sortOrder: 1 },
-  { id: "3", name: "Oasis", year: "2025", backgroundColor: "#3c2a20", isActive: true, sortOrder: 2 },
-];
-
-interface AboutContentProps {
-  collections?: AboutCollectionData[];
-}
-
-export function AboutContent({ collections: dbCollections }: AboutContentProps) {
-  const collections = dbCollections && dbCollections.length > 0 ? dbCollections : defaultCollections;
+export function AboutContent() {
   const whatsappLink = createWhatsAppLink(
     "Bonjour, j'aimerais en savoir plus sur SO'MAYA et vos produits."
   );
@@ -562,129 +549,6 @@ export function AboutContent({ collections: dbCollections }: AboutContentProps) 
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Collections - Horizontal Scroll Style */}
-      <section
-        style={{
-          padding: "clamp(60px, 10vw, 120px) 0",
-          background: "#fff",
-        }}
-      >
-        <div style={{ padding: "0 clamp(20px, 4vw, 60px)" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-end",
-              marginBottom: "48px",
-              flexWrap: "wrap",
-              gap: "20px",
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  fontSize: "11px",
-                  letterSpacing: "0.3em",
-                  textTransform: "uppercase",
-                  color: "var(--som-burgundy)",
-                  marginBottom: "12px",
-                }}
-              >
-                Nos Collections
-              </div>
-              <h2
-                style={{
-                  fontFamily: "var(--font-serif), serif",
-                  fontWeight: 400,
-                  fontSize: "clamp(28px, 4vw, 44px)",
-                  color: "var(--som-text)",
-                  margin: 0,
-                }}
-              >
-                Des Univers Uniques
-              </h2>
-            </div>
-            <Link
-              href="/catalogue"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                fontSize: "13px",
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                color: "var(--som-burgundy)",
-                textDecoration: "none",
-              }}
-            >
-              Voir le catalogue
-              <ArrowRight size={16} />
-            </Link>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "2px",
-            }}
-            className="grid-cols-1-mobile"
-          >
-            {collections.map((collection, index) => (
-              <div
-                key={collection.id}
-                style={{
-                  position: "relative",
-                  aspectRatio: "3/4",
-                  background: collection.backgroundColor || "#511F29",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "flex-end",
-                  padding: "clamp(24px, 4vw, 40px)",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "24px",
-                    right: "24px",
-                    fontSize: "11px",
-                    letterSpacing: "0.1em",
-                    color: "rgba(255,255,255,0.4)",
-                  }}
-                >
-                  {collection.year}
-                </div>
-                <div
-                  style={{
-                    fontSize: "10px",
-                    letterSpacing: "0.3em",
-                    textTransform: "uppercase",
-                    color: "var(--som-peach)",
-                    marginBottom: "8px",
-                  }}
-                >
-                  Collection {String(index + 1).padStart(2, "0")}
-                </div>
-                <h3
-                  style={{
-                    fontFamily: "var(--font-serif), serif",
-                    fontWeight: 400,
-                    fontSize: "clamp(24px, 3vw, 36px)",
-                    color: "#fff",
-                    margin: 0,
-                  }}
-                >
-                  {collection.name}
-                </h3>
-              </div>
-            ))}
           </div>
         </div>
       </section>
