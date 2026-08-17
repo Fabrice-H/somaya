@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { HomeHeroBanner } from "@/lib/queries/home";
@@ -32,6 +33,43 @@ const DEFAULTS = {
 // ============================================================
 
 export default function HeroSection({ data }: HeroSectionProps) {
+  const desktopVideoRef = useRef<HTMLVideoElement>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Force autoplay on mobile (iOS Safari requires user interaction workaround)
+  useEffect(() => {
+    const playVideos = () => {
+      if (desktopVideoRef.current) {
+        desktopVideoRef.current.play().catch(() => {
+          // Autoplay failed, user interaction required
+        });
+      }
+      if (mobileVideoRef.current) {
+        mobileVideoRef.current.play().catch(() => {
+          // Autoplay failed, user interaction required
+        });
+      }
+    };
+
+    // Try to play immediately
+    playVideos();
+
+    // Also try on user interaction (for iOS)
+    const handleInteraction = () => {
+      playVideos();
+      document.removeEventListener("touchstart", handleInteraction);
+      document.removeEventListener("click", handleInteraction);
+    };
+
+    document.addEventListener("touchstart", handleInteraction, { once: true });
+    document.addEventListener("click", handleInteraction, { once: true });
+
+    return () => {
+      document.removeEventListener("touchstart", handleInteraction);
+      document.removeEventListener("click", handleInteraction);
+    };
+  }, []);
+
   const eyebrow = data?.eyebrow || DEFAULTS.eyebrow;
   const title = data?.title || DEFAULTS.title;
   const titleHighlight = data?.title_highlight || DEFAULTS.title_highlight;
@@ -137,10 +175,12 @@ export default function HeroSection({ data }: HeroSectionProps) {
         <div style={{ position: "relative", overflow: "hidden", background: "#ece0d3" }}>
           {mediaType === "video" ? (
             <video
+              ref={desktopVideoRef}
               autoPlay
               loop
               muted
               playsInline
+              preload="auto"
               style={{
                 position: "absolute",
                 inset: 0,
@@ -178,10 +218,12 @@ export default function HeroSection({ data }: HeroSectionProps) {
         {/* Background Media */}
         {mediaType === "video" ? (
           <video
+            ref={mobileVideoRef}
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
             style={{
               position: "absolute",
               inset: 0,
