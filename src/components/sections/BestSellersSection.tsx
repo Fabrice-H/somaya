@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { ProductCard } from "@/components/product";
 import type { HomePageProduct } from "@/lib/queries/home";
 
@@ -13,7 +12,7 @@ interface BestSellersSectionProps {
 
 // ============================================================
 // Server Component - BestSellersSection
-// Style Telo - Clean, Modern
+// Design: Centered header, 4-column grid (matching old design)
 // ============================================================
 
 export function BestSellersSection({ products }: BestSellersSectionProps) {
@@ -24,92 +23,64 @@ export function BestSellersSection({ products }: BestSellersSectionProps) {
   return (
     <section
       id="ventes"
+      className="section-padding"
       style={{
-        background: "#ffffff",
-        padding: "clamp(40px, 5vw, 60px) 0",
+        maxWidth: "1400px",
+        margin: "0 auto",
       }}
     >
-      <div
-        style={{
-          maxWidth: "1400px",
-          margin: "0 auto",
-          padding: "0 clamp(20px, 4vw, 48px)",
-        }}
-      >
-        {/* Header */}
+      {/* Header - Centered */}
+      <div style={{ textAlign: "center", marginBottom: "52px" }}>
         <div
-          className="animate-fade-in"
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            marginBottom: "clamp(32px, 5vw, 56px)",
-            flexWrap: "wrap",
-            gap: "20px",
+            fontSize: "11.5px",
+            letterSpacing: "0.3em",
+            textTransform: "uppercase",
+            color: "#94786b",
+            marginBottom: "14px",
           }}
         >
-          <div>
-            <span
-              style={{
-                display: "block",
-                fontSize: "12px",
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                color: "#94786b",
-                marginBottom: "10px",
-                fontWeight: 500,
-              }}
-            >
-              Les favoris
-            </span>
-            <h2
-              style={{
-                fontFamily: "var(--font-serif), serif",
-                fontWeight: 400,
-                fontSize: "clamp(32px, 4vw, 48px)",
-                lineHeight: 1.1,
-                margin: 0,
-                color: "#2a181d",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Meilleures ventes
-            </h2>
-          </div>
-          <Link
-            href="/catalogue"
-            className="group"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              fontSize: "13px",
-              fontWeight: 500,
-              color: "#511F29",
-              textDecoration: "none",
-              padding: "12px 24px",
-              border: "1px solid #d4c4b0",
-              borderRadius: "6px",
-              transition: "all 0.3s ease",
-            }}
-          >
-            Tout voir
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
+          Les favoris de la SO&apos;FAMILY
         </div>
+        <h2
+          style={{
+            fontFamily: "var(--font-playfair-display), 'Playfair Display', serif",
+            fontWeight: 500,
+            fontSize: "clamp(34px, 4vw, 56px)",
+            lineHeight: 1,
+            margin: 0,
+            color: "#2a181d",
+          }}
+        >
+          Meilleures ventes
+        </h2>
+      </div>
 
-        {/* Grid */}
-        <div className="products-grid-4">
-          {products.slice(0, 4).map((product, index) => (
-            <div
-              key={product.id}
-              className="animate-fade-in-up"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <ProductCard product={product} priority={index < 2} />
-            </div>
-          ))}
-        </div>
+      {/* Grid - 4 columns responsive */}
+      <div className="grid-cols-4-responsive">
+        {products.slice(0, 4).map((product, index) => (
+          <ProductCard key={product.id} product={product} priority={index < 2} />
+        ))}
+      </div>
+
+      {/* Voir tout button - centered */}
+      <div style={{ textAlign: "center", marginTop: "48px" }}>
+        <Link
+          href="/catalogue"
+          style={{
+            display: "inline-block",
+            fontSize: "12.5px",
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: "#511F29",
+            textDecoration: "none",
+            borderBottom: "1px solid rgba(81,31,41,0.35)",
+            paddingBottom: "5px",
+            transition: "opacity 0.25s",
+          }}
+        >
+          Voir tout le catalogue
+        </Link>
       </div>
     </section>
   );

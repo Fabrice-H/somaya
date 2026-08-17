@@ -6,6 +6,7 @@ import HeroSection from "@/components/sections/HeroSection";
 import { CollectionsSection } from "@/components/sections/CollectionsSection";
 import { BestSellersSection } from "@/components/sections/BestSellersSection";
 import NewCollectionSection from "@/components/sections/NewCollectionSection";
+import WhyChooseSection from "@/components/sections/WhyChooseSection";
 import { CategoryProductsSection } from "@/components/sections/CategoryProductsSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { InstagramSection } from "@/components/sections/InstagramSection";
@@ -82,6 +83,9 @@ export default async function HomePage() {
 
         <TestimonialsSection testimonials={data.testimonials} />
         <InstagramSection data={data.instagram} />
+
+        {/* Why Choose Us - Before Footer */}
+        <WhyChooseSection />
       </main>
       <Footer />
       <WhatsAppButton />
