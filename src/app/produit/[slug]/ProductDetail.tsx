@@ -221,6 +221,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
   return (
     <>
       <div
+        className="product-detail-container"
         style={{
           maxWidth: "1400px",
           margin: "0 auto",
@@ -860,7 +861,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               position: "fixed",
               inset: 0,
               background: "rgba(42,24,29,0.95)",
-              zIndex: 50,
+              zIndex: 9999,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -872,17 +873,22 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               onClick={() => setIsLightboxOpen(false)}
               style={{
                 position: "absolute",
-                top: "24px",
-                right: "24px",
-                padding: "8px",
-                color: "rgba(255,255,255,0.7)",
-                background: "none",
+                top: "20px",
+                right: "20px",
+                padding: "12px",
+                color: "#fff",
+                background: "rgba(0,0,0,0.5)",
                 border: "none",
+                borderRadius: "50%",
                 cursor: "pointer",
+                zIndex: 10000,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
               aria-label="Fermer"
             >
-              <X size={32} />
+              <X size={28} />
             </button>
 
             {/* Navigation */}

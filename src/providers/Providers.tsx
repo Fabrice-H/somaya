@@ -1,8 +1,20 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { CartSidebar } from "@/components/cart/CartSidebar";
+
+// Scroll to top on route change
+function ScrollToTop() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [pathname]);
+
+  return null;
+}
 
 // Query client configuration optimized for e-commerce + SSR
 function makeQueryClient() {
@@ -53,6 +65,7 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ScrollToTop />
       {children}
       <CartSidebar />
     </QueryClientProvider>
