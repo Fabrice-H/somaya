@@ -17,7 +17,8 @@ import {
   GripVertical,
 } from "lucide-react";
 import { createPriceLot, updatePriceLot, deletePriceLot } from "../actions";
-import { uploadImage } from "@/features/admin/storage/actions";
+import { uploadToCloudinaryDirect } from "@/lib/cloudinary/direct-upload";
+import imageCompression from "browser-image-compression";
 import type { PriceLot, PriceLotItem, PriceLotInput } from "../types";
 
 interface LotFormProps {
@@ -77,12 +78,26 @@ export function LotForm({ lot, categories }: LotFormProps) {
     setUploadingIdx(idx);
     setError(null);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("bucket", "lots");
+      // Compress image if needed
+      let fileToUpload = file;
+      if (file.size > 500 * 1024) {
+        try {
+          const compressed = await imageCompression(file, {
+            maxSizeMB: 2,
+            maxWidthOrHeight: 2400,
+            useWebWorker: true,
+            initialQuality: 0.9,
+            preserveExif: false,
+          });
+          fileToUpload = new File([compressed], file.name, { type: compressed.type });
+        } catch {
+          // Use original if compression fails
+        }
+      }
 
-      const result = await uploadImage(formData);
-      if (result.url) {
+      // Upload directly to Cloudinary
+      const result = await uploadToCloudinaryDirect(fileToUpload, "somaya/lots");
+      if (result.success && result.url) {
         handleUpdateItem(idx, { image: result.url });
       } else {
         setError(result.error || "Erreur lors de l'upload");
