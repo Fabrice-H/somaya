@@ -2,15 +2,44 @@
 
 import { useState, useCallback } from "react";
 import Image from "next/image";
+import imageCompression from "browser-image-compression";
 import { Upload, X, Loader2, GripVertical } from "lucide-react";
-import { uploadImage, deleteImage } from "../storage/actions";
+import { uploadToCloudinaryDirect } from "@/lib/cloudinary/direct-upload";
+import { deleteImage } from "../storage/actions";
 import clsx from "clsx";
 
 interface ImageUploadProps {
   images: string[];
   onChange: (images: string[]) => void;
-  bucket: "products" | "categories" | "store" | "featured";
+  bucket: "products" | "categories" | "store" | "featured" | "lots";
   maxImages?: number;
+}
+
+// Folder mapping for Cloudinary
+const FOLDER_MAP: Record<ImageUploadProps["bucket"], string> = {
+  products: "somaya/products",
+  categories: "somaya/categories",
+  store: "somaya/store",
+  featured: "somaya/featured",
+  lots: "somaya/lots",
+};
+
+// Compress image before upload
+async function compressImage(file: File): Promise<File> {
+  if (file.size < 500 * 1024) return file;
+
+  try {
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 2,
+      maxWidthOrHeight: 2400,
+      useWebWorker: true,
+      initialQuality: 0.9,
+      preserveExif: false,
+    });
+    return new File([compressed], file.name, { type: compressed.type });
+  } catch {
+    return file;
+  }
 }
 
 export function ImageUpload({
@@ -20,6 +49,7 @@ export function ImageUpload({
   maxImages = 5,
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
@@ -36,15 +66,13 @@ export function ImageUpload({
       const filesToUpload = Array.from(files).slice(0, remaining);
 
       // Validate files
-      const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"];
-      const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".heic", ".heif"];
-
       for (const file of filesToUpload) {
         const fileName = file.name.toLowerCase();
-        const hasValidExtension = allowedExtensions.some((ext) => fileName.endsWith(ext));
-        const hasValidType = allowedTypes.includes(file.type) || file.type.startsWith("image/");
+        const isImage = file.type.startsWith("image/") ||
+          fileName.endsWith(".heic") ||
+          fileName.endsWith(".heif");
 
-        if (!hasValidType && !hasValidExtension) {
+        if (!isImage) {
           setError("Formats acceptés: JPG, PNG, WebP, GIF, HEIC");
           return;
         }
@@ -56,25 +84,34 @@ export function ImageUpload({
 
       setUploading(true);
       setError(null);
+      setProgress(0);
 
       try {
+        const folder = FOLDER_MAP[bucket];
         const newUrls: string[] = [];
+        const total = filesToUpload.length;
 
-        for (const file of filesToUpload) {
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("bucket", bucket);
+        for (let i = 0; i < filesToUpload.length; i++) {
+          const file = filesToUpload[i];
 
-          const result = await uploadImage(formData);
+          // Compress
+          setProgress(Math.round(((i + 0.3) / total) * 100));
+          const compressed = await compressImage(file);
 
-          if (result.error) {
-            setError(result.error);
+          // Upload directly to Cloudinary
+          setProgress(Math.round(((i + 0.6) / total) * 100));
+          const result = await uploadToCloudinaryDirect(compressed, folder);
+
+          if (!result.success) {
+            setError(result.error || "Erreur lors de l'upload");
             break;
           }
 
           if (result.url) {
             newUrls.push(result.url);
           }
+
+          setProgress(Math.round(((i + 1) / total) * 100));
         }
 
         if (newUrls.length > 0) {
@@ -84,6 +121,7 @@ export function ImageUpload({
         setError("Erreur lors de l'upload");
       } finally {
         setUploading(false);
+        setProgress(0);
       }
     },
     [images, onChange, bucket, maxImages]
@@ -93,14 +131,13 @@ export function ImageUpload({
     async (index: number) => {
       const url = images[index];
 
-      // Extract path from URL for deletion
-      const urlParts = url.split("/storage/v1/object/public/");
-      if (urlParts.length > 1) {
-        const path = urlParts[1];
-        await deleteImage(path);
-      }
-
+      // Update UI immediately
       onChange(images.filter((_, i) => i !== index));
+
+      // Delete from Cloudinary in background
+      deleteImage(url).catch((err) => {
+        console.error("Failed to delete image:", err);
+      });
     },
     [images, onChange]
   );
@@ -200,7 +237,9 @@ export function ImageUpload({
           {uploading ? (
             <>
               <Loader2 size={32} className="text-[#511F29]/50 animate-spin mb-2" />
-              <span className="text-sm text-[#511F29]/60">Upload en cours...</span>
+              <span className="text-sm text-[#511F29]/60">
+                Upload en cours... {progress}%
+              </span>
             </>
           ) : (
             <>

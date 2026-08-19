@@ -1,5 +1,3 @@
-"use server";
-
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { requireAdmin } from "@/lib/auth/actions";
@@ -9,6 +7,7 @@ cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
 });
 
 export async function POST(request: Request) {
@@ -26,19 +25,23 @@ export async function POST(request: Request) {
     const targetFolder = folder && allowedFolders.includes(folder) ? folder : "somaya/products";
 
     // Generate timestamp
-    const timestamp = Math.round(new Date().getTime() / 1000);
+    const timestamp = Math.round(Date.now() / 1000);
 
-    // Generate signature for direct upload
+    // Parameters to sign (must match EXACTLY what's sent in upload)
+    const paramsToSign = {
+      timestamp,
+      folder: targetFolder,
+      format: "webp", // Convert all uploads to WebP (including HEIC)
+    };
+
+    // Generate signature
     const signature = cloudinary.utils.api_sign_request(
-      {
-        timestamp,
-        folder: targetFolder,
-        upload_preset: "ml_default", // Default preset, or create a custom one
-      },
+      paramsToSign,
       process.env.CLOUDINARY_API_SECRET!
     );
 
     return NextResponse.json({
+      success: true,
       signature,
       timestamp,
       folder: targetFolder,

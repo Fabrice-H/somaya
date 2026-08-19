@@ -50,12 +50,14 @@ export async function uploadToCloudinaryDirect(
       await getUploadSignature(folder);
 
     // Create form data for Cloudinary upload
+    // Order and parameters must match EXACTLY what was signed
     const formData = new FormData();
     formData.append("file", file);
     formData.append("signature", signature);
     formData.append("timestamp", timestamp.toString());
-    formData.append("api_key", apiKey);
     formData.append("folder", signedFolder);
+    formData.append("format", "webp"); // Convert to WebP (handles HEIC)
+    formData.append("api_key", apiKey);
 
     // Upload directly to Cloudinary
     const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
