@@ -1,16 +1,10 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import {
-  optimizeImages,
-  validateImageFile,
-  validateImageCount,
-  IMAGE_CONFIG,
-} from "@/lib/image";
-import {
-  uploadImage,
-  deleteImage,
-} from "@/features/admin/storage/actions";
+import imageCompression from "browser-image-compression";
+import { uploadToCloudinaryDirect } from "@/lib/cloudinary/direct-upload";
+import { deleteImage } from "@/features/admin/storage/actions";
+import { IMAGE_CONFIG } from "@/lib/image";
 import type { BucketType } from "../types";
 
 interface UseImageUploadOptions {
@@ -26,6 +20,37 @@ interface UploadState {
   error: string | null;
 }
 
+// Folder mapping for Cloudinary
+const FOLDER_MAP: Record<BucketType, string> = {
+  products: "somaya/products",
+  categories: "somaya/categories",
+  store: "somaya/store",
+  lots: "somaya/lots",
+};
+
+// Compress image before upload (for faster uploads)
+async function compressImage(file: File): Promise<File> {
+  // Skip compression for already small files
+  if (file.size < 500 * 1024) {
+    return file;
+  }
+
+  try {
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 2,
+      maxWidthOrHeight: 2400,
+      useWebWorker: true,
+      initialQuality: 0.9,
+      preserveExif: false,
+    });
+
+    return new File([compressed], file.name, { type: compressed.type });
+  } catch (error) {
+    console.warn("Compression failed, using original:", error);
+    return file;
+  }
+}
+
 export function useImageUpload({
   bucket,
   maxImages = IMAGE_CONFIG.maxImages,
@@ -34,9 +59,8 @@ export function useImageUpload({
 }: UseImageUploadOptions) {
   const [images, setImages] = useState<string[]>(initialImages);
 
-  // Sync with external images changes (only when initialImages actually changes)
+  // Sync with external images changes
   useEffect(() => {
-    // Compare arrays by content to avoid unnecessary re-syncs
     const isDifferent =
       initialImages.length !== images.length ||
       initialImages.some((img, i) => img !== images[i]);
@@ -63,38 +87,43 @@ export function useImageUpload({
   const uploadFiles = useCallback(
     async (files: File[]) => {
       // Validate count
-      const countValidation = validateImageCount(
-        images.length,
-        files.length,
-        maxImages
-      );
-      if (!countValidation.valid) {
+      const remaining = maxImages - images.length;
+      if (files.length > remaining) {
         setUploadState((prev) => ({
           ...prev,
-          error: countValidation.error ?? null,
+          error: `Maximum ${maxImages} images. Vous pouvez encore ajouter ${remaining} image(s).`,
         }));
         return;
       }
 
-      // Validate each file
-      const validationErrors: string[] = [];
+      // Validate file types
       const validFiles: File[] = [];
+      const errors: string[] = [];
 
       for (const file of files) {
-        const validation = validateImageFile(file);
-        if (!validation.valid) {
-          validationErrors.push(`${file.name}: ${validation.error}`);
-        } else {
-          validFiles.push(file);
+        const isValidType =
+          file.type.startsWith("image/") ||
+          file.name.toLowerCase().endsWith(".heic") ||
+          file.name.toLowerCase().endsWith(".heif");
+
+        if (!isValidType) {
+          errors.push(`${file.name}: Type non supporté`);
+          continue;
         }
+
+        if (file.size > 15 * 1024 * 1024) {
+          errors.push(`${file.name}: Fichier trop volumineux (max 15MB)`);
+          continue;
+        }
+
+        validFiles.push(file);
       }
 
-      if (validationErrors.length > 0) {
+      if (errors.length > 0) {
         setUploadState((prev) => ({
           ...prev,
-          error: validationErrors.join(", "),
+          error: errors.join(", "),
         }));
-        return;
       }
 
       if (validFiles.length === 0) return;
@@ -102,36 +131,39 @@ export function useImageUpload({
       setUploadState({ uploading: true, progress: 0, error: null });
 
       try {
-        // Optimize images
-        const optimized = await optimizeImages(validFiles, (completed, total) => {
-          setUploadState((prev) => ({
-            ...prev,
-            progress: Math.round((completed / total) * 50), // First 50% is optimization
-          }));
-        });
-
-        // Upload optimized images
+        const folder = FOLDER_MAP[bucket];
         const uploadedUrls: string[] = [];
         const uploadErrors: string[] = [];
+        const total = validFiles.length;
 
-        for (let i = 0; i < optimized.length; i++) {
-          const { file } = optimized[i];
+        for (let i = 0; i < validFiles.length; i++) {
+          const file = validFiles[i];
 
-          const formData = new FormData();
-          formData.set("file", file);
-          formData.set("bucket", bucket);
+          // Compress image (first 40% of progress)
+          setUploadState((prev) => ({
+            ...prev,
+            progress: Math.round(((i + 0.3) / total) * 100),
+          }));
 
-          const result = await uploadImage(formData);
+          const compressed = await compressImage(file);
 
-          if (result.url) {
+          // Upload directly to Cloudinary (remaining 60% of progress)
+          setUploadState((prev) => ({
+            ...prev,
+            progress: Math.round(((i + 0.6) / total) * 100),
+          }));
+
+          const result = await uploadToCloudinaryDirect(compressed, folder);
+
+          if (result.success && result.url) {
             uploadedUrls.push(result.url);
-          } else if (result.error) {
-            uploadErrors.push(result.error);
+          } else {
+            uploadErrors.push(result.error || "Upload failed");
           }
 
           setUploadState((prev) => ({
             ...prev,
-            progress: 50 + Math.round(((i + 1) / optimized.length) * 50),
+            progress: Math.round(((i + 1) / total) * 100),
           }));
         }
 
@@ -162,12 +194,14 @@ export function useImageUpload({
 
   const removeImage = useCallback(
     async (url: string) => {
-      // Delete from Cloudinary
-      await deleteImage(url);
-
-      // Update local state
+      // Update UI immediately (optimistic update)
       const newImages = images.filter((img) => img !== url);
       updateImages(newImages);
+
+      // Delete from Cloudinary in background
+      deleteImage(url).catch((error) => {
+        console.error("Failed to delete image:", error);
+      });
     },
     [images, updateImages]
   );

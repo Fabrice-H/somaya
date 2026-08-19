@@ -1,4 +1,4 @@
-// Server-side exports
+// Server-side exports (only import in server components or "use server" files)
 export { cloudinary, CLOUDINARY_FOLDERS, IMAGE_PRESETS } from "./config";
 export {
   uploadImage,
@@ -12,3 +12,6 @@ export {
 
 // Utility exports (can be used anywhere)
 export { getOptimizedUrl, getPublicIdFromUrl } from "./utils";
+
+// NOTE: For client-side direct upload, import from "@/lib/cloudinary/direct-upload"
+// DO NOT export from here to avoid pulling in cloudinary SDK on client

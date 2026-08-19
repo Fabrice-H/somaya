@@ -1,5 +1,4 @@
 import imageCompression from "browser-image-compression";
-import { heicTo } from "heic-to";
 import { IMAGE_CONFIG } from "./constants";
 
 export type OptimizationResult = {
@@ -9,60 +8,59 @@ export type OptimizationResult = {
   compressionRatio: number;
 };
 
-function isHeicFile(file: File): boolean {
-  const fileName = file.name.toLowerCase();
-  return (
-    file.type === "image/heic" ||
-    file.type === "image/heif" ||
-    fileName.endsWith(".heic") ||
-    fileName.endsWith(".heif")
-  );
-}
-
-async function convertHeicToJpeg(file: File): Promise<File> {
-  const blob = await heicTo({
-    blob: file,
-    type: "image/jpeg",
-    quality: 0.9,
-  });
-
-  const newFileName = file.name.replace(/\.(heic|heif)$/i, ".jpg");
-  return new File([blob], newFileName, { type: "image/jpeg" });
-}
-
+/**
+ * Optimize a single image for upload
+ * Note: HEIC files are passed through - Cloudinary handles conversion server-side
+ */
 export async function optimizeImage(file: File): Promise<OptimizationResult> {
   const originalSize = file.size;
-  let processedFile = file;
 
-  // Convert HEIC/HEIF to JPEG first
-  if (isHeicFile(file)) {
-    processedFile = await convertHeicToJpeg(file);
+  // Skip optimization for small files or HEIC (Cloudinary handles HEIC)
+  const isHeic = file.name.toLowerCase().match(/\.(heic|heif)$/);
+  if (file.size < 500 * 1024 || isHeic) {
+    return {
+      file,
+      originalSize,
+      optimizedSize: file.size,
+      compressionRatio: 1,
+    };
   }
 
-  // Compress and convert to WebP
-  const compressed = await imageCompression(processedFile, {
-    maxSizeMB: IMAGE_CONFIG.maxSizeMB,
-    maxWidthOrHeight: IMAGE_CONFIG.maxWidthOrHeight,
-    useWebWorker: true,
-    fileType: IMAGE_CONFIG.outputType,
-    initialQuality: IMAGE_CONFIG.quality,
-    preserveExif: false, // Remove metadata for privacy/security
-  });
+  try {
+    // Compress image
+    const compressed = await imageCompression(file, {
+      maxSizeMB: IMAGE_CONFIG.maxSizeMB,
+      maxWidthOrHeight: IMAGE_CONFIG.maxWidthOrHeight,
+      useWebWorker: true,
+      initialQuality: IMAGE_CONFIG.quality,
+      preserveExif: false,
+    });
 
-  // Create final file with .webp extension
-  const baseName = processedFile.name.replace(/\.[^.]+$/, "");
-  const optimizedFile = new File([compressed], `${baseName}.webp`, {
-    type: IMAGE_CONFIG.outputType,
-  });
+    // Create final file
+    const optimizedFile = new File([compressed], file.name, {
+      type: compressed.type,
+    });
 
-  return {
-    file: optimizedFile,
-    originalSize,
-    optimizedSize: optimizedFile.size,
-    compressionRatio: originalSize / optimizedFile.size,
-  };
+    return {
+      file: optimizedFile,
+      originalSize,
+      optimizedSize: optimizedFile.size,
+      compressionRatio: originalSize / optimizedFile.size,
+    };
+  } catch (error) {
+    console.warn("Image optimization failed, using original:", error);
+    return {
+      file,
+      originalSize,
+      optimizedSize: file.size,
+      compressionRatio: 1,
+    };
+  }
 }
 
+/**
+ * Optimize multiple images
+ */
 export async function optimizeImages(
   files: File[],
   onProgress?: (completed: number, total: number) => void
@@ -76,7 +74,6 @@ export async function optimizeImages(
     const batch = files.slice(i, i + concurrencyLimit);
     const batchResults = await Promise.all(batch.map(optimizeImage));
     results.push(...batchResults);
-
     onProgress?.(Math.min(i + concurrencyLimit, total), total);
   }
 
