@@ -1,21 +1,24 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ShoppingBag,
-  Check,
+  ChevronDown,
   X,
-  Search,
+  LayoutGrid,
+  Check,
   Grid3X3,
   Layers,
 } from "lucide-react";
 import { useCartStore } from "@/stores/cart-store";
 import type { PriceLotPublic, PriceLotItemPublic } from "@/lib/queries/lots";
+import clsx from "clsx";
 
 // ============================================================
-// Types
+// Types & Constants
 // ============================================================
 
 interface LotsContentProps {
@@ -24,18 +27,21 @@ interface LotsContentProps {
   categories: Array<{ id: string; name: string; slug: string }>;
 }
 
-// Flatten items for display
 type FlatItem = {
   item: PriceLotItemPublic;
   lot: PriceLotPublic;
 };
+
+type SortOption = "price-asc" | "price-desc" | "name" | "category";
+type ViewMode = "comfort" | "dense";
+type GroupMode = "price" | "category" | "none";
 
 // ============================================================
 // Helpers
 // ============================================================
 
 function formatPrice(price: number): string {
-  return new Intl.NumberFormat("fr-CI").format(price) + " FCFA";
+  return new Intl.NumberFormat("fr-CI").format(price) + " F";
 }
 
 function formatShortPrice(price: number): string {
@@ -47,385 +53,25 @@ function formatShortPrice(price: number): string {
 }
 
 // ============================================================
-// Main Component
+// Product Card Component
 // ============================================================
 
-type GroupMode = "price" | "category";
-
-export function LotsContent({ lots, availablePrices, categories }: LotsContentProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<FlatItem | null>(null);
-  const [groupMode, setGroupMode] = useState<GroupMode>("price");
-
-  // Flatten all items from all lots
-  const allItems = useMemo(() => {
-    const items: FlatItem[] = [];
-    for (const lot of lots) {
-      for (const item of lot.items) {
-        items.push({ item, lot });
-      }
-    }
-    return items;
-  }, [lots]);
-
-  // Filter items
-  const filteredItems = useMemo(() => {
-    return allItems.filter(({ item, lot }) => {
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        if (
-          !lot.name.toLowerCase().includes(query) &&
-          !lot.category?.name.toLowerCase().includes(query) &&
-          !(item.label?.toLowerCase().includes(query))
-        ) {
-          return false;
-        }
-      }
-      if (selectedPrice !== null && lot.price !== selectedPrice) {
-        return false;
-      }
-      if (selectedCategory && lot.category?.id !== selectedCategory) {
-        return false;
-      }
-      return true;
-    });
-  }, [allItems, searchQuery, selectedPrice, selectedCategory]);
-
-  // Group by price for display (out-of-stock items at the end of each group)
-  const itemsByPrice = useMemo(() => {
-    const groups = new Map<number, FlatItem[]>();
-    for (const flatItem of filteredItems) {
-      const price = flatItem.lot.price;
-      if (!groups.has(price)) {
-        groups.set(price, []);
-      }
-      groups.get(price)!.push(flatItem);
-    }
-    // Sort items within each group: in-stock first, out-of-stock last
-    for (const items of groups.values()) {
-      items.sort((a, b) => {
-        const aOutOfStock = a.item.stock <= 0;
-        const bOutOfStock = b.item.stock <= 0;
-        if (aOutOfStock && !bOutOfStock) return 1;
-        if (!aOutOfStock && bOutOfStock) return -1;
-        return 0;
-      });
-    }
-    return Array.from(groups.entries()).sort(([a], [b]) => a - b);
-  }, [filteredItems]);
-
-  // Group by category for display (out-of-stock items at the end of each group)
-  const itemsByCategory = useMemo(() => {
-    const groups = new Map<string, { name: string; items: FlatItem[] }>();
-    const noCategory = { name: "Sans catégorie", items: [] as FlatItem[] };
-
-    for (const flatItem of filteredItems) {
-      const catId = flatItem.lot.category?.id;
-      const catName = flatItem.lot.category?.name;
-
-      if (catId && catName) {
-        if (!groups.has(catId)) {
-          groups.set(catId, { name: catName, items: [] });
-        }
-        groups.get(catId)!.items.push(flatItem);
-      } else {
-        noCategory.items.push(flatItem);
-      }
-    }
-
-    const result = Array.from(groups.entries()).map(([id, data]) => ({
-      id,
-      name: data.name,
-      items: data.items,
-    }));
-
-    // Sort alphabetically by name
-    result.sort((a, b) => a.name.localeCompare(b.name));
-
-    // Add no-category items at the end if any
-    if (noCategory.items.length > 0) {
-      result.push({ id: "no-category", name: noCategory.name, items: noCategory.items });
-    }
-
-    // Sort items within each group: in-stock first, out-of-stock last
-    for (const group of result) {
-      group.items.sort((a, b) => {
-        const aOutOfStock = a.item.stock <= 0;
-        const bOutOfStock = b.item.stock <= 0;
-        if (aOutOfStock && !bOutOfStock) return 1;
-        if (!aOutOfStock && bOutOfStock) return -1;
-        return 0;
-      });
-    }
-
-    return result;
-  }, [filteredItems]);
-
-  const clearFilters = () => {
-    setSearchQuery("");
-    setSelectedPrice(null);
-    setSelectedCategory(null);
-  };
-
-  const hasFilters = searchQuery || selectedPrice !== null || selectedCategory;
-  const totalItems = filteredItems.length;
-
-  return (
-    <div className="min-h-screen bg-[#fbf9f7]">
-      {/* Hero Header */}
-      <div className="bg-gradient-to-b from-[#511F29] to-[#3d171f] text-center py-16 px-5">
-        <h1 className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-[#fbf3ec] mb-3">
-          Par Budget
-        </h1>
-        <p className="text-[#fcd3b4]/80 text-lg max-w-md mx-auto">
-          Trouvez l'article parfait selon votre budget
-        </p>
-      </div>
-
-      {/* Search & Filters - Floating */}
-      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 clamp(16px, 3vw, 48px)" }} className="-mt-8">
-        <div className="bg-white rounded-2xl shadow-xl p-6">
-          {/* Search */}
-          <div className="relative mb-5">
-            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94786b]" />
-            <input
-              type="text"
-              placeholder="Rechercher un article..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 rounded-xl bg-[#faf6f1] text-[15px] text-[#2a181d] placeholder-[#94786b]/60 focus:outline-none focus:ring-2 focus:ring-[#511F29]/20 transition-all"
-            />
-          </div>
-
-          {/* Filter Pills */}
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Price filters */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-[#94786b] uppercase tracking-wider font-medium">Budget:</span>
-              <button
-                onClick={() => setSelectedPrice(null)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  selectedPrice === null
-                    ? "bg-[#511F29] text-white shadow-md"
-                    : "bg-[#faf6f1] text-[#511F29] hover:bg-[#f0e8e0]"
-                }`}
-              >
-                Tous
-              </button>
-              {availablePrices.map((price) => (
-                <button
-                  key={price}
-                  onClick={() => setSelectedPrice(price)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    selectedPrice === price
-                      ? "bg-[#511F29] text-white shadow-md"
-                      : "bg-[#faf6f1] text-[#511F29] hover:bg-[#f0e8e0]"
-                  }`}
-                >
-                  {formatShortPrice(price)}
-                </button>
-              ))}
-            </div>
-
-            {/* Divider */}
-            {categories.length > 0 && (
-              <div className="hidden md:block h-8 w-px bg-[#511F29]/10" />
-            )}
-
-            {/* Category filters */}
-            {categories.length > 0 && (
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-[#94786b] uppercase tracking-wider font-medium">Catégorie:</span>
-                <button
-                  onClick={() => setSelectedCategory(null)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    !selectedCategory
-                      ? "bg-[#511F29] text-white shadow-md"
-                      : "bg-[#faf6f1] text-[#511F29] hover:bg-[#f0e8e0]"
-                  }`}
-                >
-                  Toutes
-                </button>
-                {categories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      selectedCategory === cat.id
-                        ? "bg-[#511F29] text-white shadow-md"
-                        : "bg-[#faf6f1] text-[#511F29] hover:bg-[#f0e8e0]"
-                    }`}
-                  >
-                    {cat.name}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* Clear */}
-            {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="ml-auto text-sm text-[#94786b] hover:text-[#511F29] underline"
-              >
-                Effacer tout
-              </button>
-            )}
-          </div>
-
-          {/* Results count + View Toggle */}
-          <div className="mt-4 pt-4 border-t border-[#511F29]/5 flex items-center justify-between flex-wrap gap-4">
-            <p className="text-sm text-[#94786b]">
-              <span className="font-semibold text-[#511F29]">{totalItems}</span> article{totalItems > 1 ? "s" : ""} disponible{totalItems > 1 ? "s" : ""}
-            </p>
-
-            {/* Group Toggle */}
-            <div className="flex items-center gap-2 bg-[#faf6f1] rounded-full p-1">
-              <button
-                onClick={() => setGroupMode("price")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  groupMode === "price"
-                    ? "bg-[#511F29] text-white shadow-sm"
-                    : "text-[#94786b] hover:text-[#511F29]"
-                }`}
-              >
-                <Layers size={16} />
-                <span className="hidden sm:inline">Par Prix</span>
-              </button>
-              <button
-                onClick={() => setGroupMode("category")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  groupMode === "category"
-                    ? "bg-[#511F29] text-white shadow-sm"
-                    : "text-[#94786b] hover:text-[#511F29]"
-                }`}
-              >
-                <Grid3X3 size={16} />
-                <span className="hidden sm:inline">Par Catégorie</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Products Grid */}
-      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "24px clamp(16px, 3vw, 48px) 80px" }}>
-        {filteredItems.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-[#511F29]/5 flex items-center justify-center">
-              <ShoppingBag size={40} className="text-[#511F29]/30" />
-            </div>
-            <h3 className="font-[family-name:var(--font-serif)] text-2xl text-[#2a181d] mb-2">
-              Aucun article trouvé
-            </h3>
-            <p className="text-[#94786b] mb-6">
-              Essayez de modifier vos filtres
-            </p>
-            {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="px-6 py-3 bg-[#511F29] text-white rounded-full font-medium hover:bg-[#3d171f] transition-colors"
-              >
-                Effacer les filtres
-              </button>
-            )}
-          </div>
-        ) : groupMode === "price" ? (
-          /* =================== BY PRICE =================== */
-          <div className="space-y-16">
-            {itemsByPrice.map(([price, items]) => (
-              <section key={price}>
-                {/* Price Section Header */}
-                <div className="flex items-center gap-6 mb-8">
-                  <h2 className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-[#511F29] whitespace-nowrap">
-                    {formatShortPrice(price)} FCFA
-                  </h2>
-                  <div className="flex-1 h-px bg-gradient-to-r from-[#511F29]/20 to-transparent" />
-                  <span className="text-sm text-[#94786b] whitespace-nowrap">
-                    {items.length} article{items.length > 1 ? "s" : ""}
-                  </span>
-                </div>
-
-                {/* Items Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                  {items.map(({ item, lot }) => (
-                    <ProductCard
-                      key={`${lot.id}-${item.id}`}
-                      item={item}
-                      lot={lot}
-                      onClick={() => setSelectedItem({ item, lot })}
-                    />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        ) : (
-          /* =================== BY CATEGORY =================== */
-          <div className="space-y-16">
-            {itemsByCategory.map((category) => (
-              <section key={category.id}>
-                {/* Category Section Header */}
-                <div className="flex items-center gap-6 mb-8">
-                  <h2 className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl text-[#511F29] whitespace-nowrap">
-                    {category.name}
-                  </h2>
-                  <div className="flex-1 h-px bg-gradient-to-r from-[#511F29]/20 to-transparent" />
-                  <span className="text-sm text-[#94786b] whitespace-nowrap">
-                    {category.items.length} article{category.items.length > 1 ? "s" : ""}
-                  </span>
-                </div>
-
-                {/* Items Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                  {category.items.map(({ item, lot }) => (
-                    <ProductCard
-                      key={`${lot.id}-${item.id}`}
-                      item={item}
-                      lot={lot}
-                      onClick={() => setSelectedItem({ item, lot })}
-                    />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Quick View Modal */}
-      <AnimatePresence>
-        {selectedItem && (
-          <QuickViewModal
-            item={selectedItem.item}
-            lot={selectedItem.lot}
-            onClose={() => setSelectedItem(null)}
-          />
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-// ============================================================
-// Product Card - Matching Boutique Style
-// ============================================================
-
-interface ProductCardProps {
+interface LotItemCardProps {
   item: PriceLotItemPublic;
   lot: PriceLotPublic;
+  viewMode: ViewMode;
   onClick: () => void;
 }
 
-function ProductCard({ item, lot, onClick }: ProductCardProps) {
+function LotItemCard({ item, lot, viewMode, onClick }: LotItemCardProps) {
   const addItem = useCartStore((state) => state.addItem);
 
   const isOutOfStock = item.stock <= 0;
+  const isLowStock = item.stock > 0 && item.stock <= 3;
   const categoryName = lot.category?.name || "";
 
   const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (isOutOfStock) return;
 
@@ -447,143 +93,77 @@ function ProductCard({ item, lot, onClick }: ProductCardProps) {
   };
 
   return (
-    <article className="group" style={{ position: "relative", width: "100%", minWidth: 0 }} onClick={onClick}>
+    <article className="group relative" onClick={onClick}>
       {/* Image Container */}
       <div
-        style={{
-          position: "relative",
-          width: "100%",
-          aspectRatio: "4/5",
-          overflow: "hidden",
-          background: "#ece0d3",
-          borderRadius: "2px",
-          cursor: "pointer",
-        }}
+        className={clsx(
+          "relative overflow-hidden bg-[#f5f0eb] cursor-pointer",
+          viewMode === "comfort" ? "aspect-[4/5] rounded-sm" : "aspect-square rounded-sm"
+        )}
       >
         <Image
           src={item.image}
           alt={item.label || lot.name}
           fill
-          className="transition-transform duration-700 group-hover:scale-[1.06]"
-          style={{ objectFit: "cover", objectPosition: "center 20%" }}
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className={clsx(
+            "object-cover transition-transform duration-700",
+            !isOutOfStock && "group-hover:scale-[1.06]",
+            isOutOfStock && "grayscale opacity-70"
+          )}
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
         />
 
-        {/* Badge */}
-        <div
-          style={{
-            position: "absolute",
-            top: "14px",
-            left: "14px",
-            background: isOutOfStock ? "#6b6b6b" : "#511F29",
-            color: isOutOfStock ? "#ffffff" : "#fcd3b4",
-            fontSize: "9.5px",
-            fontWeight: 600,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            padding: "6px 11px",
-            borderRadius: "2px",
-            pointerEvents: "none",
-          }}
-        >
-          {isOutOfStock ? "Épuisé" : `${formatShortPrice(lot.price)}`}
+        {/* Badges - Top Left */}
+        <div className="absolute top-3 left-3 flex flex-col gap-2">
+          {/* Price Badge */}
+          <span
+            className={clsx(
+              "px-2.5 py-1 text-[10px] font-semibold tracking-wider",
+              isOutOfStock
+                ? "bg-[#6b6b6b] text-white uppercase"
+                : "bg-[#511F29] text-[#fcd3b4]"
+            )}
+          >
+            {isOutOfStock ? "Épuisé" : formatShortPrice(lot.price)}
+          </span>
         </div>
 
-        {/* Low stock badge */}
-        {!isOutOfStock && item.stock <= 3 && (
-          <div
-            style={{
-              position: "absolute",
-              top: "14px",
-              right: "14px",
-              background: "#2d5a3d",
-              color: "#d4f5dc",
-              fontSize: "9.5px",
-              fontWeight: 600,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              padding: "6px 11px",
-              borderRadius: "2px",
-              pointerEvents: "none",
-            }}
-          >
+        {/* Low Stock Badge - Bottom Left */}
+        {isLowStock && (
+          <span className="absolute bottom-3 left-3 px-2.5 py-1 bg-[#2d5a3d] text-white text-[10px] font-semibold tracking-wider uppercase">
             Plus que {item.stock}
-          </div>
+          </span>
         )}
 
-        {/* Add to Cart Button (on hover) */}
-        <button
-          onClick={handleAddToCart}
-          disabled={isOutOfStock}
-          className="opacity-0 group-hover:opacity-100 hide-on-mobile transition-opacity duration-300"
-          style={{
-            position: "absolute",
-            left: "14px",
-            right: "14px",
-            bottom: "14px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "8px",
-            background: isOutOfStock ? "rgba(107,107,107,0.9)" : "rgba(81,31,41,0.95)",
-            color: "#fbf3ec",
-            fontFamily: "var(--font-sans), sans-serif",
-            fontSize: "11px",
-            fontWeight: 600,
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            padding: "13px 16px",
-            border: "none",
-            borderRadius: "2px",
-            backdropFilter: "blur(4px)",
-            cursor: isOutOfStock ? "not-allowed" : "pointer",
-          }}
-        >
-          {isOutOfStock ? (
-            "Indisponible"
-          ) : (
-            <>
-              <ShoppingBag size={14} />
-              Ajouter au panier
-            </>
-          )}
-        </button>
+        {/* Add to Cart Button - Hover (Desktop only) */}
+        {!isOutOfStock && (
+          <button
+            onClick={handleAddToCart}
+            className="absolute left-3 right-3 bottom-3 py-3 bg-[#511F29]/95 text-white text-[11px] font-semibold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:flex items-center justify-center gap-2"
+          >
+            <ShoppingBag size={14} />
+            Ajouter au panier
+          </button>
+        )}
       </div>
 
       {/* Product Info */}
-      <div style={{ padding: "18px 2px 0" }}>
-        {categoryName && (
-          <div
-            style={{
-              fontSize: "10.5px",
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              color: "#94786b",
-              marginBottom: "7px",
-            }}
-          >
+      <div className="pt-4">
+        {/* Category */}
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[10px] font-medium tracking-[0.15em] uppercase text-[#94786b]">
             {categoryName}
-          </div>
-        )}
-        <h3
-          style={{
-            fontFamily: "var(--font-serif), serif",
-            fontWeight: 500,
-            fontSize: "19px",
-            margin: "0 0 9px",
-            color: "#2a181d",
-          }}
-        >
+          </span>
+        </div>
+
+        {/* Name */}
+        <h3 className="font-[family-name:var(--font-serif)] text-[17px] text-[#2a181d] leading-snug mb-2 hover:text-[#511F29] transition-colors cursor-pointer">
           {item.label || lot.name}
         </h3>
-        <div style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
-          <span
-            style={{
-              fontSize: "14.5px",
-              fontWeight: 600,
-              color: "#511F29",
-            }}
-          >
+
+        {/* Price */}
+        <div className="flex items-baseline gap-2">
+          <span className="text-[15px] font-semibold text-[#2a181d]">
             {formatPrice(lot.price)}
           </span>
         </div>
@@ -648,7 +228,7 @@ function QuickViewModal({ item, lot, onClose }: QuickViewModalProps) {
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-3xl overflow-hidden max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row shadow-2xl"
+        className="bg-white overflow-hidden max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row shadow-2xl"
       >
         {/* Image */}
         <div className="relative md:w-1/2 aspect-square md:aspect-auto">
@@ -661,14 +241,14 @@ function QuickViewModal({ item, lot, onClose }: QuickViewModalProps) {
           />
           {isOutOfStock && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <span className="bg-white text-[#511F29] px-6 py-3 rounded-full text-lg font-bold uppercase">
+              <span className="bg-white text-[#511F29] px-6 py-3 text-lg font-bold uppercase">
                 Épuisé
               </span>
             </div>
           )}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#511F29] hover:bg-white transition-colors shadow-md"
+            className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#511F29] hover:bg-white transition-colors shadow-md"
           >
             <X size={20} />
           </button>
@@ -677,7 +257,7 @@ function QuickViewModal({ item, lot, onClose }: QuickViewModalProps) {
         {/* Details */}
         <div className="md:w-1/2 p-8 flex flex-col">
           {lot.category && (
-            <span className="text-sm text-[#94786b] uppercase tracking-wider mb-2">
+            <span className="text-[10px] font-medium tracking-[0.15em] uppercase text-[#94786b] mb-2">
               {lot.category.name}
             </span>
           )}
@@ -686,9 +266,7 @@ function QuickViewModal({ item, lot, onClose }: QuickViewModalProps) {
             {item.label || lot.name}
           </h2>
 
-          <p className="text-sm text-[#94786b] mb-6">
-            {lot.name}
-          </p>
+          <p className="text-sm text-[#94786b] mb-6">{lot.name}</p>
 
           <div className="flex items-baseline gap-3 mb-8">
             <span className="text-3xl font-bold text-[#511F29]">
@@ -699,7 +277,9 @@ function QuickViewModal({ item, lot, onClose }: QuickViewModalProps) {
           {/* Stock info */}
           {!isOutOfStock && (
             <div className="flex items-center gap-2 mb-8">
-              <div className={`w-2 h-2 rounded-full ${item.stock > 5 ? "bg-green-500" : "bg-orange-500"}`} />
+              <div
+                className={`w-2 h-2 rounded-full ${item.stock > 5 ? "bg-green-500" : "bg-orange-500"}`}
+              />
               <span className="text-sm text-[#94786b]">
                 {item.stock > 5 ? "En stock" : `Plus que ${item.stock} en stock`}
               </span>
@@ -711,13 +291,14 @@ function QuickViewModal({ item, lot, onClose }: QuickViewModalProps) {
             <button
               onClick={handleAdd}
               disabled={isOutOfStock}
-              className={`w-full py-4 rounded-xl text-base font-semibold flex items-center justify-center gap-3 transition-all ${
+              className={clsx(
+                "w-full py-4 text-base font-semibold flex items-center justify-center gap-3 transition-all",
                 added
                   ? "bg-green-500 text-white"
                   : isOutOfStock
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-[#511F29] text-white hover:bg-[#3d171f]"
-              }`}
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-[#511F29] text-white hover:bg-[#3d171f]"
+              )}
             >
               {added ? (
                 <>
@@ -735,5 +316,709 @@ function QuickViewModal({ item, lot, onClose }: QuickViewModalProps) {
         </div>
       </motion.div>
     </motion.div>
+  );
+}
+
+// ============================================================
+// Main Component
+// ============================================================
+
+export function LotsContent({ lots, availablePrices, categories }: LotsContentProps) {
+  const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<SortOption>("price-asc");
+  const [viewMode, setViewMode] = useState<ViewMode>("comfort");
+  const [groupMode, setGroupMode] = useState<GroupMode>("price");
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<FlatItem | null>(null);
+
+  // Flatten all items from all lots
+  const allItems = useMemo(() => {
+    const items: FlatItem[] = [];
+    for (const lot of lots) {
+      for (const item of lot.items) {
+        items.push({ item, lot });
+      }
+    }
+    return items;
+  }, [lots]);
+
+  // Price counts
+  const priceCounts = useMemo(() => {
+    const counts: Record<number, number> = {};
+    for (const { lot } of allItems) {
+      counts[lot.price] = (counts[lot.price] || 0) + 1;
+    }
+    return counts;
+  }, [allItems]);
+
+  // Category counts
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const { lot } of allItems) {
+      if (lot.category?.id) {
+        counts[lot.category.id] = (counts[lot.category.id] || 0) + 1;
+      }
+    }
+    return counts;
+  }, [allItems]);
+
+  // Filter and sort items
+  const filteredItems = useMemo(() => {
+    let result = [...allItems];
+
+    // Price filter
+    if (selectedPrice !== null) {
+      result = result.filter(({ lot }) => lot.price === selectedPrice);
+    }
+
+    // Category filter
+    if (selectedCategory) {
+      result = result.filter(({ lot }) => lot.category?.id === selectedCategory);
+    }
+
+    // In stock filter
+    if (inStockOnly) {
+      result = result.filter(({ item }) => item.stock > 0);
+    }
+
+    // Sort
+    switch (sortBy) {
+      case "price-asc":
+        result.sort((a, b) => a.lot.price - b.lot.price);
+        break;
+      case "price-desc":
+        result.sort((a, b) => b.lot.price - a.lot.price);
+        break;
+      case "name":
+        result.sort((a, b) => (a.item.label || a.lot.name).localeCompare(b.item.label || b.lot.name));
+        break;
+      case "category":
+        result.sort((a, b) => (a.lot.category?.name || "").localeCompare(b.lot.category?.name || ""));
+        break;
+    }
+
+    // Always put out-of-stock at the end
+    result.sort((a, b) => {
+      if (a.item.stock <= 0 && b.item.stock > 0) return 1;
+      if (a.item.stock > 0 && b.item.stock <= 0) return -1;
+      return 0;
+    });
+
+    return result;
+  }, [allItems, selectedPrice, selectedCategory, inStockOnly, sortBy]);
+
+  // Group by price
+  const itemsByPrice = useMemo(() => {
+    if (groupMode !== "price") return [];
+    const groups = new Map<number, FlatItem[]>();
+    for (const flatItem of filteredItems) {
+      const price = flatItem.lot.price;
+      if (!groups.has(price)) {
+        groups.set(price, []);
+      }
+      groups.get(price)!.push(flatItem);
+    }
+    return Array.from(groups.entries()).sort(([a], [b]) => a - b);
+  }, [filteredItems, groupMode]);
+
+  // Group by category
+  const itemsByCategory = useMemo(() => {
+    if (groupMode !== "category") return [];
+    const groups = new Map<string, { name: string; items: FlatItem[] }>();
+    const noCategory = { name: "Sans catégorie", items: [] as FlatItem[] };
+
+    for (const flatItem of filteredItems) {
+      const catId = flatItem.lot.category?.id;
+      const catName = flatItem.lot.category?.name;
+
+      if (catId && catName) {
+        if (!groups.has(catId)) {
+          groups.set(catId, { name: catName, items: [] });
+        }
+        groups.get(catId)!.items.push(flatItem);
+      } else {
+        noCategory.items.push(flatItem);
+      }
+    }
+
+    const result = Array.from(groups.entries())
+      .map(([id, data]) => ({ id, name: data.name, items: data.items }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    if (noCategory.items.length > 0) {
+      result.push({ id: "no-category", name: noCategory.name, items: noCategory.items });
+    }
+
+    return result;
+  }, [filteredItems, groupMode]);
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSelectedPrice(null);
+    setSelectedCategory(null);
+    setInStockOnly(false);
+  };
+
+  const hasActiveFilters = selectedPrice !== null || selectedCategory !== null || inStockOnly;
+
+  const sortOptions = [
+    { value: "price-asc", label: "Prix croissant" },
+    { value: "price-desc", label: "Prix décroissant" },
+    { value: "name", label: "Alphabétique" },
+    { value: "category", label: "Par catégorie" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#fbf9f7]">
+      {/* Header */}
+      <div className="bg-[#fbf9f7] border-b border-[#e8ddd4]">
+        <div className="max-w-[1600px] mx-auto px-5 md:px-8 lg:px-12 py-8 md:py-12">
+          {/* Breadcrumb */}
+          <div className="text-[11px] font-medium tracking-[0.15em] uppercase text-[#94786b] mb-4">
+            <Link href="/" className="hover:text-[#511F29] transition-colors">
+              Accueil
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-[#2a181d]">Par Budget</span>
+          </div>
+
+          {/* Title & Sort */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <h1 className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl text-[#2a181d] leading-none mb-3">
+                Par Budget
+              </h1>
+              <p className="text-[15px] text-[#94786b] max-w-md leading-relaxed">
+                {allItems.length} articles disponibles, classés par gamme de prix.
+                <br className="hidden md:block" />
+                Trouvez l'article parfait selon votre budget.
+              </p>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="relative">
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] font-medium tracking-[0.1em] uppercase text-[#94786b]">
+                  Trier par
+                </span>
+                <button
+                  onClick={() => setIsSortOpen(!isSortOpen)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#e8ddd4] text-[13px] font-medium text-[#2a181d] min-w-[160px] justify-between"
+                >
+                  {sortOptions.find((o) => o.value === sortBy)?.label}
+                  <ChevronDown
+                    size={16}
+                    className={clsx("transition-transform", isSortOpen && "rotate-180")}
+                  />
+                </button>
+              </div>
+              {isSortOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsSortOpen(false)} />
+                  <div className="absolute top-full right-0 mt-1 bg-white border border-[#e8ddd4] shadow-lg z-50 min-w-[160px]">
+                    {sortOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setSortBy(option.value as SortOption);
+                          setIsSortOpen(false);
+                        }}
+                        className={clsx(
+                          "w-full px-4 py-2.5 text-left text-[13px] transition-colors",
+                          sortBy === option.value
+                            ? "bg-[#511F29] text-white"
+                            : "text-[#2a181d] hover:bg-[#faf6f1]"
+                        )}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-[1600px] mx-auto px-5 md:px-8 lg:px-12 py-8">
+        <div className="flex gap-8 lg:gap-12">
+          {/* Sidebar - Desktop */}
+          <aside className="hidden lg:block w-[220px] flex-shrink-0">
+            {/* Filter Header */}
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#2a181d]">
+                Filtrer
+              </span>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="text-[11px] font-medium tracking-[0.1em] uppercase text-[#94786b] hover:text-[#511F29] transition-colors"
+                >
+                  Tout effacer
+                </button>
+              )}
+            </div>
+
+            {/* Prices */}
+            <div className="mb-8">
+              <h3 className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[#94786b] mb-4">
+                Budget
+              </h3>
+              <ul className="space-y-2">
+                <li>
+                  <button
+                    onClick={() => setSelectedPrice(null)}
+                    className={clsx(
+                      "flex items-center justify-between w-full text-left text-[14px] py-1 transition-colors",
+                      selectedPrice === null
+                        ? "text-[#2a181d] font-medium border-l-2 border-[#511F29] pl-3 -ml-[2px]"
+                        : "text-[#94786b] hover:text-[#2a181d]"
+                    )}
+                  >
+                    <span>Tous les prix</span>
+                    <span className="text-[12px] text-[#94786b]">{allItems.length}</span>
+                  </button>
+                </li>
+                {availablePrices.map((price) => (
+                  <li key={price}>
+                    <button
+                      onClick={() => setSelectedPrice(price)}
+                      className={clsx(
+                        "flex items-center justify-between w-full text-left text-[14px] py-1 transition-colors",
+                        selectedPrice === price
+                          ? "text-[#2a181d] font-medium border-l-2 border-[#511F29] pl-3 -ml-[2px]"
+                          : "text-[#94786b] hover:text-[#2a181d]"
+                      )}
+                    >
+                      <span>{formatShortPrice(price)} FCFA</span>
+                      <span className="text-[12px] text-[#94786b]">{priceCounts[price] || 0}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Categories */}
+            {categories.length > 0 && (
+              <div className="mb-8">
+                <h3 className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[#94786b] mb-4">
+                  Catégorie
+                </h3>
+                <ul className="space-y-2">
+                  <li>
+                    <button
+                      onClick={() => setSelectedCategory(null)}
+                      className={clsx(
+                        "flex items-center justify-between w-full text-left text-[14px] py-1 transition-colors",
+                        !selectedCategory
+                          ? "text-[#2a181d] font-medium border-l-2 border-[#511F29] pl-3 -ml-[2px]"
+                          : "text-[#94786b] hover:text-[#2a181d]"
+                      )}
+                    >
+                      <span>Toutes</span>
+                      <span className="text-[12px] text-[#94786b]">{allItems.length}</span>
+                    </button>
+                  </li>
+                  {categories.map((category) => (
+                    <li key={category.id}>
+                      <button
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={clsx(
+                          "flex items-center justify-between w-full text-left text-[14px] py-1 transition-colors",
+                          selectedCategory === category.id
+                            ? "text-[#2a181d] font-medium border-l-2 border-[#511F29] pl-3 -ml-[2px]"
+                            : "text-[#94786b] hover:text-[#2a181d]"
+                        )}
+                      >
+                        <span>{category.name}</span>
+                        <span className="text-[12px] text-[#94786b]">
+                          {categoryCounts[category.id] || 0}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Toggles */}
+            <div className="space-y-4 pt-4 border-t border-[#e8ddd4]">
+              <label className="flex items-center justify-between cursor-pointer">
+                <span className="text-[13px] text-[#2a181d]">En stock uniquement</span>
+                <button
+                  onClick={() => setInStockOnly(!inStockOnly)}
+                  className={clsx(
+                    "relative w-11 h-6 rounded-full transition-colors",
+                    inStockOnly ? "bg-[#511F29]" : "bg-[#e8ddd4]"
+                  )}
+                >
+                  <span
+                    className={clsx(
+                      "absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-sm",
+                      inStockOnly ? "right-1" : "left-1"
+                    )}
+                  />
+                </button>
+              </label>
+            </div>
+          </aside>
+
+          {/* Products Grid */}
+          <div className="flex-1">
+            {/* Products Header */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <p className="text-[12px] font-medium tracking-[0.1em] uppercase text-[#94786b]">
+                {filteredItems.length} article{filteredItems.length !== 1 ? "s" : ""}
+              </p>
+
+              <div className="flex items-center gap-3">
+                {/* Group Mode Toggle */}
+                <div className="flex items-center gap-1 bg-[#f5f0eb] p-1 rounded">
+                  <button
+                    onClick={() => setGroupMode("price")}
+                    className={clsx(
+                      "px-2.5 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase transition-colors rounded-sm flex items-center gap-1.5",
+                      groupMode === "price"
+                        ? "bg-[#511F29] text-white"
+                        : "text-[#94786b] hover:text-[#2a181d]"
+                    )}
+                  >
+                    <Layers size={14} />
+                    <span className="hidden sm:inline">Prix</span>
+                  </button>
+                  <button
+                    onClick={() => setGroupMode("category")}
+                    className={clsx(
+                      "px-2.5 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase transition-colors rounded-sm flex items-center gap-1.5",
+                      groupMode === "category"
+                        ? "bg-[#511F29] text-white"
+                        : "text-[#94786b] hover:text-[#2a181d]"
+                    )}
+                  >
+                    <Grid3X3 size={14} />
+                    <span className="hidden sm:inline">Catégorie</span>
+                  </button>
+                  <button
+                    onClick={() => setGroupMode("none")}
+                    className={clsx(
+                      "px-2.5 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase transition-colors rounded-sm",
+                      groupMode === "none"
+                        ? "bg-[#511F29] text-white"
+                        : "text-[#94786b] hover:text-[#2a181d]"
+                    )}
+                  >
+                    <span className="hidden sm:inline">Tout</span>
+                    <span className="sm:hidden">—</span>
+                  </button>
+                </div>
+
+                {/* View Mode Toggle */}
+                <div className="flex items-center gap-1 bg-[#f5f0eb] p-1 rounded">
+                  <button
+                    onClick={() => setViewMode("comfort")}
+                    className={clsx(
+                      "px-3 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase transition-colors rounded-sm",
+                      viewMode === "comfort"
+                        ? "bg-[#511F29] text-white"
+                        : "text-[#94786b] hover:text-[#2a181d]"
+                    )}
+                  >
+                    Confort
+                  </button>
+                  <button
+                    onClick={() => setViewMode("dense")}
+                    className={clsx(
+                      "px-3 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase transition-colors rounded-sm",
+                      viewMode === "dense"
+                        ? "bg-[#511F29] text-white"
+                        : "text-[#94786b] hover:text-[#2a181d]"
+                    )}
+                  >
+                    Dense
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Filter Button */}
+            <button
+              onClick={() => setIsMobileFilterOpen(true)}
+              className="lg:hidden w-full mb-6 py-3 bg-white border border-[#e8ddd4] text-[13px] font-medium text-[#2a181d] flex items-center justify-center gap-2"
+            >
+              <LayoutGrid size={16} />
+              Filtrer{" "}
+              {hasActiveFilters &&
+                `(${[selectedPrice !== null, selectedCategory !== null, inStockOnly].filter(Boolean).length})`}
+            </button>
+
+            {/* Products */}
+            {filteredItems.length > 0 ? (
+              groupMode === "none" ? (
+                /* No grouping */
+                <div
+                  className={clsx(
+                    "grid gap-x-5 gap-y-8",
+                    viewMode === "comfort"
+                      ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+                      : "grid-cols-2 md:grid-cols-4 xl:grid-cols-5"
+                  )}
+                >
+                  {filteredItems.map(({ item, lot }) => (
+                    <LotItemCard
+                      key={`${lot.id}-${item.id}`}
+                      item={item}
+                      lot={lot}
+                      viewMode={viewMode}
+                      onClick={() => setSelectedItem({ item, lot })}
+                    />
+                  ))}
+                </div>
+              ) : groupMode === "price" ? (
+                /* Group by price */
+                <div className="space-y-12">
+                  {itemsByPrice.map(([price, items]) => (
+                    <section key={price}>
+                      {/* Section Header */}
+                      <div className="flex items-center gap-4 mb-6">
+                        <h2 className="font-[family-name:var(--font-serif)] text-2xl md:text-3xl text-[#2a181d] whitespace-nowrap">
+                          {formatShortPrice(price)} FCFA
+                        </h2>
+                        <div className="flex-1 h-px bg-[#e8ddd4]" />
+                        <span className="text-[12px] text-[#94786b] whitespace-nowrap">
+                          {items.length} article{items.length > 1 ? "s" : ""}
+                        </span>
+                      </div>
+
+                      {/* Items Grid */}
+                      <div
+                        className={clsx(
+                          "grid gap-x-5 gap-y-8",
+                          viewMode === "comfort"
+                            ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+                            : "grid-cols-2 md:grid-cols-4 xl:grid-cols-5"
+                        )}
+                      >
+                        {items.map(({ item, lot }) => (
+                          <LotItemCard
+                            key={`${lot.id}-${item.id}`}
+                            item={item}
+                            lot={lot}
+                            viewMode={viewMode}
+                            onClick={() => setSelectedItem({ item, lot })}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              ) : (
+                /* Group by category */
+                <div className="space-y-12">
+                  {itemsByCategory.map((category) => (
+                    <section key={category.id}>
+                      {/* Section Header */}
+                      <div className="flex items-center gap-4 mb-6">
+                        <h2 className="font-[family-name:var(--font-serif)] text-2xl md:text-3xl text-[#2a181d] whitespace-nowrap">
+                          {category.name}
+                        </h2>
+                        <div className="flex-1 h-px bg-[#e8ddd4]" />
+                        <span className="text-[12px] text-[#94786b] whitespace-nowrap">
+                          {category.items.length} article{category.items.length > 1 ? "s" : ""}
+                        </span>
+                      </div>
+
+                      {/* Items Grid */}
+                      <div
+                        className={clsx(
+                          "grid gap-x-5 gap-y-8",
+                          viewMode === "comfort"
+                            ? "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+                            : "grid-cols-2 md:grid-cols-4 xl:grid-cols-5"
+                        )}
+                      >
+                        {category.items.map(({ item, lot }) => (
+                          <LotItemCard
+                            key={`${lot.id}-${item.id}`}
+                            item={item}
+                            lot={lot}
+                            viewMode={viewMode}
+                            onClick={() => setSelectedItem({ item, lot })}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              )
+            ) : (
+              <div className="text-center py-20 bg-white rounded-lg">
+                <div className="w-16 h-16 mx-auto mb-5 bg-[#faf6f1] rounded-full flex items-center justify-center">
+                  <ShoppingBag size={28} className="text-[#94786b]" />
+                </div>
+                <p className="font-[family-name:var(--font-serif)] text-xl text-[#2a181d] mb-2">
+                  Aucun article trouvé
+                </p>
+                <p className="text-[14px] text-[#94786b] mb-6">
+                  Modifiez vos filtres pour voir plus d'articles
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="px-6 py-3 bg-[#511F29] text-white text-[12px] font-semibold tracking-wider uppercase"
+                >
+                  Effacer les filtres
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Filter Modal */}
+      {isMobileFilterOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setIsMobileFilterOpen(false)} />
+          <div className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-[#e8ddd4] p-5 flex items-center justify-between">
+              <span className="text-[13px] font-semibold tracking-[0.1em] uppercase text-[#2a181d]">
+                Filtres
+              </span>
+              <button onClick={() => setIsMobileFilterOpen(false)}>
+                <X size={24} className="text-[#94786b]" />
+              </button>
+            </div>
+            <div className="p-5">
+              {/* Prices */}
+              <div className="mb-8">
+                <h3 className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[#94786b] mb-4">
+                  Budget
+                </h3>
+                <ul className="space-y-2">
+                  <li>
+                    <button
+                      onClick={() => setSelectedPrice(null)}
+                      className={clsx(
+                        "flex items-center justify-between w-full text-left text-[14px] py-1",
+                        selectedPrice === null ? "text-[#2a181d] font-medium" : "text-[#94786b]"
+                      )}
+                    >
+                      <span>Tous les prix</span>
+                      <span className="text-[12px]">{allItems.length}</span>
+                    </button>
+                  </li>
+                  {availablePrices.map((price) => (
+                    <li key={price}>
+                      <button
+                        onClick={() => setSelectedPrice(price)}
+                        className={clsx(
+                          "flex items-center justify-between w-full text-left text-[14px] py-1",
+                          selectedPrice === price ? "text-[#2a181d] font-medium" : "text-[#94786b]"
+                        )}
+                      >
+                        <span>{formatShortPrice(price)} FCFA</span>
+                        <span className="text-[12px]">{priceCounts[price] || 0}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Categories */}
+              {categories.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[#94786b] mb-4">
+                    Catégorie
+                  </h3>
+                  <ul className="space-y-2">
+                    <li>
+                      <button
+                        onClick={() => setSelectedCategory(null)}
+                        className={clsx(
+                          "flex items-center justify-between w-full text-left text-[14px] py-1",
+                          !selectedCategory ? "text-[#2a181d] font-medium" : "text-[#94786b]"
+                        )}
+                      >
+                        <span>Toutes</span>
+                        <span className="text-[12px]">{allItems.length}</span>
+                      </button>
+                    </li>
+                    {categories.map((category) => (
+                      <li key={category.id}>
+                        <button
+                          onClick={() => setSelectedCategory(category.id)}
+                          className={clsx(
+                            "flex items-center justify-between w-full text-left text-[14px] py-1",
+                            selectedCategory === category.id
+                              ? "text-[#2a181d] font-medium"
+                              : "text-[#94786b]"
+                          )}
+                        >
+                          <span>{category.name}</span>
+                          <span className="text-[12px]">{categoryCounts[category.id] || 0}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Toggles */}
+              <div className="space-y-4">
+                <label className="flex items-center justify-between cursor-pointer">
+                  <span className="text-[13px] text-[#2a181d]">En stock uniquement</span>
+                  <button
+                    onClick={() => setInStockOnly(!inStockOnly)}
+                    className={clsx(
+                      "relative w-11 h-6 rounded-full transition-colors",
+                      inStockOnly ? "bg-[#511F29]" : "bg-[#e8ddd4]"
+                    )}
+                  >
+                    <span
+                      className={clsx(
+                        "absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-sm",
+                        inStockOnly ? "right-1" : "left-1"
+                      )}
+                    />
+                  </button>
+                </label>
+              </div>
+
+              {/* Apply Button */}
+              <div className="mt-8 space-y-3">
+                <button
+                  onClick={() => setIsMobileFilterOpen(false)}
+                  className="w-full py-3 bg-[#511F29] text-white text-[12px] font-semibold tracking-wider uppercase"
+                >
+                  Voir {filteredItems.length} résultat{filteredItems.length !== 1 ? "s" : ""}
+                </button>
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearFilters}
+                    className="w-full py-3 border border-[#e8ddd4] text-[#94786b] text-[12px] font-semibold tracking-wider uppercase"
+                  >
+                    Tout effacer
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick View Modal */}
+      <AnimatePresence>
+        {selectedItem && (
+          <QuickViewModal
+            item={selectedItem.item}
+            lot={selectedItem.lot}
+            onClose={() => setSelectedItem(null)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

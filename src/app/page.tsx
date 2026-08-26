@@ -5,8 +5,9 @@ import { Footer } from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
 import { CollectionsSection } from "@/components/sections/CollectionsSection";
 import { BestSellersSection } from "@/components/sections/BestSellersSection";
+import { FeaturedProductsSection } from "@/components/sections/FeaturedProductsSection";
 import NewCollectionSection from "@/components/sections/NewCollectionSection";
-import WhyChooseSection from "@/components/sections/WhyChooseSection";
+import { TrustBar } from "@/components/sections/TrustBar";
 import { CategoryProductsSection } from "@/components/sections/CategoryProductsSection";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { InstagramSection } from "@/components/sections/InstagramSection";
@@ -46,9 +47,17 @@ export default async function HomePage() {
         {/* Hero - Dynamic from DB */}
         <HeroSection data={data.heroBanner} />
 
+        {/* Trust Bar - Right after hero */}
+        <TrustBar />
+
         {/* Collections - Categories from DB */}
         <Suspense fallback={<SectionSkeleton height="600px" />}>
           <CollectionsSection categories={data.categories} />
+        </Suspense>
+
+        {/* Featured Products - Produits Vedettes */}
+        <Suspense fallback={<SectionSkeleton height="500px" />}>
+          <FeaturedProductsSection products={data.featuredProducts} />
         </Suspense>
 
         {/* Best Sellers - Products from DB */}
@@ -82,10 +91,9 @@ export default async function HomePage() {
         </Suspense>
 
         <TestimonialsSection testimonials={data.testimonials} />
-        <InstagramSection data={data.instagram} />
 
-        {/* Why Choose Us - Before Footer */}
-        <WhyChooseSection />
+        {/* Instagram - Before Footer */}
+        <InstagramSection data={data.instagram} />
       </main>
       <Footer />
       <WhatsAppButton />
