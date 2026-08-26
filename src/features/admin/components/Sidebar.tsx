@@ -25,7 +25,7 @@ const navigation = [
   { name: "Lots de Prix", href: "/admin/lots", icon: Layers },
   { name: "Categories", href: "/admin/categories", icon: FolderOpen },
   { name: "Collection Vedette", href: "/admin/collection-vedette", icon: Star },
-  { name: "À Propos", href: "/admin/about-collections", icon: Users },
+  // { name: "À Propos", href: "/admin/about-collections", icon: Users },
   { name: "Commandes", href: "/admin/commandes", icon: ShoppingCart },
   { name: "Reglages", href: "/admin/reglages", icon: Settings },
 ];
