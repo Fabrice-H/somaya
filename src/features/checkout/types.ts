@@ -11,10 +11,11 @@ export type PricedLine = {
   lineTotal: number;
 };
 
-import type { CheckoutCustomer } from "./schemas";
+import type { CheckoutCustomer, DeliveryMethod } from "./schemas";
 
 export type PlacedOrder = {
   customer: CheckoutCustomer;
+  deliveryMethod: DeliveryMethod;
   orderNumber: string;
   lines: PricedLine[];
   subtotal: number;
@@ -23,5 +24,4 @@ export type PlacedOrder = {
 };
 
 export type PlaceOrderResult =
-  | { ok: true; order: PlacedOrder }
-  | { ok: false; error: string; fieldErrors?: Record<string, string[]> };
+  { ok: true; order: PlacedOrder } | { ok: false; error: string; fieldErrors?: Record<string, string[]> };

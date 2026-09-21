@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
-import Placeholder from '@tiptap/extension-placeholder';
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
+import Placeholder from "@tiptap/extension-placeholder";
 import {
   Bold,
   Italic,
@@ -16,8 +16,8 @@ import {
   Undo,
   Redo,
   Quote,
-} from 'lucide-react';
-import type { RichTextEditorProps } from './types';
+} from "lucide-react";
+import type { RichTextEditorProps } from "./types";
 
 function ToolbarButton({
   onClick,
@@ -42,13 +42,13 @@ function ToolbarButton({
       style={{
         width: 32,
         height: 32,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: isActive ? '#000000' : 'transparent',
-        color: isActive ? '#f4f4f2' : '#000000',
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: isActive ? "#000000" : "transparent",
+        color: isActive ? "#f4f4f2" : "#000000",
         opacity: disabled ? 0.4 : 1,
-        cursor: disabled ? 'not-allowed' : 'pointer',
+        cursor: disabled ? "not-allowed" : "pointer",
       }}
     >
       {children}
@@ -59,13 +59,13 @@ function ToolbarButton({
 export function RichTextEditor({
   value,
   onChange,
-  placeholder = 'Commencez à écrire...',
+  placeholder = "Commencez à écrire...",
   label,
   hint,
   minHeight = 200,
   maxHeight = 500,
   disabled = false,
-  className = '',
+  className = "",
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -77,7 +77,7 @@ export function RichTextEditor({
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-black underline',
+          class: "text-black underline",
         },
       }),
       Placeholder.configure({
@@ -91,7 +91,7 @@ export function RichTextEditor({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none focus:outline-none',
+        class: "prose prose-sm max-w-none focus:outline-none",
         style: `min-height: ${minHeight - 60}px; max-height: ${maxHeight - 60}px; overflow-y: auto; padding: 16px;`,
       },
     },
@@ -102,7 +102,7 @@ export function RichTextEditor({
   }
 
   const addLink = () => {
-    const url = window.prompt('URL du lien:');
+    const url = window.prompt("URL du lien:");
     if (url) {
       editor.chain().focus().setLink({ href: url }).run();
     }
@@ -113,10 +113,10 @@ export function RichTextEditor({
       {label && (
         <label
           style={{
-            display: 'block',
+            display: "block",
             fontSize: 14,
             fontWeight: 500,
-            color: '#000000',
+            color: "#000000",
             marginBottom: 8,
           }}
         >
@@ -126,20 +126,18 @@ export function RichTextEditor({
 
       <div
         style={{
-          border: '1px solid rgba(0, 0, 0, 0.15)',
-          background: disabled ? '#eeeeec' : '#fafafa',
+          border: "1px solid rgba(0, 0, 0, 0.15)",
+          background: disabled ? "#eeeeec" : "#fafafa",
         }}
       >
-        {/* Toolbar */}
         <div
           className="flex flex-wrap items-center gap-1"
           style={{
-            padding: '8px 12px',
-            borderBottom: '1px solid rgba(0, 0, 0, 0.15)',
-            background: '#fafafa',
+            padding: "8px 12px",
+            borderBottom: "1px solid rgba(0, 0, 0, 0.15)",
+            background: "#fafafa",
           }}
         >
-          {/* History */}
           <ToolbarButton
             onClick={() => editor.chain().focus().undo().run()}
             disabled={disabled || !editor.can().undo()}
@@ -155,12 +153,11 @@ export function RichTextEditor({
             <Redo size={16} />
           </ToolbarButton>
 
-          <span style={{ width: 1, height: 20, background: 'rgba(0, 0, 0, 0.15)', margin: '0 8px' }} />
+          <span style={{ width: 1, height: 20, background: "rgba(0, 0, 0, 0.15)", margin: "0 8px" }} />
 
-          {/* Headings */}
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            isActive={editor.isActive('heading', { level: 2 })}
+            isActive={editor.isActive("heading", { level: 2 })}
             disabled={disabled}
             title="Titre 2"
           >
@@ -168,19 +165,18 @@ export function RichTextEditor({
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            isActive={editor.isActive('heading', { level: 3 })}
+            isActive={editor.isActive("heading", { level: 3 })}
             disabled={disabled}
             title="Titre 3"
           >
             <Heading3 size={16} />
           </ToolbarButton>
 
-          <span style={{ width: 1, height: 20, background: 'rgba(0, 0, 0, 0.15)', margin: '0 8px' }} />
+          <span style={{ width: 1, height: 20, background: "rgba(0, 0, 0, 0.15)", margin: "0 8px" }} />
 
-          {/* Formatting */}
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBold().run()}
-            isActive={editor.isActive('bold')}
+            isActive={editor.isActive("bold")}
             disabled={disabled}
             title="Gras"
           >
@@ -188,19 +184,18 @@ export function RichTextEditor({
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            isActive={editor.isActive('italic')}
+            isActive={editor.isActive("italic")}
             disabled={disabled}
             title="Italique"
           >
             <Italic size={16} />
           </ToolbarButton>
 
-          <span style={{ width: 1, height: 20, background: 'rgba(0, 0, 0, 0.15)', margin: '0 8px' }} />
+          <span style={{ width: 1, height: 20, background: "rgba(0, 0, 0, 0.15)", margin: "0 8px" }} />
 
-          {/* Lists */}
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            isActive={editor.isActive('bulletList')}
+            isActive={editor.isActive("bulletList")}
             disabled={disabled}
             title="Liste à puces"
           >
@@ -208,35 +203,33 @@ export function RichTextEditor({
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            isActive={editor.isActive('orderedList')}
+            isActive={editor.isActive("orderedList")}
             disabled={disabled}
             title="Liste numérotée"
           >
             <ListOrdered size={16} />
           </ToolbarButton>
 
-          <span style={{ width: 1, height: 20, background: 'rgba(0, 0, 0, 0.15)', margin: '0 8px' }} />
+          <span style={{ width: 1, height: 20, background: "rgba(0, 0, 0, 0.15)", margin: "0 8px" }} />
 
-          {/* Quote */}
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            isActive={editor.isActive('blockquote')}
+            isActive={editor.isActive("blockquote")}
             disabled={disabled}
             title="Citation"
           >
             <Quote size={16} />
           </ToolbarButton>
 
-          {/* Links */}
           <ToolbarButton
             onClick={addLink}
-            isActive={editor.isActive('link')}
+            isActive={editor.isActive("link")}
             disabled={disabled}
             title="Ajouter un lien"
           >
             <LinkIcon size={16} />
           </ToolbarButton>
-          {editor.isActive('link') && (
+          {editor.isActive("link") && (
             <ToolbarButton
               onClick={() => editor.chain().focus().unsetLink().run()}
               disabled={disabled}
@@ -247,15 +240,10 @@ export function RichTextEditor({
           )}
         </div>
 
-        {/* Editor content */}
         <EditorContent editor={editor} />
       </div>
 
-      {hint && (
-        <p style={{ fontSize: 12, color: '#6b6b6b', marginTop: 6 }}>
-          {hint}
-        </p>
-      )}
+      {hint && <p style={{ fontSize: 12, color: "#6b6b6b", marginTop: 6 }}>{hint}</p>}
 
       <style jsx global>{`
         .ProseMirror p.is-editor-empty:first-child::before {

@@ -1,9 +1,6 @@
 @import "tailwindcss";
 
 :root {
-  /* SO'MAYA palette
-     Primary: burgundy #511f29 + tonal scale (density)
-     Accent: rose palette, used sparingly */
   --som-primary-50: #f9f1f3;
   --som-primary-100: #f1e1e5;
   --som-primary-200: #e3c3cb;
@@ -11,54 +8,40 @@
   --som-primary-400: #a45d6d;
   --som-primary-500: #7e3a4a;
   --som-primary-600: #672a38;
-  --som-primary-700: #511f29; /* brand */
+  --som-primary-700: #511f29;
   --som-primary-800: #3c161e;
   --som-primary-900: #280f14;
 
-  --som-primary: var(--som-primary-700);       /* buttons, bars, active states (13:1 on white) */
+  --som-primary: var(--som-primary-700);
   --som-primary-hover: var(--som-primary-800);
-  --som-primary-tint: var(--som-primary-50);   /* light brand surfaces */
+  --som-primary-tint: var(--som-primary-50);
 
-  --som-accent: #da5771;       /* rose vif - heart, counters, highlights */
-  --som-accent-soft: #d86379;  /* rose doux */
-  --som-accent-deep: #9b384c;  /* rose profond - promo prices / small pink text (6.9:1) */
+  --som-accent: #da5771;
+  --som-accent-soft: #d86379;
+  --som-accent-deep: #9b384c;
 
   --som-black: #000000;
-
-  /* Legacy token names */
   --som-primary-deep: var(--som-primary-hover);
   --som-primary-soft: var(--som-primary-500);
-
-  /* Surfaces */
   --som-white: #ffffff;
-  --som-surface: #f4f4f2;       /* section bands, image placeholders */
-  --som-surface-alt: #fafafa;   /* subtle panels, disabled fields */
-
-  /* Borders */
-  --som-border: #e6e6e6;        /* cards, dividers */
-  --som-border-strong: #cfcfcf; /* hover */
-  --som-border-input: var(--som-black); /* form fields: black */
-
-  /* Text */
-  --som-text: var(--som-black);  /* 21:1 */
-  --som-text-secondary: #4a4a4a; /* 8.9:1 */
-  --som-text-muted: #6b6b6b;     /* 5.3:1 */
-  --som-text-subtle: #8a8a8a;    /* placeholders, struck prices */
+  --som-surface: #f4f4f2;
+  --som-surface-alt: #fafafa;
+  --som-border: #e6e6e6;
+  --som-border-strong: #cfcfcf;
+  --som-border-input: var(--som-black);
+  --som-text: var(--som-black);
+  --som-text-secondary: #4a4a4a;
+  --som-text-muted: #6b6b6b;
+  --som-text-subtle: #8a8a8a;
   --som-text-on-dark: #ffffff;
   --som-text-on-dark-muted: rgba(255, 255, 255, 0.72);
-
-  /* States */
   --som-focus: var(--som-primary);
   --som-focus-ring: rgba(81, 31, 41, 0.14);
   --som-success: #1f7a45;
   --som-error: #c62828;
   --som-error-tint: #fdecec;
-
-  /* Functional */
   --som-whatsapp: #1f8a4c;
   --som-whatsapp-hover: #16713d;
-
-  /* Legacy names mapped onto the system (still used across pages) */
   --som-burgundy: var(--som-primary);
   --som-burgundy-dark: var(--som-primary-deep);
   --som-burgundy-darker: var(--som-primary-deep);
@@ -74,17 +57,12 @@
   --som-footer-link: #cfcfcf;
   --som-ink: var(--som-black);
   --som-gray: var(--som-text-muted);
-
-  /* Base */
   --background: var(--som-white);
   --foreground: var(--som-text);
-
-  /* Single typeface: Poppins */
   --font-stack: var(--font-poppins), "Poppins", "Helvetica Neue", Arial, sans-serif;
 }
 
 @theme inline {
-  /* Palette -> bg-primary, text-primary-deep, bg-primary-tint ... */
   --color-primary: var(--som-primary);
   --color-primary-hover: var(--som-primary-hover);
   --color-primary-50: var(--som-primary-50);
@@ -102,8 +80,6 @@
   --color-primary-tint: var(--som-primary-tint);
   --color-accent-soft: var(--som-accent-soft);
   --color-accent-deep: var(--som-accent-deep);
-
-  /* Semantic -> text-secondary, text-muted, border-border, bg-surface ... */
   --color-surface: var(--som-surface);
   --color-surface-alt: var(--som-surface-alt);
   --color-border: var(--som-border);
@@ -116,8 +92,6 @@
   --color-error: var(--som-error);
   --color-error-tint: var(--som-error-tint);
   --color-whatsapp: var(--som-whatsapp);
-
-  /* Legacy aliases */
   --color-burgundy: var(--som-burgundy);
   --color-burgundy-dark: var(--som-burgundy-dark);
   --color-peach: var(--som-peach);
@@ -135,13 +109,9 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
-  /* Fonts - Poppins everywhere (font-serif kept as alias for existing classes) */
   --font-serif: var(--font-stack);
   --font-sans: var(--font-stack);
 }
-
-/* Base Styles */
 * {
   box-sizing: border-box;
 }
@@ -161,24 +131,22 @@ body {
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
-
-/* Selection */
 ::selection {
   background-color: var(--som-burgundy);
   color: #ffffff;
 }
-
-/* Typography */
-/* In base layer so Tailwind utilities (font-light, leading-*) can override */
 @layer base {
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-stack);
     font-weight: 600;
     line-height: 1.2;
   }
 }
-
-/* Custom Scrollbar - Minimal */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -196,16 +164,6 @@ body {
   background: var(--som-text-light);
 }
 
-/* Animations */
-@keyframes somFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(7px);
-  }
-}
-
 @keyframes somMarquee {
   0% {
     transform: translateX(0);
@@ -215,36 +173,9 @@ body {
   }
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Utility Classes */
-.animate-float {
-  animation: somFloat 2.6s ease-in-out infinite;
-}
-
 .animate-marquee {
   animation: somMarquee 32s linear infinite;
 }
-
-.animate-fade-up {
-  animation: fadeInUp 0.9s cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
-}
-
-/* Button Styles - Primary */
-/* ============================================================
-   Buttons
-   .btn-primary | .btn-secondary | .btn-dark | .btn-link
-   .btn-primary-light / .btn-secondary-light (on dark or photo backgrounds)
-   ============================================================ */
 .btn-primary,
 .btn-primary-light,
 .btn-secondary,
@@ -266,26 +197,66 @@ body {
   border: 1px solid transparent;
   border-radius: 2px;
   cursor: pointer;
-  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
 }
 
-.btn-primary { background-color: var(--som-primary); color: #fff; }
-.btn-primary:hover { background-color: var(--som-primary-hover); }
+.btn-primary {
+  background-color: var(--som-primary);
+  color: #fff;
+}
+.btn-primary:hover {
+  background-color: var(--som-primary-hover);
+}
 
-.btn-secondary { background: transparent; color: var(--som-primary); border-color: var(--som-primary); }
-.btn-secondary:hover { background: var(--som-primary); color: #fff; }
+.btn-secondary {
+  background: transparent;
+  color: var(--som-primary);
+  border-color: var(--som-primary);
+}
+.btn-secondary:hover {
+  background: var(--som-primary);
+  color: #fff;
+}
 
-.btn-dark { background-color: var(--som-black); color: #fff; }
-.btn-dark:hover { background-color: var(--som-primary); }
+.btn-dark {
+  background-color: var(--som-black);
+  color: #fff;
+}
+.btn-dark:hover {
+  background-color: var(--som-primary);
+}
 
-.btn-primary-light { background-color: #fff; color: var(--som-text); }
-.btn-primary-light:hover { background-color: var(--som-primary-100); color: var(--som-primary); }
+.btn-primary-light {
+  background-color: #fff;
+  color: var(--som-text);
+}
+.btn-primary-light:hover {
+  background-color: var(--som-primary-100);
+  color: var(--som-primary);
+}
 
-.btn-secondary-light { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.7); }
-.btn-secondary-light:hover { background: #fff; color: var(--som-text); border-color: #fff; }
+.btn-secondary-light {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+.btn-secondary-light:hover {
+  background: #fff;
+  color: var(--som-text);
+  border-color: #fff;
+}
 
-.btn-whatsapp { background-color: var(--som-whatsapp); color: #fff; letter-spacing: 0.1em; }
-.btn-whatsapp:hover { background-color: var(--som-whatsapp-hover); }
+.btn-whatsapp {
+  background-color: var(--som-whatsapp);
+  color: #fff;
+  letter-spacing: 0.1em;
+}
+.btn-whatsapp:hover {
+  background-color: var(--som-whatsapp-hover);
+}
 
 .btn-link {
   display: inline-flex;
@@ -306,47 +277,45 @@ body {
   cursor: pointer;
   transition: color 0.25s ease;
 }
-.btn-link:hover { color: var(--som-primary-hover); }
+.btn-link:hover {
+  color: var(--som-primary-hover);
+}
 
-:is(.btn-primary, .btn-primary-light, .btn-secondary, .btn-secondary-light, .btn-dark, .btn-whatsapp, .btn-link):focus-visible {
+:is(
+  .btn-primary,
+  .btn-primary-light,
+  .btn-secondary,
+  .btn-secondary-light,
+  .btn-dark,
+  .btn-whatsapp,
+  .btn-link
+):focus-visible {
   outline: 2px solid var(--som-focus);
   outline-offset: 3px;
 }
 
-:is(.btn-primary, .btn-primary-light, .btn-secondary, .btn-secondary-light, .btn-dark, .btn-whatsapp, .btn-link):disabled,
-:is(.btn-primary, .btn-primary-light, .btn-secondary, .btn-secondary-light, .btn-dark, .btn-whatsapp, .btn-link)[aria-disabled="true"] {
+:is(
+  .btn-primary,
+  .btn-primary-light,
+  .btn-secondary,
+  .btn-secondary-light,
+  .btn-dark,
+  .btn-whatsapp,
+  .btn-link
+):disabled,
+:is(
+  .btn-primary,
+  .btn-primary-light,
+  .btn-secondary,
+  .btn-secondary-light,
+  .btn-dark,
+  .btn-whatsapp,
+  .btn-link
+)[aria-disabled="true"] {
   opacity: 0.45;
   cursor: not-allowed;
   pointer-events: none;
 }
-
-/* ============================================================
-   Section titles
-   ============================================================ */
-.section-eyebrow,
-.section-eyebrow-burgundy,
-.section-eyebrow-peach {
-  font-size: 11.5px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  margin-bottom: 14px;
-}
-.section-eyebrow { color: var(--som-text-muted); }
-.section-eyebrow-burgundy { color: var(--som-primary); }
-.section-eyebrow-peach { color: var(--som-text-on-dark-muted); }
-
-.section-title,
-.section-title-light {
-  font-family: var(--font-stack);
-  font-weight: 500;
-  font-size: clamp(34px, 4vw, 56px);
-  line-height: 1;
-  margin: 0;
-}
-.section-title { color: var(--som-text); }
-.section-title-light { color: var(--som-text-on-dark); }
-
-/* Container */
 .container-som {
   max-width: 1400px;
   margin: 0 auto;
@@ -358,8 +327,6 @@ body {
     padding: 0 16px;
   }
 }
-
-/* Link underline effect */
 .link-underline {
   position: relative;
   text-decoration: none;
@@ -371,24 +338,6 @@ body {
 .link-underline:hover {
   opacity: 0.6;
 }
-
-/* Image hover zoom */
-.img-zoom {
-  overflow: hidden;
-}
-
-.img-zoom img {
-  transition: transform 0.8s cubic-bezier(0.16, 0.84, 0.44, 1);
-}
-
-.img-zoom:hover img {
-  transform: scale(1.07);
-}
-
-/* ============================================================
-   Cards
-   .card-som (bordered) | .card-som-muted (grey panel) | + .card-som-interactive
-   ============================================================ */
 .card-som {
   background: var(--som-white);
   border: 1px solid var(--som-border);
@@ -402,27 +351,15 @@ body {
 }
 
 .card-som-interactive {
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .card-som-interactive:hover {
   border-color: var(--som-border-strong);
   box-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.25);
 }
-
-/* Card hover lift */
-.card-lift {
-  transition: transform 0.3s ease;
-}
-
-.card-lift:hover {
-  transform: translateY(-6px);
-}
-
-/* ============================================================
-   Badges
-   .badge + -primary | -soft | -dark | -outline | -success | -error
-   ============================================================ */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -436,19 +373,35 @@ body {
   border-radius: 2px;
 }
 
-.badge-primary { background: var(--som-primary); color: #fff; }
-.badge-soft { background: var(--som-primary-100); color: var(--som-primary); }
-.badge-accent { background: var(--som-accent); color: #fff; }
-.badge-dark { background: var(--som-black); color: #fff; }
-.badge-outline { background: #fff; color: var(--som-text); box-shadow: inset 0 0 0 1px var(--som-border); }
-.badge-success { background: #e8f5ed; color: var(--som-success); }
-.badge-error { background: var(--som-error-tint); color: var(--som-error); }
-
-/* ============================================================
-   Forms
-   .label-som | .input-som (input, select, textarea) | .help-som | .error-som
-   Error state: aria-invalid="true" on the field
-   ============================================================ */
+.badge-primary {
+  background: var(--som-primary);
+  color: #fff;
+}
+.badge-soft {
+  background: var(--som-primary-100);
+  color: var(--som-primary);
+}
+.badge-accent {
+  background: var(--som-accent);
+  color: #fff;
+}
+.badge-dark {
+  background: var(--som-black);
+  color: #fff;
+}
+.badge-outline {
+  background: #fff;
+  color: var(--som-text);
+  box-shadow: inset 0 0 0 1px var(--som-border);
+}
+.badge-success {
+  background: #e8f5ed;
+  color: var(--som-success);
+}
+.badge-error {
+  background: var(--som-error-tint);
+  color: var(--som-error);
+}
 .label-som {
   display: block;
   margin-bottom: 8px;
@@ -466,11 +419,14 @@ body {
   border: 1px solid var(--som-border-input);
   color: var(--som-text);
   padding: 12px 14px;
-  font-size: 16px; /* 16px avoids iOS zoom on focus */
+  font-size: 16px;
   font-family: var(--font-stack);
   border-radius: 2px;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 @media (min-width: 768px) {
@@ -478,7 +434,6 @@ body {
     font-size: 14px;
   }
 }
-
 
 .input-som:focus,
 .input-som:focus-visible {
@@ -520,8 +475,6 @@ textarea.input-som {
   font-size: 12.5px;
   color: var(--som-error);
 }
-
-/* Dark input variant (on dark / photo backgrounds) */
 .input-som-dark {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.35);
@@ -535,8 +488,6 @@ textarea.input-som {
 .input-som-dark::placeholder {
   color: rgba(255, 255, 255, 0.55);
 }
-
-/* Radio button */
 .radio-som {
   width: 18px;
   height: 18px;
@@ -555,230 +506,18 @@ textarea.input-som {
   background: var(--som-primary);
 }
 
-/* Aspect ratios */
-.aspect-4-5 {
-  aspect-ratio: 4/5;
-}
-
-.aspect-3-4 {
-  aspect-ratio: 3/4;
-}
-
-.aspect-1-1 {
-  aspect-ratio: 1/1;
-}
-
-/* Glassmorphism header */
-.glass-header {
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-/* Gradient overlays */
-.gradient-overlay-bottom {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 38%, rgba(0, 0, 0, 0.72) 100%);
-}
-
-.gradient-overlay-full {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0) 32%, rgba(0, 0, 0, 0.62) 100%);
-}
-
-/* Stars rating */
-.stars {
-  color: var(--som-accent);
-  letter-spacing: 0.18em;
-  font-size: 14px;
-}
-
-/* Masonry layout for lookbook */
-.masonry-4 {
-  column-count: 4;
-  column-gap: 16px;
-}
-
-.masonry-4 > * {
-  break-inside: avoid;
-  margin-bottom: 16px;
-}
-
-@media (max-width: 1024px) {
-  .masonry-4 {
-    column-count: 3;
-  }
-}
-
-@media (max-width: 768px) {
-  .masonry-4 {
-    column-count: 2;
-  }
-}
-
-@media (max-width: 480px) {
-  .masonry-4 {
-    column-count: 1;
-  }
-}
-
-/* Hide scrollbar but keep functionality */
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-/* ============================================================
-   ANIMATIONS - Fluid & Professional
-   ============================================================ */
-
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out forwards;
 }
-
-.animate-fade-in-up {
-  opacity: 0;
-  animation: fadeInUp 0.6s ease-out forwards;
-}
-
-.animate-slide-up {
-  opacity: 0;
-  animation: slideUp 0.7s ease-out forwards;
-}
-
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
-
-/* ============================================================
-   GRIDS - Responsive & Clean
-   ============================================================ */
-
-/* Products Grid - 4 columns */
-.products-grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(16px, 2vw, 24px);
-  width: 100%;
-  overflow: hidden;
-}
-
-.products-grid-4 > * {
-  min-width: 0;
-  overflow: hidden;
-}
-
-@media (max-width: 1024px) {
-  .products-grid-4 {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .products-grid-4 {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-}
-
-/* Testimonials Grid */
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(16px, 2vw, 24px);
-}
-
-@media (max-width: 1024px) {
-  .testimonials-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
-  .testimonials-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Hero Container - Responsive */
-.hero-container {
-  display: grid;
-  grid-template-columns: 1fr 1.3fr;
-  gap: clamp(12px, 2vw, 24px);
-}
-
-@media (max-width: 900px) {
-  .hero-container {
-    grid-template-columns: 1fr;
-    min-height: auto !important;
-  }
-
-  .hero-content-card {
-    order: 2;
-    min-height: 400px;
-  }
-
-  .hero-media-card {
-    order: 1;
-    aspect-ratio: 16/10;
-  }
-}
-
-/* New Collection Container - Responsive */
-.new-collection-container {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: clamp(12px, 2vw, 24px);
-}
-
-@media (max-width: 900px) {
-  .new-collection-container {
-    grid-template-columns: 1fr;
-    min-height: auto !important;
-  }
-
-  .new-collection-container > div:first-child {
-    order: 2;
-    min-height: 400px;
-  }
-
-  .new-collection-container > div:last-child {
-    order: 1;
-    min-height: 350px;
-  }
-}
-
-/* Legacy Grid Classes - Keep for compatibility */
 .grid-cols-4-responsive {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -818,32 +557,10 @@ textarea.input-som {
     gap: 12px;
   }
 }
-
-.grid-cols-2-responsive {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(40px, 5vw, 80px);
-  align-items: start;
-}
-
-@media (max-width: 1024px) {
-  .grid-cols-2-responsive {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-}
-
-/* Responsive padding */
 .section-padding {
   padding: clamp(60px, 8vw, 124px) clamp(20px, 4vw, 40px);
 }
-
-/* Responsive text */
 @media (max-width: 768px) {
-  .section-title {
-    font-size: clamp(28px, 6vw, 40px);
-  }
-
   .btn-primary,
   .btn-secondary,
   .btn-primary-light,
@@ -853,262 +570,11 @@ textarea.input-som {
   }
 }
 
-/* Mobile menu */
-@media (max-width: 768px) {
-  .desktop-only {
-    display: none !important;
-  }
-}
-
 @media (min-width: 769px) {
   .mobile-only {
     display: none !important;
   }
 }
-
-/* Footer Grid */
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr 1fr;
-  gap: 40px;
-}
-
-@media (max-width: 1024px) {
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-  }
-}
-
-@media (max-width: 640px) {
-  .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-}
-
-/* Footer Bottom */
-.footer-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 640px) {
-  .footer-bottom {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 16px;
-  }
-}
-
-/* Checkout Grid */
-.checkout-grid {
-  display: grid;
-  grid-template-columns: 1.55fr 1fr;
-  gap: 32px;
-  align-items: start;
-}
-
-@media (max-width: 1024px) {
-  .checkout-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-}
-
-/* Form Grid */
-.form-grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
-
-@media (max-width: 640px) {
-  .form-grid-2 {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Hide add to cart button on mobile - keep hover behavior on desktop only */
-@media (max-width: 768px) {
-  .hide-on-mobile {
-    display: none !important;
-  }
-}
-
-/* Hero Section - Desktop/Mobile toggle */
-.hero-desktop {
-  display: grid;
-}
-
-.hero-mobile {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .hero-desktop {
-    display: none;
-  }
-
-  .hero-mobile {
-    display: block;
-  }
-}
-
-/* Why Choose Grid (5 columns) */
-.grid-cols-5-responsive {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0;
-}
-
-@media (max-width: 1200px) {
-  .grid-cols-5-responsive {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .grid-cols-5-responsive > *:nth-child(4),
-  .grid-cols-5-responsive > *:nth-child(5) {
-    border-right: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .grid-cols-5-responsive {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .grid-cols-5-responsive > * {
-    border-right: none !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .grid-cols-5-responsive {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* 6 columns grid */
-.grid-cols-6-responsive {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 12px;
-}
-
-@media (max-width: 1024px) {
-  .grid-cols-6-responsive {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .grid-cols-6-responsive {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-}
-
-@media (max-width: 480px) {
-  .grid-cols-6-responsive {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* New Collection Section Grid */
-.new-collection-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  gap: clamp(32px, 5vw, 80px);
-  align-items: center;
-}
-
-@media (max-width: 1024px) {
-  .new-collection-grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-}
-
-/* Collections Telo Style Grid */
-.collections-telo-top {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: clamp(8px, 1.5vw, 16px);
-}
-
-.collections-telo-bottom {
-  display: grid;
-  gap: clamp(8px, 1.5vw, 16px);
-}
-
-@media (max-width: 900px) {
-  .collections-telo-top {
-    grid-template-columns: 1fr 1fr;
-    height: auto !important;
-  }
-
-  .collections-telo-top > *:first-child {
-    grid-row: span 2;
-    min-height: 400px;
-  }
-
-  .collections-telo-bottom {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-@media (max-width: 640px) {
-  .collections-telo-top {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-  }
-
-  .collections-telo-top > *:first-child {
-    grid-row: span 1;
-    aspect-ratio: 4/5;
-    min-height: auto;
-  }
-
-  .collections-telo-top > *:nth-child(2),
-  .collections-telo-top > *:nth-child(3) {
-    aspect-ratio: 16/10;
-  }
-
-  .collections-telo-bottom {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  .collections-telo-bottom > * {
-    aspect-ratio: 1 !important;
-  }
-}
-
-/* Magazine-style responsive grid */
-.grid-cols-1-mobile {
-  display: grid;
-}
-
-@media (max-width: 900px) {
-  .grid-cols-1-mobile {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-/* Product Detail - Mobile spacing */
-@media (max-width: 768px) {
-  .product-detail-container {
-    padding-top: 20px !important;
-  }
-}
-
-/* ============================================================
-   Legal pages (Livraison & Retours, CGV, Confidentialité)
-   Numbered sections, light body text, burgundy details
-   ============================================================ */
 .legal-content {
   counter-reset: legal-section;
 }

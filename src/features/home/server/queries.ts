@@ -2,11 +2,13 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { eq } from "drizzle-orm";
 import { db, heroBanner } from "@/shared/lib/db";
+import { assertAdmin } from "@/features/auth/server/session";
 import { getActiveCategories } from "@/features/categories/server/queries";
 import { getBestsellers, getNewArrivals } from "@/features/products/server/queries";
 import { getActiveTestimonials } from "@/features/testimonials/server/queries";
 import { HERO_BANNER_ID, HERO_CACHE_TAG, HOME_LIMITS } from "../constants";
-import type { HeroBannerContent } from "../types";
+import type { HeroBannerContent, HeroBannerData } from "../types";
+import { toHeroBannerData } from "../utils";
 
 export const getHeroBannerContent = unstable_cache(
   async (): Promise<HeroBannerContent | null> => {
@@ -39,5 +41,17 @@ export async function getHomePageData() {
     getBestsellers(HOME_LIMITS.bestsellers),
     getActiveTestimonials(HOME_LIMITS.testimonials),
   ]);
-  return { heroBanner, categories: categories.slice(0, HOME_LIMITS.categories), newArrivals, bestsellers, testimonials };
+  return {
+    heroBanner,
+    categories: categories.slice(0, HOME_LIMITS.categories),
+    newArrivals,
+    bestsellers,
+    testimonials,
+  };
+}
+
+export async function getHeroBanner(): Promise<HeroBannerData | null> {
+  await assertAdmin();
+  const hero = await db.query.heroBanner.findFirst({ where: eq(heroBanner.id, HERO_BANNER_ID) });
+  return hero ? toHeroBannerData(hero) : null;
 }

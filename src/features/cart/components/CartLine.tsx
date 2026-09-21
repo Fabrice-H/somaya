@@ -14,7 +14,11 @@ export function CartLine({ item, onNavigate }: { item: CartItem; onNavigate?: ()
 
   return (
     <li className="flex gap-4 border-b border-[var(--som-border)] py-5 last:border-b-0">
-      <Link href={itemHref(item)} onClick={onNavigate} className="relative h-28 w-21 shrink-0 overflow-hidden bg-[var(--som-primary-50)]">
+      <Link
+        href={itemHref(item)}
+        onClick={onNavigate}
+        className="relative h-28 w-21 shrink-0 overflow-hidden bg-[var(--som-primary-50)]"
+      >
         <Image src={item.productImage} alt={item.productName} fill sizes="84px" className="object-cover" />
       </Link>
       <div className="flex min-w-0 flex-1 flex-col">

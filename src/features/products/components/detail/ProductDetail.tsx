@@ -43,11 +43,16 @@ export function ProductDetail({ product }: { product: ProductWithCategoryAndLots
 
   return (
     <div className="mx-auto max-w-[1240px] px-4 pb-20 pt-6 md:px-8 md:pb-28 md:pt-8">
-      <nav aria-label="Fil d'Ariane" className="mb-6 text-[11px] uppercase tracking-[0.2em] text-[var(--som-gray)] md:mb-8">
+      <nav
+        aria-label="Fil d'Ariane"
+        className="mb-6 text-[11px] uppercase tracking-[0.2em] text-[var(--som-gray)] md:mb-8"
+      >
         <Link href="/" className="hover:text-[var(--som-primary)]">
           Accueil
         </Link>
-        <span aria-hidden className="mx-2">/</span>
+        <span aria-hidden className="mx-2">
+          /
+        </span>
         {product.category ? (
           <Link href={`/catalogue/${product.category.slug}`} className="hover:text-[var(--som-primary)]">
             {product.category.name}
@@ -83,13 +88,18 @@ export function ProductDetail({ product }: { product: ProductWithCategoryAndLots
                 {formatPrice(oldPrice)}
               </s>
             )}
-            <span className={`text-[24px] font-normal ${discount > 0 ? "text-[var(--som-accent-deep)]" : "text-[var(--som-ink)]"}`}>
+            <span
+              className={`text-[24px] font-normal ${discount > 0 ? "text-[var(--som-accent-deep)]" : "text-[var(--som-ink)]"}`}
+            >
               {formatPrice(purchase.unitPrice)}
             </span>
           </p>
 
           {product.description && (
-            <RichTextViewer content={product.description} className="mt-5 text-[15px] font-light leading-relaxed text-[#4a4a4a]" />
+            <RichTextViewer
+              content={product.description}
+              className="mt-5 text-[15px] font-light leading-relaxed text-[#4a4a4a]"
+            />
           )}
 
           <div className="mt-8 flex flex-col gap-7">
@@ -98,10 +108,21 @@ export function ProductDetail({ product }: { product: ProductWithCategoryAndLots
             ) : (
               <>
                 {purchase.colors.length > 0 && (
-                  <OptionPicker label="Couleur" options={purchase.colors} value={purchase.color} onChange={purchase.setColor} />
+                  <OptionPicker
+                    label="Couleur"
+                    options={purchase.colors}
+                    value={purchase.color}
+                    onChange={purchase.setColor}
+                  />
                 )}
                 {purchase.sizes.length > 0 && (
-                  <OptionPicker label="Taille" options={purchase.sizes} value={purchase.size} onChange={purchase.setSize} compact />
+                  <OptionPicker
+                    label="Taille"
+                    options={purchase.sizes}
+                    value={purchase.size}
+                    onChange={purchase.setSize}
+                    compact
+                  />
                 )}
               </>
             )}
@@ -113,7 +134,12 @@ export function ProductDetail({ product }: { product: ProductWithCategoryAndLots
 
           <div className="mt-6 flex gap-3">
             <QuantityStepper value={purchase.quantity} onChange={purchase.changeQuantity} />
-            <button type="button" onClick={purchase.addToCart} disabled={purchase.isSoldOut} className="btn-primary h-14 flex-1 px-4">
+            <button
+              type="button"
+              onClick={purchase.addToCart}
+              disabled={purchase.isSoldOut}
+              className="btn-primary h-14 flex-1 px-4"
+            >
               {purchase.isSoldOut ? (
                 "Épuisé"
               ) : purchase.added ? (

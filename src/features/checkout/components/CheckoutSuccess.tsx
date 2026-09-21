@@ -21,8 +21,8 @@ export function CheckoutSuccess({ order, whatsapp }: CheckoutSuccessProps) {
         Merci {order.customer.firstName}
       </h1>
       <p className="m-0 mt-4 text-[15px] font-light leading-relaxed text-[#4a4a4a]">
-        Votre commande <span className="font-normal text-[var(--som-ink)]">{order.orderNumber}</span> d&apos;un montant de{" "}
-        <span className="font-normal text-[var(--som-ink)] tabular-nums">{formatPrice(order.total)}</span> est bien
+        Votre commande <span className="font-normal text-[var(--som-ink)]">{order.orderNumber}</span> d&apos;un montant
+        de <span className="font-normal text-[var(--som-ink)] tabular-nums">{formatPrice(order.total)}</span> est bien
         enregistrée. Envoyez-nous le récapitulatif sur WhatsApp pour confirmer la livraison.
       </p>
       <a

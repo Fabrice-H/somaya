@@ -45,10 +45,18 @@ export function LotPicker({ lots, selected, onSelect }: LotPickerProps) {
                         })
                       }
                       className={`relative block aspect-[3/4] w-full cursor-pointer overflow-hidden bg-[var(--som-primary-50)] outline-offset-2 transition-shadow disabled:cursor-not-allowed ${
-                        active ? "shadow-[0_0_0_2px_var(--som-ink)]" : "hover:shadow-[0_0_0_1px_var(--som-border-strong)]"
+                        active
+                          ? "shadow-[0_0_0_2px_var(--som-ink)]"
+                          : "hover:shadow-[0_0_0_1px_var(--som-border-strong)]"
                       }`}
                     >
-                      <Image src={item.image} alt="" fill sizes="96px" className={`object-cover ${soldOut ? "opacity-40 grayscale" : ""}`} />
+                      <Image
+                        src={item.image}
+                        alt=""
+                        fill
+                        sizes="96px"
+                        className={`object-cover ${soldOut ? "opacity-40 grayscale" : ""}`}
+                      />
                     </button>
                   </li>
                 );

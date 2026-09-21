@@ -10,7 +10,9 @@ export function Reassurance() {
             <h3 className="m-0 mt-5 text-[14px] font-medium uppercase tracking-[0.04em] text-[var(--som-ink)] md:text-[15px]">
               {title}
             </h3>
-            <p className="mx-auto mt-2 max-w-[300px] text-[13px] font-light leading-relaxed text-[var(--som-gray)]">{text}</p>
+            <p className="mx-auto mt-2 max-w-[300px] text-[13px] font-light leading-relaxed text-[var(--som-gray)]">
+              {text}
+            </p>
           </li>
         ))}
       </ul>

@@ -19,7 +19,9 @@ export function buildOrderWhatsAppMessage(order: PlacedOrder): string {
     `+225 ${customer.phone}`,
     "",
     `*Livraison*`,
-    [customer.address, `${customer.commune}, Abidjan`].filter(Boolean).join("\n"),
+    order.deliveryMethod === "pickup"
+      ? "Retrait en boutique"
+      : [customer.address, `${customer.commune}, Abidjan`].filter(Boolean).join("\n"),
     customer.notes ? `Note : ${customer.notes}` : "",
     "",
     `*Articles*`,

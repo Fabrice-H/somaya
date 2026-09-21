@@ -1,258 +1,51 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import Image from "next/image";
-import imageCompression from "browser-image-compression";
-import { Upload, X, Loader2, GripVertical } from "lucide-react";
-import { uploadToCloudinaryDirect } from "@/features/media/direct-upload";
-import { deleteImage } from "@/features/media/server/storage-actions";
-import clsx from "clsx";
+import { IMAGE_CONFIG } from "../constants";
+import { useImageUploader } from "../hooks/useImageUploader";
+import type { UploadBucket } from "../types";
+import { ImageDropzone } from "./ImageDropzone";
+import { ImageTile } from "./ImageTile";
 
-interface ImageUploadProps {
+type ImageUploadProps = {
   images: string[];
   onChange: (images: string[]) => void;
-  bucket: "products" | "categories" | "store" | "featured" | "lots";
+  bucket: UploadBucket;
   maxImages?: number;
-}
-
-// Folder mapping for Cloudinary
-const FOLDER_MAP: Record<ImageUploadProps["bucket"], string> = {
-  products: "somaya/products",
-  categories: "somaya/categories",
-  store: "somaya/store",
-  featured: "somaya/featured",
-  lots: "somaya/lots",
 };
 
-// Compress image before upload
-async function compressImage(file: File): Promise<File> {
-  if (file.size < 500 * 1024) return file;
-
-  try {
-    const compressed = await imageCompression(file, {
-      maxSizeMB: 2,
-      maxWidthOrHeight: 2400,
-      useWebWorker: true,
-      initialQuality: 0.9,
-      preserveExif: false,
-    });
-    return new File([compressed], file.name, { type: compressed.type });
-  } catch {
-    return file;
-  }
-}
-
-export function ImageUpload({
-  images,
-  onChange,
-  bucket,
-  maxImages = 5,
-}: ImageUploadProps) {
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-
-  const handleUpload = useCallback(
-    async (files: FileList | null) => {
-      if (!files || files.length === 0) return;
-
-      const remaining = maxImages - images.length;
-      if (remaining <= 0) {
-        setError(`Maximum ${maxImages} images`);
-        return;
-      }
-
-      const filesToUpload = Array.from(files).slice(0, remaining);
-
-      // Validate files
-      for (const file of filesToUpload) {
-        const fileName = file.name.toLowerCase();
-        const isImage = file.type.startsWith("image/") ||
-          fileName.endsWith(".heic") ||
-          fileName.endsWith(".heif");
-
-        if (!isImage) {
-          setError("Formats acceptés: JPG, PNG, WebP, GIF, HEIC");
-          return;
-        }
-        if (file.size > 15 * 1024 * 1024) {
-          setError("Taille max: 15 MB par image");
-          return;
-        }
-      }
-
-      setUploading(true);
-      setError(null);
-      setProgress(0);
-
-      try {
-        const folder = FOLDER_MAP[bucket];
-        const newUrls: string[] = [];
-        const total = filesToUpload.length;
-
-        for (let i = 0; i < filesToUpload.length; i++) {
-          const file = filesToUpload[i];
-
-          // Compress
-          setProgress(Math.round(((i + 0.3) / total) * 100));
-          const compressed = await compressImage(file);
-
-          // Upload directly to Cloudinary
-          setProgress(Math.round(((i + 0.6) / total) * 100));
-          const result = await uploadToCloudinaryDirect(compressed, folder);
-
-          if (!result.success) {
-            setError(result.error || "Erreur lors de l'upload");
-            break;
-          }
-
-          if (result.url) {
-            newUrls.push(result.url);
-          }
-
-          setProgress(Math.round(((i + 1) / total) * 100));
-        }
-
-        if (newUrls.length > 0) {
-          onChange([...images, ...newUrls]);
-        }
-      } catch {
-        setError("Erreur lors de l'upload");
-      } finally {
-        setUploading(false);
-        setProgress(0);
-      }
-    },
-    [images, onChange, bucket, maxImages]
-  );
-
-  const handleRemove = useCallback(
-    async (index: number) => {
-      const url = images[index];
-
-      // Update UI immediately
-      onChange(images.filter((_, i) => i !== index));
-
-      // Delete from Cloudinary in background
-      deleteImage(url).catch((err) => {
-        console.error("Failed to delete image:", err);
-      });
-    },
-    [images, onChange]
-  );
-
-  const handleDragStart = (index: number) => {
-    setDraggedIndex(index);
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    if (draggedIndex === null || draggedIndex === index) return;
-
-    const newImages = [...images];
-    const draggedItem = newImages[draggedIndex];
-    newImages.splice(draggedIndex, 1);
-    newImages.splice(index, 0, draggedItem);
-
-    setDraggedIndex(index);
-    onChange(newImages);
-  };
-
-  const handleDragEnd = () => {
-    setDraggedIndex(null);
-  };
+export function ImageUpload({ images, onChange, bucket, maxImages = IMAGE_CONFIG.maxImages }: ImageUploadProps) {
+  const uploader = useImageUploader({ images, onChange, bucket, maxImages });
 
   return (
     <div className="space-y-4">
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
-          {error}
-        </div>
+      {uploader.error && (
+        <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{uploader.error}</div>
       )}
 
-      {/* Image grid */}
       {images.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {images.map((url, index) => (
-            <div
+            <ImageTile
               key={url}
-              draggable
-              onDragStart={() => handleDragStart(index)}
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDragEnd={handleDragEnd}
-              className={clsx(
-                "relative group aspect-square rounded-lg overflow-hidden border-2",
-                draggedIndex === index
-                  ? "border-[#511f29] opacity-50"
-                  : "border-transparent"
-              )}
-            >
-              <Image
-                src={url}
-                alt={`Image ${index + 1}`}
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <div className="cursor-move p-2 bg-white/90 rounded-lg text-[#3c161e]">
-                  <GripVertical size={18} />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleRemove(index)}
-                  className="p-2 bg-red-500 rounded-lg text-white hover:bg-red-600"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-              {index === 0 && (
-                <span className="absolute top-2 left-2 px-2 py-0.5 bg-[#511f29] text-white text-xs rounded">
-                  Principale
-                </span>
-              )}
-            </div>
+              url={url}
+              index={index}
+              dragging={uploader.draggedIndex === index}
+              onDragStart={() => uploader.dragStart(index)}
+              onDragOver={() => uploader.dragOver(index)}
+              onDragEnd={uploader.dragEnd}
+              onRemove={() => uploader.remove(index)}
+            />
           ))}
         </div>
       )}
 
-      {/* Upload zone */}
       {images.length < maxImages && (
-        <label
-          className={clsx(
-            "flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-colors",
-            uploading
-              ? "border-[#511f29]/30 bg-[#511f29]/5"
-              : "border-[#511f29]/20 hover:border-[#511f29]/40 hover:bg-[#511f29]/5"
-          )}
-        >
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={(e) => handleUpload(e.target.files)}
-            disabled={uploading}
-            className="hidden"
-          />
-          {uploading ? (
-            <>
-              <Loader2 size={32} className="text-[#3c161e]/50 animate-spin mb-2" />
-              <span className="text-sm text-[#3c161e]/60">
-                Upload en cours... {progress}%
-              </span>
-            </>
-          ) : (
-            <>
-              <Upload size={32} className="text-[#3c161e]/40 mb-2" />
-              <span className="text-sm text-[#3c161e]/60">
-                Cliquez ou glissez vos images ici
-              </span>
-              <span className="text-xs text-[#3c161e]/40 mt-1">
-                Max {maxImages} image{maxImages > 1 ? "s" : ""}, 15 MB chacune
-              </span>
-            </>
-          )}
-        </label>
+        <ImageDropzone
+          uploading={uploader.uploading}
+          progress={uploader.progress}
+          maxImages={maxImages}
+          onFiles={uploader.upload}
+        />
       )}
     </div>
   );

@@ -1,27 +1,16 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getCategories } from "@/features/categories/server/queries";
+import { getAdminProduct } from "@/features/products/server/queries";
 import { ProductForm } from "@/features/products/components/admin/form/ProductForm";
-import { getProduct } from "@/features/products/server/actions";
-import { getCategories } from "@/features/categories/server/actions";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Modifier le produit | Admin SO'MAYA",
 };
 
-interface EditProductPageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default async function EditProductPage({ params }: EditProductPageProps) {
+export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-
-  const [product, categories] = await Promise.all([
-    getProduct(id),
-    getCategories(),
-  ]);
-
-  if (!product) {
-    notFound();
-  }
-
+  const [product, categories] = await Promise.all([getAdminProduct(id), getCategories()]);
+  if (!product) notFound();
   return <ProductForm product={product} categories={categories} />;
 }

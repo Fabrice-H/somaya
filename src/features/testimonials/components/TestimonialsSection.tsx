@@ -5,11 +5,6 @@ interface TestimonialsSectionProps {
   testimonials: TestimonialCard[];
 }
 
-// ============================================================
-// Server Component - TestimonialsSection
-// Design: Centered header, cream cards with border (matching old design)
-// ============================================================
-
 export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
   if (testimonials.length === 0) return null;
 
@@ -21,7 +16,6 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
         margin: "0 auto",
       }}
     >
-      {/* Header - Centered */}
       <div style={{ textAlign: "center", marginBottom: "56px" }}>
         <div
           style={{
@@ -48,7 +42,6 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
         </h2>
       </div>
 
-      {/* Grid - 3 columns */}
       <div className="grid-cols-3-responsive">
         {testimonials.map((testimonial) => (
           <div
@@ -60,7 +53,6 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
               padding: "38px 34px",
             }}
           >
-            {/* Stars - Text */}
             <div
               style={{
                 color: "#000000",
@@ -69,10 +61,10 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
                 marginBottom: "20px",
               }}
             >
-              {"★".repeat(testimonial.rating)}{"☆".repeat(5 - testimonial.rating)}
+              {"★".repeat(testimonial.rating)}
+              {"☆".repeat(5 - testimonial.rating)}
             </div>
 
-            {/* Quote */}
             <p
               style={{
                 fontFamily: "var(--font-stack)",
@@ -86,7 +78,6 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
               &ldquo;{testimonial.text}&rdquo;
             </p>
 
-            {/* Author */}
             <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
               {testimonial.image ? (
                 <Image
@@ -120,13 +111,9 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
                 </div>
               )}
               <div>
-                <div style={{ fontWeight: 600, fontSize: "14px", color: "#000000" }}>
-                  {testimonial.name}
-                </div>
+                <div style={{ fontWeight: 600, fontSize: "14px", color: "#000000" }}>{testimonial.name}</div>
                 {testimonial.location && (
-                  <div style={{ fontSize: "12px", color: "#6b6b6b", marginTop: "3px" }}>
-                    {testimonial.location}
-                  </div>
+                  <div style={{ fontSize: "12px", color: "#6b6b6b", marginTop: "3px" }}>{testimonial.location}</div>
                 )}
               </div>
             </div>

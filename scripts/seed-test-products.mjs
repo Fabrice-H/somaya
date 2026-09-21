@@ -1,25 +1,14 @@
-/**
- * Script pour créer des produits de test avec lots de prix
- *
- * Usage:
- *   node scripts/seed-test-products.mjs          # Créer les produits
- *   node scripts/seed-test-products.mjs delete   # Supprimer les produits de test
- */
-
 import { config } from "dotenv";
 import { resolve } from "path";
 import { neon } from "@neondatabase/serverless";
 
-// Load env
 config({ path: resolve(process.cwd(), ".env.local") });
 
 const sql = neon(process.env.DATABASE_URL);
 
-// Préfixe pour identifier les produits de test
 const TEST_PREFIX = "[TEST]";
 const TEST_SKU_PREFIX = "TEST-";
 
-// Images de placeholder (Unsplash)
 const PLACEHOLDER_IMAGES = [
   "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800",
   "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800",
@@ -31,40 +20,33 @@ const PLACEHOLDER_IMAGES = [
   "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=800",
 ];
 
-// Données des produits de test
 const TEST_PRODUCTS = [
-  // Produits Femmes
   { name: "Robe Élégante Soirée", category: "femmes", price: 35000, hasLots: true, isFeatured: true, isNew: true },
   { name: "Ensemble Wax Moderne", category: "femmes", price: 28000, hasLots: true, isBestseller: true },
   { name: "Jupe Longue Traditionnelle", category: "femmes", price: 18000, hasLots: false },
   { name: "Top Dentelle Brodé", category: "femmes", price: 15000, hasLots: false, isNew: true },
 
-  // Produits Hommes
   { name: "Boubou Grand Homme", category: "hommes", price: 45000, hasLots: true, isFeatured: true },
   { name: "Chemise Bazin Brodée", category: "hommes", price: 25000, hasLots: true, isBestseller: true },
   { name: "Ensemble Caftan Luxe", category: "hommes", price: 55000, hasLots: false, isFeatured: true },
   { name: "Pantalon Traditionnel", category: "hommes", price: 20000, hasLots: false },
 
-  // Boubous
   { name: "Boubou Sénégalais Classique", category: "boubous", price: 40000, hasLots: true, isBestseller: true },
   { name: "Grand Boubou Cérémonie", category: "boubous", price: 65000, hasLots: true, isFeatured: true },
   { name: "Boubou Bazin Riche", category: "boubous", price: 50000, hasLots: false, isNew: true },
   { name: "Boubou Simple Quotidien", category: "boubous", price: 30000, hasLots: false },
 
-  // Sacs
   { name: "Sac à Main Cuir Tressé", category: "sacs", price: 22000, hasLots: true, isBestseller: true },
   { name: "Pochette Soirée Dorée", category: "sacs", price: 15000, hasLots: false, isNew: true },
   { name: "Sac Bandoulière Wax", category: "sacs", price: 18000, hasLots: true },
   { name: "Cabas XL Shopping", category: "sacs", price: 25000, hasLots: false },
 
-  // Accessoires
   { name: "Foulard Soie Imprimé", category: "accessoires", price: 12000, hasLots: false, isNew: true },
   { name: "Ceinture Cuir Artisanale", category: "accessoires", price: 8000, hasLots: true },
   { name: "Bracelet Perles Africaines", category: "accessoires", price: 5000, hasLots: false, isBestseller: true },
   { name: "Collier Statement", category: "accessoires", price: 15000, hasLots: true, isFeatured: true },
 ];
 
-// Lots de prix pour les produits
 const LOTS_CONFIG = [
   { name: "Lot Standard", priceMultiplier: 1, stock: 10 },
   { name: "Lot Premium", priceMultiplier: 1.3, stock: 5 },
@@ -96,7 +78,6 @@ async function getCategories() {
 async function createTestProducts() {
   console.log("🚀 Création des produits de test...\n");
 
-  // Récupérer les catégories
   const categories = await getCategories();
   console.log("📁 Catégories disponibles:", Object.keys(categories).join(", "));
 
@@ -121,7 +102,6 @@ async function createTestProducts() {
     const images = JSON.stringify(getRandomImages(3));
 
     try {
-      // Insérer le produit
       const [insertedProduct] = await sql`
         INSERT INTO products (
           name, slug, description, price, category_id, images,
@@ -147,7 +127,6 @@ async function createTestProducts() {
       createdProducts++;
       console.log(`✅ Produit créé: ${insertedProduct.name}`);
 
-      // Créer les lots si nécessaire
       if (product.hasLots) {
         for (let i = 0; i < LOTS_CONFIG.length; i++) {
           const lot = LOTS_CONFIG[i];
@@ -171,7 +150,6 @@ async function createTestProducts() {
         }
         console.log(`   └─ ${LOTS_CONFIG.length} lots créés`);
       }
-
     } catch (error) {
       console.error(`❌ Erreur pour ${product.name}:`, error.message);
     }
@@ -189,7 +167,6 @@ async function deleteTestProducts() {
   console.log("🗑️  Suppression des produits de test...\n");
 
   try {
-    // Compter les produits à supprimer
     const [countResult] = await sql`
       SELECT COUNT(*) as count FROM products WHERE name LIKE ${TEST_PREFIX + "%"}
     `;
@@ -203,13 +180,11 @@ async function deleteTestProducts() {
 
     console.log(`🔍 ${count} produit(s) de test trouvé(s)`);
 
-    // Supprimer les produits (les lots seront supprimés en cascade)
     await sql`
       DELETE FROM products WHERE name LIKE ${TEST_PREFIX + "%"}
     `;
 
     console.log(`✅ ${count} produit(s) de test supprimé(s) avec leurs lots.`);
-
   } catch (error) {
     console.error("❌ Erreur lors de la suppression:", error.message);
   }

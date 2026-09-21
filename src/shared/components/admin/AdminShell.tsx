@@ -1,10 +1,7 @@
+import type { ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 
-interface AdminShellProps {
-  children: React.ReactNode;
-}
-
-export function AdminShell({ children }: AdminShellProps) {
+export function AdminShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-[#fafafa]">
       <Sidebar />

@@ -1,17 +1,19 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import imageCompression from "browser-image-compression";
+import { useState } from "react";
 import { uploadToCloudinaryDirect } from "@/features/media/direct-upload";
-import { deleteImage } from "@/features/media/server/storage-actions";
-import { IMAGE_CONFIG } from "@/features/media/constants";
-import type { BucketType } from "@/features/products/types";
+import { deleteImage } from "@/features/media/server/actions";
+import { IMAGE_CONFIG, UPLOAD_FOLDERS } from "@/features/media/constants";
+import { compressImage } from "@/features/media/optimizer";
+import { isImageFile } from "@/features/media/utils";
+import type { UploadBucket } from "@/features/media/types";
+import { moveItem } from "../utils";
 
 interface UseImageUploadOptions {
-  bucket: BucketType;
-  maxImages?: number;
-  initialImages?: string[];
-  onImagesChange: (images: string[]) => void;
+  images: string[];
+  onChange: (images: string[]) => void;
+  bucket: UploadBucket;
+  maxImages: number;
 }
 
 interface UploadState {
@@ -20,215 +22,75 @@ interface UploadState {
   error: string | null;
 }
 
-// Folder mapping for Cloudinary
-const FOLDER_MAP: Record<BucketType, string> = {
-  products: "somaya/products",
-  categories: "somaya/categories",
-  store: "somaya/store",
-  lots: "somaya/lots",
-};
+const IDLE: UploadState = { uploading: false, progress: 0, error: null };
 
-// Compress image before upload (for faster uploads)
-async function compressImage(file: File): Promise<File> {
-  // Skip compression for already small files
-  if (file.size < 500 * 1024) {
-    return file;
+function validateFiles(files: File[]) {
+  const valid: File[] = [];
+  const errors: string[] = [];
+  for (const file of files) {
+    if (!isImageFile(file)) errors.push(`${file.name}: Type non supporté`);
+    else if (file.size > IMAGE_CONFIG.maxFileSizeBeforeCompression)
+      errors.push(`${file.name}: Fichier trop volumineux (max 15MB)`);
+    else valid.push(file);
   }
-
-  try {
-    const compressed = await imageCompression(file, {
-      maxSizeMB: 2,
-      maxWidthOrHeight: 2400,
-      useWebWorker: true,
-      initialQuality: 0.9,
-      preserveExif: false,
-    });
-
-    return new File([compressed], file.name, { type: compressed.type });
-  } catch (error) {
-    console.warn("Compression failed, using original:", error);
-    return file;
-  }
+  return { valid, errors };
 }
 
-export function useImageUpload({
-  bucket,
-  maxImages = IMAGE_CONFIG.maxImages,
-  initialImages = [],
-  onImagesChange,
-}: UseImageUploadOptions) {
-  const [images, setImages] = useState<string[]>(initialImages);
+export function useImageUpload({ images, onChange, bucket, maxImages }: UseImageUploadOptions) {
+  const [state, setState] = useState<UploadState>(IDLE);
 
-  // Sync with external images changes
-  useEffect(() => {
-    const isDifferent =
-      initialImages.length !== images.length ||
-      initialImages.some((img, i) => img !== images[i]);
+  const setProgress = (step: number, total: number) =>
+    setState((prev) => ({ ...prev, progress: Math.round((step / total) * 100) }));
 
-    if (isDifferent) {
-      setImages(initialImages);
+  const uploadFiles = async (files: File[]) => {
+    const remaining = maxImages - images.length;
+    if (files.length > remaining) {
+      setState((prev) => ({
+        ...prev,
+        error: `Maximum ${maxImages} images. Vous pouvez encore ajouter ${remaining} image(s).`,
+      }));
+      return;
     }
-  }, [initialImages]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const [uploadState, setUploadState] = useState<UploadState>({
-    uploading: false,
-    progress: 0,
-    error: null,
-  });
+    const { valid, errors } = validateFiles(files);
+    if (errors.length > 0) setState((prev) => ({ ...prev, error: errors.join(", ") }));
+    if (valid.length === 0) return;
 
-  const updateImages = useCallback(
-    (newImages: string[]) => {
-      setImages(newImages);
-      onImagesChange(newImages);
-    },
-    [onImagesChange]
-  );
+    setState({ uploading: true, progress: 0, error: null });
 
-  const uploadFiles = useCallback(
-    async (files: File[]) => {
-      // Validate count
-      const remaining = maxImages - images.length;
-      if (files.length > remaining) {
-        setUploadState((prev) => ({
-          ...prev,
-          error: `Maximum ${maxImages} images. Vous pouvez encore ajouter ${remaining} image(s).`,
-        }));
-        return;
+    try {
+      const uploaded: string[] = [];
+      const failures: string[] = [];
+
+      for (const [index, file] of valid.entries()) {
+        setProgress(index + 0.3, valid.length);
+        const compressed = await compressImage(file);
+        setProgress(index + 0.6, valid.length);
+        const result = await uploadToCloudinaryDirect(compressed, UPLOAD_FOLDERS[bucket]);
+        if (result.success && result.url) uploaded.push(result.url);
+        else failures.push(result.error || "Upload failed");
+        setProgress(index + 1, valid.length);
       }
 
-      // Validate file types
-      const validFiles: File[] = [];
-      const errors: string[] = [];
-
-      for (const file of files) {
-        const isValidType =
-          file.type.startsWith("image/") ||
-          file.name.toLowerCase().endsWith(".heic") ||
-          file.name.toLowerCase().endsWith(".heif");
-
-        if (!isValidType) {
-          errors.push(`${file.name}: Type non supporté`);
-          continue;
-        }
-
-        if (file.size > 15 * 1024 * 1024) {
-          errors.push(`${file.name}: Fichier trop volumineux (max 15MB)`);
-          continue;
-        }
-
-        validFiles.push(file);
-      }
-
-      if (errors.length > 0) {
-        setUploadState((prev) => ({
-          ...prev,
-          error: errors.join(", "),
-        }));
-      }
-
-      if (validFiles.length === 0) return;
-
-      setUploadState({ uploading: true, progress: 0, error: null });
-
-      try {
-        const folder = FOLDER_MAP[bucket];
-        const uploadedUrls: string[] = [];
-        const uploadErrors: string[] = [];
-        const total = validFiles.length;
-
-        for (let i = 0; i < validFiles.length; i++) {
-          const file = validFiles[i];
-
-          // Compress image (first 40% of progress)
-          setUploadState((prev) => ({
-            ...prev,
-            progress: Math.round(((i + 0.3) / total) * 100),
-          }));
-
-          const compressed = await compressImage(file);
-
-          // Upload directly to Cloudinary (remaining 60% of progress)
-          setUploadState((prev) => ({
-            ...prev,
-            progress: Math.round(((i + 0.6) / total) * 100),
-          }));
-
-          const result = await uploadToCloudinaryDirect(compressed, folder);
-
-          if (result.success && result.url) {
-            uploadedUrls.push(result.url);
-          } else {
-            uploadErrors.push(result.error || "Upload failed");
-          }
-
-          setUploadState((prev) => ({
-            ...prev,
-            progress: Math.round(((i + 1) / total) * 100),
-          }));
-        }
-
-        if (uploadErrors.length > 0) {
-          setUploadState((prev) => ({
-            ...prev,
-            error: uploadErrors.join(", "),
-            uploading: false,
-          }));
-        } else {
-          setUploadState({ uploading: false, progress: 100, error: null });
-        }
-
-        if (uploadedUrls.length > 0) {
-          updateImages([...images, ...uploadedUrls]);
-        }
-      } catch (error) {
-        setUploadState({
-          uploading: false,
-          progress: 0,
-          error:
-            error instanceof Error ? error.message : "Erreur lors de l'upload",
-        });
-      }
-    },
-    [images, maxImages, bucket, updateImages]
-  );
-
-  const removeImage = useCallback(
-    async (url: string) => {
-      // Update UI immediately (optimistic update)
-      const newImages = images.filter((img) => img !== url);
-      updateImages(newImages);
-
-      // Delete from Cloudinary in background
-      deleteImage(url).catch((error) => {
-        console.error("Failed to delete image:", error);
-      });
-    },
-    [images, updateImages]
-  );
-
-  const reorderImages = useCallback(
-    (fromIndex: number, toIndex: number) => {
-      const newImages = [...images];
-      const [removed] = newImages.splice(fromIndex, 1);
-      newImages.splice(toIndex, 0, removed);
-      updateImages(newImages);
-    },
-    [images, updateImages]
-  );
-
-  const clearError = useCallback(() => {
-    setUploadState((prev) => ({ ...prev, error: null }));
-  }, []);
-
-  return {
-    images,
-    uploading: uploadState.uploading,
-    progress: uploadState.progress,
-    error: uploadState.error,
-    uploadFiles,
-    removeImage,
-    reorderImages,
-    clearError,
-    setImages: updateImages,
+      setState(
+        failures.length > 0
+          ? (prev) => ({ ...prev, uploading: false, error: failures.join(", ") })
+          : { uploading: false, progress: 100, error: null }
+      );
+      if (uploaded.length > 0) onChange([...images, ...uploaded]);
+    } catch (error) {
+      setState({ ...IDLE, error: error instanceof Error ? error.message : "Erreur lors de l'upload" });
+    }
   };
+
+  const removeImage = async (url: string) => {
+    onChange(images.filter((image) => image !== url));
+    deleteImage(url).catch(() => undefined);
+  };
+
+  const reorderImages = (from: number, to: number) => onChange(moveItem(images, from, to));
+
+  const clearError = () => setState((prev) => ({ ...prev, error: null }));
+
+  return { ...state, uploadFiles, removeImage, reorderImages, clearError };
 }

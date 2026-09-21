@@ -1,40 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MessageCircle } from "lucide-react";
-import { createWhatsAppLink } from "@/shared/lib/utils";
+import { whatsappHref } from "@/shared/lib/phone";
+import { COMMUNITY_FIGURES, FIRSTS, KEY_FIGURES } from "../constants";
+import { Story } from "./about/Story";
+import { aboutBody, aboutEyebrow, aboutTitle } from "./about/typography";
 
-// ============================================================
-// Content
-// ============================================================
-
-const KEY_FIGURES = [
-  { value: "1", label: "Année" },
-  { value: "+350", label: "Pièces vendues" },
-  { value: "2", label: "Pop-ups réussis" },
-  { value: "1", label: "Showroom" },
-];
-
-const FIRSTS = [
-  { title: "Ventes privées", text: "Des moments exclusifs avec nos clientes VIP." },
-  { title: "Ruptures de stock", text: "Ouiiiiiii ! Et on adore." },
-];
-
-// Shared typography (same system as the home sections)
-const eyebrow = "m-0 text-[11px] font-medium uppercase tracking-[0.3em] text-[var(--som-primary)]";
-const title =
-  "m-0 mt-4 text-[26px] font-semibold uppercase tracking-[0.06em] text-[var(--som-ink)] md:text-[34px]";
-const body = "text-[15px] font-light leading-[1.85] text-[#4a4a4a]";
-
-// ============================================================
-// AboutContent - editorial layout
-// ============================================================
-
-export function AboutContent() {
-  const whatsappLink = createWhatsAppLink("Bonjour, j'aimerais en savoir plus sur SO'MAYA et vos produits.");
+export function AboutContent({ whatsapp }: { whatsapp: string }) {
+  const whatsappLink = whatsappHref(whatsapp, "Bonjour, j'aimerais en savoir plus sur SO'MAYA et vos produits.");
 
   return (
     <div className="bg-white">
-      {/* Opening */}
       <header className="px-4 pb-10 pt-10 text-center md:px-8 md:pb-14 md:pt-14">
         <nav aria-label="Fil d'Ariane" className="mb-6 text-[11px] uppercase tracking-[0.2em] text-[var(--som-gray)]">
           <Link href="/" className="transition-colors hover:text-[var(--som-primary)]">
@@ -70,13 +46,11 @@ export function AboutContent() {
         </div>
       </div>
 
-      {/* Founder's quote */}
       <section className="px-4 py-20 md:py-28">
         <figure className="m-0 mx-auto max-w-[820px] text-center">
           <blockquote className="m-0 text-[22px] font-light italic leading-[1.5] text-[var(--som-ink)] md:text-[32px]">
-            « Nous croyons que chaque femme mérite de se sentir{" "}
-            <span className="text-[var(--som-primary)]">belle</span> et{" "}
-            <span className="text-[var(--som-primary)]">confiante</span>, à chaque moment de sa vie. »
+            « Nous croyons que chaque femme mérite de se sentir <span className="text-[var(--som-primary)]">belle</span>{" "}
+            et <span className="text-[var(--som-primary)]">confiante</span>, à chaque moment de sa vie. »
           </blockquote>
           <figcaption className="mt-8 text-[11px] uppercase tracking-[0.3em] text-[var(--som-gray)]">
             Fondatrice de SO&apos;MAYA
@@ -84,7 +58,6 @@ export function AboutContent() {
         </figure>
       </section>
 
-      {/* The founder */}
       <Story
         image="/images/boss.jpg"
         imageAlt="La fondatrice de SO'MAYA"
@@ -105,7 +78,6 @@ export function AboutContent() {
         </p>
       </Story>
 
-      {/* Our passion */}
       <Story
         reverse
         image="/images/so_maya_ci_1776781082_3880233341219782649_13316418128.jpg"
@@ -129,12 +101,14 @@ export function AboutContent() {
         </div>
       </Story>
 
-      {/* Key figures */}
-      <section aria-labelledby="figures-title" className="mt-20 bg-[var(--som-primary-50)] px-4 py-16 md:mt-28 md:py-20">
+      <section
+        aria-labelledby="figures-title"
+        className="mt-20 bg-[var(--som-primary-50)] px-4 py-16 md:mt-28 md:py-20"
+      >
         <div className="mx-auto max-w-[1100px]">
           <div className="text-center">
-            <p className={eyebrow}>1 an de style</p>
-            <h2 id="figures-title" className={title}>
+            <p className={aboutEyebrow}>1 an de style</p>
+            <h2 id="figures-title" className={aboutTitle}>
               Nos succès
             </h2>
           </div>
@@ -169,7 +143,6 @@ export function AboutContent() {
         </div>
       </section>
 
-      {/* Community */}
       <div className="pt-20 md:pt-28">
         <Story
           image="/images/communaute.jpg"
@@ -179,8 +152,8 @@ export function AboutContent() {
           heading="Une belle famille"
         >
           <p className="m-0">
-            Plus qu&apos;une boutique, SO&apos;MAYA c&apos;est une communauté de femmes qui partagent les mêmes valeurs :
-            l&apos;élégance, la qualité et le respect de soi.
+            Plus qu&apos;une boutique, SO&apos;MAYA c&apos;est une communauté de femmes qui partagent les mêmes valeurs
+            : l&apos;élégance, la qualité et le respect de soi.
           </p>
           <p className="m-0">
             Un immense merci à toutes nos clientes formidables qui sont venues partager ce moment unique lors de notre
@@ -190,10 +163,7 @@ export function AboutContent() {
             Notre fierté : vous ! Notre si belle communauté à qui nous devons tout.
           </p>
           <dl className="m-0 mt-4 flex gap-12 border-t border-[var(--som-border)] pt-6">
-            {[
-              { value: "+350", label: "Clientes satisfaites" },
-              { value: "2", label: "Événements réussis" },
-            ].map((figure) => (
+            {COMMUNITY_FIGURES.map((figure) => (
               <div key={figure.label} className="flex flex-col-reverse">
                 <dt className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[var(--som-gray)]">{figure.label}</dt>
                 <dd className="m-0 text-[32px] font-light leading-none text-[var(--som-primary)] tabular-nums">
@@ -205,12 +175,11 @@ export function AboutContent() {
         </Story>
       </div>
 
-      {/* Thank you */}
       <section className="px-4 py-20 text-center md:py-28">
         <div className="mx-auto max-w-[620px]">
-          <p className={eyebrow}>Merci</p>
-          <h2 className={title}>1 an de pur bonheur</h2>
-          <p className={`${body} mx-auto mt-5 max-w-[520px]`}>
+          <p className={aboutEyebrow}>Merci</p>
+          <h2 className={aboutTitle}>1 an de pur bonheur</h2>
+          <p className={`${aboutBody} mx-auto mt-5 max-w-[520px]`}>
             Merci à notre belle communauté qui nous soutient depuis le premier jour. Ensemble, continuons à célébrer
             l&apos;élégance ivoirienne.
           </p>
@@ -221,7 +190,6 @@ export function AboutContent() {
         </div>
       </section>
 
-      {/* Visit us */}
       <section className="border-t border-[var(--som-primary-100)] bg-[var(--som-primary-50)] px-4 py-12 text-center md:py-14">
         <p className="m-0 text-[11px] uppercase tracking-[0.3em] text-[var(--som-gray)]">Rendez-nous visite</p>
         <p className="m-0 mt-3 text-[18px] font-normal text-[var(--som-ink)] md:text-[22px]">
@@ -233,57 +201,5 @@ export function AboutContent() {
         </Link>
       </section>
     </div>
-  );
-}
-
-// ============================================================
-// Story block: photo + text, alternating sides
-// ============================================================
-
-function Story({
-  image,
-  imageAlt,
-  imagePosition = "center",
-  imageLabel,
-  eyebrowText,
-  heading,
-  reverse = false,
-  children,
-}: {
-  image: string;
-  imageAlt: string;
-  imagePosition?: string;
-  imageLabel?: string;
-  eyebrowText: string;
-  heading: string;
-  reverse?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="mx-auto max-w-[1240px] px-4 md:px-8 [&+&]:mt-20 md:[&+&]:mt-28">
-      <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16 lg:gap-24">
-        <div className={`relative aspect-[4/5] w-full overflow-hidden bg-[var(--som-primary-50)] ${reverse ? "md:order-2" : ""}`}>
-          <Image
-            src={image}
-            alt={imageAlt}
-            fill
-            sizes="(max-width: 768px) 100vw, 600px"
-            className="object-cover"
-            style={{ objectPosition: imagePosition }}
-          />
-          {imageLabel && (
-            <span className="absolute bottom-4 left-4 bg-white px-3 py-2 text-[10px] uppercase tracking-[0.16em] text-[var(--som-ink)]">
-              {imageLabel}
-            </span>
-          )}
-        </div>
-
-        <div className={`max-w-[480px] ${reverse ? "md:order-1 md:justify-self-end" : ""}`}>
-          <p className={eyebrow}>{eyebrowText}</p>
-          <h2 className={title}>{heading}</h2>
-          <div className={`${body} mt-6 flex flex-col gap-4`}>{children}</div>
-        </div>
-      </div>
-    </section>
   );
 }

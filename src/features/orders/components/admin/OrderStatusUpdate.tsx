@@ -1,85 +1,77 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { updateOrderStatus, type OrderStatus } from '@/features/orders/server/actions';
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { updateOrderStatus } from "../../server/actions";
+import { ORDER_STATUS_LABELS, ORDER_STATUSES } from "../../constants";
+import type { OrderStatus } from "../../types";
 
-type OrderStatusUpdateProps = {
+interface OrderStatusUpdateProps {
   orderId: string;
   currentStatus: OrderStatus;
-};
+}
 
-const STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
-  { value: 'pending', label: 'En attente' },
-  { value: 'confirmed', label: 'Confirmée' },
-  { value: 'preparing', label: 'En préparation' },
-  { value: 'shipped', label: 'En livraison' },
-  { value: 'delivered', label: 'Livrée' },
-  { value: 'cancelled', label: 'Annulée' },
-];
+type Feedback = { type: "success" | "error"; text: string };
 
-export function OrderStatusUpdate({
-  orderId,
-  currentStatus,
-}: OrderStatusUpdateProps) {
+const FEEDBACK_DURATION_MS = 3000;
+
+export function OrderStatusUpdate({ orderId, currentStatus }: OrderStatusUpdateProps) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [status, setStatus] = useState<OrderStatus>(currentStatus);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
 
-  const handleChange = async (newStatus: OrderStatus) => {
-    if (newStatus === status) return;
+  useEffect(() => {
+    if (feedback?.type !== "success") return;
+    const timer = setTimeout(() => setFeedback(null), FEEDBACK_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, [feedback]);
 
-    const previousStatus = status;
-    setStatus(newStatus);
-    setLoading(true);
-    setMessage(null);
+  const handleChange = (next: OrderStatus) => {
+    if (next === status) return;
+    const previous = status;
+    setStatus(next);
+    setFeedback(null);
 
-    const result = await updateOrderStatus(orderId, newStatus);
-
-    if (result.success) {
-      setMessage({ type: 'success', text: 'Statut mis à jour' });
-      router.refresh();
-      setTimeout(() => setMessage(null), 3000);
-    } else {
-      setMessage({ type: 'error', text: result.error || 'Erreur' });
-      setStatus(previousStatus);
-    }
-    setLoading(false);
+    startTransition(async () => {
+      const result = await updateOrderStatus({ id: orderId, status: next });
+      if (result.ok) {
+        setFeedback({ type: "success", text: "Statut mis à jour" });
+        router.refresh();
+      } else {
+        setFeedback({ type: "error", text: result.error });
+        setStatus(previous);
+      }
+    });
   };
 
   return (
     <div>
       <select
+        aria-label="Statut de la commande"
         value={status}
-        onChange={(e) => handleChange(e.target.value as OrderStatus)}
-        disabled={loading}
+        onChange={(event) => handleChange(event.target.value as OrderStatus)}
+        disabled={isPending}
         style={{
-          width: '100%',
-          padding: '10px 14px',
+          width: "100%",
+          padding: "10px 14px",
           fontSize: 14,
-          border: '1px solid rgba(81,31,41,0.2)',
-          background: 'white',
-          color: '#000000',
-          cursor: loading ? 'wait' : 'pointer',
-          opacity: loading ? 0.7 : 1,
+          border: "1px solid rgba(81,31,41,0.2)",
+          background: "white",
+          color: "#000000",
+          cursor: isPending ? "wait" : "pointer",
+          opacity: isPending ? 0.7 : 1,
         }}
       >
-        {STATUS_OPTIONS.map(({ value, label }) => (
+        {ORDER_STATUSES.map((value) => (
           <option key={value} value={value}>
-            {label}
+            {ORDER_STATUS_LABELS[value]}
           </option>
         ))}
       </select>
-      {message && (
-        <p
-          style={{
-            marginTop: 8,
-            fontSize: 12,
-            color: message.type === 'success' ? '#065F46' : '#991B1B',
-          }}
-        >
-          {message.text}
+      {feedback && (
+        <p style={{ marginTop: 8, fontSize: 12, color: feedback.type === "success" ? "#065F46" : "#991B1B" }}>
+          {feedback.text}
         </p>
       )}
     </div>

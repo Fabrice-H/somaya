@@ -34,9 +34,12 @@ export function useProductPurchase(product: ProductWithCategoryAndLots) {
 
   const missingChoice = hasLots
     ? !selectedItem && "Sélectionnez un article"
-    : (sizes.length > 0 && !size && "Choisissez une taille") || (colors.length > 0 && !color && "Choisissez une couleur");
+    : (sizes.length > 0 && !size && "Choisissez une taille") ||
+      (colors.length > 0 && !color && "Choisissez une couleur");
 
-  const isSoldOut = hasLots ? lotOptions.every((lot) => lot.items.every((item) => item.stock <= 0)) : product.stock <= 0;
+  const isSoldOut = hasLots
+    ? lotOptions.every((lot) => lot.items.every((item) => item.stock <= 0))
+    : product.stock <= 0;
   const canAdd = !missingChoice && availableStock > 0;
 
   const resetFeedback = () => {
@@ -66,7 +69,11 @@ export function useProductPurchase(product: ProductWithCategoryAndLots) {
       return;
     }
     if (quantity > availableStock) {
-      setError(availableStock <= 0 ? "Ce produit n'est plus disponible" : `Seulement ${availableStock} article(s) disponible(s)`);
+      setError(
+        availableStock <= 0
+          ? "Ce produit n'est plus disponible"
+          : `Seulement ${availableStock} article(s) disponible(s)`
+      );
       return;
     }
 

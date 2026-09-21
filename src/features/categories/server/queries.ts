@@ -1,10 +1,13 @@
 import "server-only";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
-import { asc, eq, sql } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { categories, db } from "@/shared/lib/db";
+import { assertAdmin } from "@/features/auth/server/session";
 import { CATEGORIES_CACHE_TAG } from "../constants";
-import type { CategoryWithProductCount } from "../types";
+import { categoryIdSchema } from "../schemas";
+import { toAdminCategory } from "./mappers";
+import type { Category, CategoryOption } from "../types";
 
 export const getActiveCategories = unstable_cache(
   () =>
@@ -23,14 +26,24 @@ export const getCategoryBySlug = cache(async (slug: string) => {
   return category ?? null;
 });
 
-export async function getCategoriesWithProductCount() {
-  const result = await db.execute(sql`
-    SELECT c.*, COALESCE(COUNT(p.id), 0)::int AS "productCount"
-    FROM categories c
-    LEFT JOIN products p ON p.category_id = c.id AND p.is_active = true
-    WHERE c.is_active = true
-    GROUP BY c.id
-    ORDER BY c.position ASC
-  `);
-  return result.rows as CategoryWithProductCount[];
+export async function getCategories(): Promise<Category[]> {
+  await assertAdmin();
+  const rows = await db.query.categories.findMany({ orderBy: [asc(categories.position)] });
+  return rows.map(toAdminCategory);
+}
+
+export async function getCategoryById(id: string): Promise<Category | null> {
+  await assertAdmin();
+  if (!categoryIdSchema.safeParse(id).success) return null;
+  const row = await db.query.categories.findFirst({ where: eq(categories.id, id) });
+  return row ? toAdminCategory(row) : null;
+}
+
+export async function getCategoryOptions(): Promise<CategoryOption[]> {
+  await assertAdmin();
+  return db.query.categories.findMany({
+    where: eq(categories.isActive, true),
+    orderBy: [asc(categories.name)],
+    columns: { id: true, name: true, slug: true },
+  });
 }

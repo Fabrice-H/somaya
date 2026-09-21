@@ -2,18 +2,9 @@ import Link from "next/link";
 import { ProductCard } from "@/features/products/components/ProductCard";
 import type { ProductSummary } from "@/features/products/types";
 
-// ============================================================
-// Types
-// ============================================================
-
 interface BestSellersSectionProps {
   products: ProductSummary[];
 }
-
-// ============================================================
-// Server Component - BestSellersSection
-// Design: Centered header, 4-column grid (matching old design)
-// ============================================================
 
 export function BestSellersSection({ products }: BestSellersSectionProps) {
   if (products.length === 0) {
@@ -29,7 +20,6 @@ export function BestSellersSection({ products }: BestSellersSectionProps) {
         margin: "0 auto",
       }}
     >
-      {/* Header - Centered */}
       <div style={{ textAlign: "center", marginBottom: "52px" }}>
         <div
           style={{
@@ -56,14 +46,12 @@ export function BestSellersSection({ products }: BestSellersSectionProps) {
         </h2>
       </div>
 
-      {/* Grid - 4 columns responsive */}
       <div className="grid-cols-4-responsive">
         {products.slice(0, 4).map((product, index) => (
           <ProductCard key={product.id} product={product} priority={index < 2} />
         ))}
       </div>
 
-      {/* Voir tout button - centered */}
       <div style={{ textAlign: "center", marginTop: "48px" }}>
         <Link
           href="/catalogue"

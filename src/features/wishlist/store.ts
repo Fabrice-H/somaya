@@ -19,7 +19,6 @@ export const useWishlistStore = create<WishlistState>()(
         })),
       has: (productId) => get().productIds.includes(productId),
     }),
-    // Rehydrated in Providers after mount to avoid SSR mismatch on hearts
     { name: "somaya-wishlist", skipHydration: true }
   )
 );

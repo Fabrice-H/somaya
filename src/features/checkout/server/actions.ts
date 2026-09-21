@@ -6,6 +6,7 @@ import { db, orderItems, orders } from "@/shared/lib/db";
 import { getDeliveryFee } from "@/features/settings/server/queries";
 import { generateOrderNumber } from "@/features/orders/utils";
 import { ORDERS_CACHE_TAG } from "@/features/orders/constants";
+import { PICKUP_LABEL } from "../constants";
 import { checkoutSchema } from "../schemas";
 import type { PlaceOrderResult } from "../types";
 import { PricingError, priceCheckoutLines } from "./pricing";
@@ -23,10 +24,12 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Informations invalides", fieldErrors };
   }
 
-  const { customer, lines } = parsed.data;
+  const { customer, deliveryMethod, lines } = parsed.data;
+  const isPickup = deliveryMethod === "pickup";
 
   try {
-    const [pricedLines, deliveryFee] = await Promise.all([priceCheckoutLines(lines), getDeliveryFee()]);
+    const [pricedLines, configuredFee] = await Promise.all([priceCheckoutLines(lines), getDeliveryFee()]);
+    const deliveryFee = isPickup ? 0 : configuredFee;
     const subtotal = pricedLines.reduce((sum, line) => sum + line.lineTotal, 0);
     const total = subtotal + deliveryFee;
     const orderId = randomUUID();
@@ -39,8 +42,8 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
         customerFirstName: customer.firstName,
         customerLastName: customer.lastName,
         customerPhone: customer.phone,
-        customerAddress: customer.address,
-        customerCommune: customer.commune,
+        customerAddress: isPickup ? PICKUP_LABEL : customer.address,
+        customerCommune: isPickup ? PICKUP_LABEL : customer.commune,
         customerNotes: customer.notes || null,
         paymentMethod: "cash",
         subtotal: String(subtotal),
@@ -67,7 +70,10 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     ]);
 
     revalidateTag(ORDERS_CACHE_TAG, "max");
-    return { ok: true, order: { customer, orderNumber, lines: pricedLines, subtotal, deliveryFee, total } };
+    return {
+      ok: true,
+      order: { customer, deliveryMethod, orderNumber, lines: pricedLines, subtotal, deliveryFee, total },
+    };
   } catch (error) {
     if (error instanceof PricingError) return { ok: false, error: error.message };
     console.error("placeOrder failed", error);

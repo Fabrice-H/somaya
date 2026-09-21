@@ -3,7 +3,6 @@ import { Poppins } from "next/font/google";
 import { Providers } from "@/shared/providers/Providers";
 import "./globals.css";
 
-// Poppins everywhere (client request) - Helvetica Neue / Arial fallback
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
@@ -27,8 +26,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "SO'MAYA | La Qualité, Notre Référence",
-    description:
-      "L'élégance africaine moderne. Bijoux, sacs, montres et vêtements de qualité premium.",
+    description: "L'élégance africaine moderne. Bijoux, sacs, montres et vêtements de qualité premium.",
     locale: "fr_CI",
     type: "website",
     siteName: "SO'MAYA",

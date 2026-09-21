@@ -2,15 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Category } from "@/shared/lib/db/schema";
 
-// ============================================================
-// Types
-// ============================================================
-
 interface CollectionsSectionProps {
   categories: Category[];
 }
 
-// Default fallback images based on category slug
 const FALLBACK_IMAGES: Record<string, string> = {
   sacs: "/images/so_maya_ci_1780747898_3913519226406721244_13316418128.jpg",
   femmes: "/images/so_maya_ci_1718012343_3387255504255434625_13316418128-1819c16c.jpg",
@@ -21,20 +16,12 @@ const FALLBACK_IMAGES: Record<string, string> = {
   default: "/images/so_maya_ci_1780747898_3913519226406721244_13316418128.jpg",
 };
 
-// Get image URL with fallback
 function getCategoryImage(category: Category): string {
   if (category.imageUrl) return category.imageUrl;
   return FALLBACK_IMAGES[category.slug] || FALLBACK_IMAGES.default;
 }
 
-// ============================================================
-// CollectionsSection
-// Design: white storefront, 3-column tile grid, the last tile
-// links to the whole shop
-// ============================================================
-
 export function CollectionsSection({ categories }: CollectionsSectionProps) {
-  // 5 categories + the "Toute la boutique" tile = two full rows of 3
   const displayCategories = categories.slice(0, 5);
 
   if (displayCategories.length === 0) {
@@ -48,7 +35,6 @@ export function CollectionsSection({ categories }: CollectionsSectionProps) {
       style={{ fontFamily: "var(--font-stack)" }}
     >
       <div className="mx-auto max-w-[1240px]">
-        {/* Header */}
         <div className="mb-10 text-center md:mb-12">
           <h2
             className="m-0 text-[26px] font-semibold tracking-[0.06em] text-[var(--som-ink)] md:text-[36px]"
@@ -61,7 +47,6 @@ export function CollectionsSection({ categories }: CollectionsSectionProps) {
           </p>
         </div>
 
-        {/* Grid */}
         <div className="grid grid-cols-2 gap-1 md:grid-cols-3">
           {displayCategories.map((category, index) => (
             <Link
@@ -79,13 +64,11 @@ export function CollectionsSection({ categories }: CollectionsSectionProps) {
                 sizes="(max-width: 768px) 50vw, 400px"
               />
 
-              {/* Bottom gradient for label legibility */}
               <div
                 aria-hidden
                 className="absolute inset-0"
                 style={{
-                  background:
-                    "linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%)",
+                  background: "linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%)",
                 }}
               />
 
@@ -103,7 +86,6 @@ export function CollectionsSection({ categories }: CollectionsSectionProps) {
             </Link>
           ))}
 
-          {/* Whole shop tile */}
           <Link
             href="/catalogue"
             className="group flex aspect-[3/4] flex-col items-center justify-center bg-[var(--som-surface)] px-4 text-center transition-colors duration-300 bg-[#ebebe8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--som-ink)]"

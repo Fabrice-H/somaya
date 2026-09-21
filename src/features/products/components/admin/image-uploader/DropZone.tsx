@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState } from "react";
+import { useState, type ChangeEvent, type DragEvent } from "react";
 import { Upload, Loader2 } from "lucide-react";
 import clsx from "clsx";
 import { IMAGE_CONFIG } from "@/features/media/constants";
@@ -9,61 +9,41 @@ interface DropZoneProps {
   onFilesSelected: (files: File[]) => void;
   uploading: boolean;
   progress: number;
-  maxImages: number;
-  currentCount: number;
+  remaining: number;
 }
 
-export const DropZone = memo(function DropZone({
-  onFilesSelected,
-  uploading,
-  progress,
-  maxImages,
-  currentCount,
-}: DropZoneProps) {
+const ACCEPTED_TYPES = IMAGE_CONFIG.acceptedTypes.join(",");
+const ACCEPTED_FORMATS = IMAGE_CONFIG.acceptedExtensions.join(", ");
+
+export function DropZone({ onFilesSelected, uploading, progress, remaining }: DropZoneProps) {
   const [isDragOver, setIsDragOver] = useState(false);
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent<HTMLLabelElement>) => {
-      e.preventDefault();
-      setIsDragOver(false);
-
-      const files = Array.from(e.dataTransfer.files).filter((file) =>
-        file.type.startsWith("image/")
-      );
-
-      if (files.length > 0) {
-        onFilesSelected(files);
-      }
-    },
-    [onFilesSelected]
-  );
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-  }, []);
-
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      if (files && files.length > 0) {
-        onFilesSelected(Array.from(files));
-      }
-      // Reset input value to allow re-selecting same files
-      e.target.value = "";
-    },
-    [onFilesSelected]
-  );
-
-  const remaining = maxImages - currentCount;
   if (remaining <= 0) return null;
 
-  const acceptedFormats = IMAGE_CONFIG.acceptedExtensions.join(", ");
+  const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const files = Array.from(e.dataTransfer.files).filter((file) => file.type.startsWith("image/"));
+    if (files.length > 0) onFilesSelected(files);
+  };
+
+  const handleDragOver = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+    if (files && files.length > 0) onFilesSelected(Array.from(files));
+    e.target.value = "";
+  };
+
+  const plural = remaining > 1 ? "s" : "";
 
   return (
     <label
@@ -81,7 +61,7 @@ export const DropZone = memo(function DropZone({
     >
       <input
         type="file"
-        accept={IMAGE_CONFIG.acceptedTypes.join(",")}
+        accept={ACCEPTED_TYPES}
         multiple
         onChange={handleChange}
         disabled={uploading}
@@ -95,27 +75,19 @@ export const DropZone = memo(function DropZone({
             {progress < 50 ? "Optimisation..." : "Upload..."} {progress}%
           </span>
           <div className="w-48 h-2 bg-[#511f29]/10 rounded-full mt-2 overflow-hidden">
-            <div
-              className="h-full bg-[#511f29] transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
+            <div className="h-full bg-[#511f29] transition-all duration-300" style={{ width: `${progress}%` }} />
           </div>
         </div>
       ) : (
         <>
           <Upload size={32} className="text-[#3c161e]/40 mb-2" />
-          <span className="text-sm text-[#3c161e]/60">
-            Cliquez ou glissez vos images ici
-          </span>
+          <span className="text-sm text-[#3c161e]/60">Cliquez ou glissez vos images ici</span>
           <span className="text-xs text-[#3c161e]/40 mt-1">
-            {remaining} image{remaining > 1 ? "s" : ""} restante
-            {remaining > 1 ? "s" : ""}
+            {remaining} image{plural} restante{plural}
           </span>
-          <span className="text-xs text-[#3c161e]/30 mt-0.5">
-            Formats: {acceptedFormats}
-          </span>
+          <span className="text-xs text-[#3c161e]/30 mt-0.5">Formats: {ACCEPTED_FORMATS}</span>
         </>
       )}
     </label>
   );
-});
+}

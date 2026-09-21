@@ -1,22 +1,15 @@
-'use client';
+"use client";
 
-import type { RichTextViewerProps } from './types';
+import type { RichTextViewerProps } from "./types";
 
-/**
- * Displays HTML content from rich text editor
- * Uses dangerouslySetInnerHTML but content should be sanitized on save
- */
-export function RichTextViewer({ content, className = '' }: RichTextViewerProps) {
-  if (!content || content === '<p></p>') {
+export function RichTextViewer({ content, className = "" }: RichTextViewerProps) {
+  if (!content || content === "<p></p>") {
     return null;
   }
 
   return (
     <>
-      <div
-        className={`rich-text-content ${className}`}
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
+      <div className={`rich-text-content ${className}`} dangerouslySetInnerHTML={{ __html: content }} />
       <style jsx global>{`
         .rich-text-content h2 {
           font-size: 1.25rem;

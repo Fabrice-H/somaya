@@ -10,12 +10,10 @@ export interface CartItem {
   price: number;
   stock: number;
   quantity: number;
-  // Lot info (optional)
   lotId: string | null;
   lotName: string | null;
   lotPrice: number | null;
   lotStock: number | null;
-  // Item info (for lot items with individual stock)
   itemId: string | null;
   itemLabel: string | null;
 }
@@ -51,7 +49,6 @@ interface CartState {
   items: Record<string, CartItem>;
   isOpen: boolean;
 
-  // Actions
   addItem: (params: AddItemParams, quantity?: number) => AddItemResult;
   removeItem: (productId: string, lotId?: string | null, itemId?: string | null) => void;
   updateQuantity: (productId: string, quantity: number, lotId?: string | null, itemId?: string | null) => void;
@@ -62,7 +59,6 @@ interface CartState {
   closeCart: () => void;
   toggleCart: () => void;
 
-  // Computed
   getItemCount: () => number;
   getSubtotal: () => number;
   hasItems: () => boolean;
@@ -80,10 +76,8 @@ export const useCartStore = create<CartState>()(
         const key = getCartKey(params.productId, params.lotId, params.itemId);
         const existingItem = get().items[key];
 
-        // Determine stock limit (lot stock if lot, otherwise product stock)
         const maxStock = params.lotStock ?? params.stock;
 
-        // Check if already at stock limit
         if (existingItem && existingItem.quantity >= maxStock) {
           set({ isOpen: true });
           return {
@@ -95,7 +89,6 @@ export const useCartStore = create<CartState>()(
         }
 
         if (existingItem) {
-          // Increment quantity
           const newQuantity = Math.min(existingItem.quantity + quantity, maxStock);
           set((state) => ({
             items: {
@@ -112,7 +105,6 @@ export const useCartStore = create<CartState>()(
           };
         }
 
-        // Add new item
         const newItem: CartItem = {
           productId: params.productId,
           productName: params.productName,
@@ -239,7 +231,6 @@ export const useCartStore = create<CartState>()(
       name: "somaya-cart",
       version: 3, // Bump version for new itemId field
       migrate: (persistedState: unknown, version: number) => {
-        // Clear old cart data on version change (breaking change)
         if (version < 3) {
           return { items: {}, isOpen: false };
         }

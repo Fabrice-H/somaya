@@ -1,6 +1,6 @@
-import { Metadata } from "next";
-import { getPriceLots, getCategories } from "@/features/lots/server/actions";
-import { LotsPageContent } from "@/features/lots/components/admin/LotsPageContent";
+import type { Metadata } from "next";
+import { getPriceLots } from "@/features/lots/server/queries";
+import { LotsPageContent } from "@/features/lots/components/admin/list/LotsPageContent";
 
 export const metadata: Metadata = {
   title: "Lots de Prix | Admin SO'MAYA",
@@ -8,10 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLotsPage() {
-  const [lots, categories] = await Promise.all([
-    getPriceLots(),
-    getCategories(),
-  ]);
-
-  return <LotsPageContent initialLots={lots} categories={categories} />;
+  const lots = await getPriceLots();
+  return <LotsPageContent initialLots={lots} />;
 }

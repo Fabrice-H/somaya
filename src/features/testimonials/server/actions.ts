@@ -1,174 +1,67 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { db, testimonials } from "@/shared/lib/db";
-import { eq, asc } from "drizzle-orm";
 import { requireAdmin } from "@/features/auth/server/session";
-import type { Testimonial } from "@/shared/lib/db/schema";
+import { ADMIN_TESTIMONIALS_PATH, TESTIMONIALS_CACHE_TAG } from "../constants";
+import { testimonialSchema, testimonialUpdateSchema } from "../schemas";
+import type { TestimonialActionResult, TestimonialInput } from "../types";
 
-export type TestimonialData = {
-  id: string;
-  name: string;
-  location: string | null;
-  image: string | null;
-  text: string;
-  rating: number;
-  isActive: boolean;
-  sortOrder: number;
-};
+const UNAUTHORIZED: TestimonialActionResult = { success: false, error: "Non autorisé" };
 
-function toTestimonialData(data: Testimonial): TestimonialData {
-  return {
-    id: data.id,
-    name: data.name,
-    location: data.location,
-    image: data.image,
-    text: data.text,
-    rating: data.rating,
-    isActive: data.isActive,
-    sortOrder: data.sortOrder,
-  };
+function revalidateTestimonials() {
+  revalidatePath(ADMIN_TESTIMONIALS_PATH);
+  revalidateTag(TESTIMONIALS_CACHE_TAG, "max");
 }
 
-/**
- * Get all testimonials for admin
- */
-export async function getTestimonials(): Promise<TestimonialData[]> {
-  const result = await db.query.testimonials.findMany({
-    orderBy: [asc(testimonials.sortOrder)],
-  });
-  return result.map(toTestimonialData);
-}
+export async function createTestimonial(input: TestimonialInput): Promise<TestimonialActionResult> {
+  if (!(await requireAdmin())) return UNAUTHORIZED;
 
-/**
- * Get active testimonials for public display
- */
-export async function getActiveTestimonials(): Promise<TestimonialData[]> {
-  const result = await db.query.testimonials.findMany({
-    where: eq(testimonials.isActive, true),
-    orderBy: [asc(testimonials.sortOrder)],
-  });
-  return result.map(toTestimonialData);
-}
-
-/**
- * Get single testimonial
- */
-export async function getTestimonial(id: string): Promise<TestimonialData | null> {
-  const result = await db.query.testimonials.findFirst({
-    where: eq(testimonials.id, id),
-  });
-  if (!result) return null;
-  return toTestimonialData(result);
-}
-
-/**
- * Create testimonial
- */
-export async function createTestimonial(
-  data: Omit<TestimonialData, "id">
-): Promise<{ success: boolean; error?: string; id?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
+  const parsed = testimonialSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message };
 
   try {
-    const [result] = await db
-      .insert(testimonials)
-      .values({
-        name: data.name,
-        location: data.location,
-        image: data.image,
-        text: data.text,
-        rating: data.rating,
-        isActive: data.isActive,
-        sortOrder: data.sortOrder,
-      })
-      .returning({ id: testimonials.id });
-
-    revalidatePath("/admin/temoignages");
-    revalidateTag("testimonials", "max");
-
-    return { success: true, id: result.id };
+    const [row] = await db.insert(testimonials).values(parsed.data).returning({ id: testimonials.id });
+    revalidateTestimonials();
+    return { success: true, id: row.id };
   } catch (error) {
-    console.error("Error creating testimonial:", error);
+    console.error("createTestimonial failed:", error);
     return { success: false, error: "Erreur lors de la création" };
   }
 }
 
-/**
- * Update testimonial
- */
 export async function updateTestimonial(
   id: string,
-  data: Partial<Omit<TestimonialData, "id">>
-): Promise<{ success: boolean; error?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
+  input: Partial<TestimonialInput>
+): Promise<TestimonialActionResult> {
+  if (!(await requireAdmin())) return UNAUTHORIZED;
+
+  const parsed = testimonialUpdateSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message };
 
   try {
     await db
       .update(testimonials)
-      .set({
-        ...data,
-        updatedAt: new Date(),
-      })
+      .set({ ...parsed.data, updatedAt: new Date() })
       .where(eq(testimonials.id, id));
-
-    revalidatePath("/admin/temoignages");
-    revalidateTag("testimonials", "max");
-
+    revalidateTestimonials();
     return { success: true };
   } catch (error) {
-    console.error("Error updating testimonial:", error);
+    console.error("updateTestimonial failed:", error);
     return { success: false, error: "Erreur lors de la mise à jour" };
   }
 }
 
-/**
- * Delete testimonial
- */
-export async function deleteTestimonial(
-  id: string
-): Promise<{ success: boolean; error?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
+export async function deleteTestimonial(id: string): Promise<TestimonialActionResult> {
+  if (!(await requireAdmin())) return UNAUTHORIZED;
 
   try {
     await db.delete(testimonials).where(eq(testimonials.id, id));
-
-    revalidatePath("/admin/temoignages");
-    revalidateTag("testimonials", "max");
-
+    revalidateTestimonials();
     return { success: true };
   } catch (error) {
-    console.error("Error deleting testimonial:", error);
+    console.error("deleteTestimonial failed:", error);
     return { success: false, error: "Erreur lors de la suppression" };
-  }
-}
-
-/**
- * Reorder testimonials
- */
-export async function reorderTestimonials(
-  items: { id: string; sortOrder: number }[]
-): Promise<{ success: boolean; error?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
-
-  try {
-    for (const item of items) {
-      await db
-        .update(testimonials)
-        .set({ sortOrder: item.sortOrder })
-        .where(eq(testimonials.id, item.id));
-    }
-
-    revalidatePath("/admin/temoignages");
-    revalidateTag("testimonials", "max");
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error reordering testimonials:", error);
-    return { success: false, error: "Erreur lors du réordonnancement" };
   }
 }

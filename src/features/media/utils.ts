@@ -1,41 +1,20 @@
-import { cloudinary } from "@/features/media/server/cloudinary";
+import { VIDEO_CONFIG } from "./constants";
 
-/**
- * Get optimized image URL with transformations
- */
-export function getOptimizedUrl(
-  publicId: string,
-  options?: {
-    width?: number;
-    height?: number;
-    crop?: string;
-    quality?: string;
-  }
-): string {
-  return cloudinary.url(publicId, {
-    secure: true,
-    transformation: [
-      {
-        width: options?.width || 800,
-        height: options?.height || 1000,
-        crop: options?.crop || "fill",
-        quality: options?.quality || "auto",
-        fetch_format: "auto",
-      },
-    ],
-  });
+const MANAGED_PREFIX = "somaya/";
+
+export function getPublicIdFromUrl(url: string): string | null {
+  const match = url.match(/\/v\d+\/(.+)\.\w+$/);
+  return match ? match[1] : null;
 }
 
-/**
- * Extract public ID from Cloudinary URL
- */
-export function getPublicIdFromUrl(url: string): string | null {
-  try {
-    // URL format: https://res.cloudinary.com/{cloud_name}/image/upload/{version}/{folder}/{public_id}.{format}
-    const regex = /\/v\d+\/(.+)\.\w+$/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-  } catch {
-    return null;
-  }
+export function isManagedPublicId(publicId: string): boolean {
+  return publicId.startsWith(MANAGED_PREFIX);
+}
+
+export function isImageFile(file: File): boolean {
+  return file.type.startsWith("image/") || /\.(heic|heif)$/i.test(file.name);
+}
+
+export function isVideoFile(file: File): boolean {
+  return file.type.startsWith("video/") || VIDEO_CONFIG.extensionPattern.test(file.name);
 }

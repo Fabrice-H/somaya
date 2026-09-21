@@ -27,7 +27,6 @@ export function ContactContent({ contact }: { contact: StoreContact }) {
 
   return (
     <div className="bg-white">
-      {/* Header */}
       <header className="px-4 pb-10 pt-10 text-center md:px-8 md:pb-14 md:pt-14">
         <nav aria-label="Fil d'Ariane" className="mb-6 text-[11px] uppercase tracking-[0.2em] text-[var(--som-gray)]">
           <Link href="/" className="transition-colors hover:text-[var(--som-primary)]">
@@ -51,13 +50,9 @@ export function ContactContent({ contact }: { contact: StoreContact }) {
 
       <section className="mx-auto max-w-[1240px] px-4 pb-20 md:px-8 md:pb-28">
         <div className="grid gap-12 border-t border-[var(--som-border)] pt-10 md:pt-14 lg:grid-cols-[1fr_1.15fr] lg:gap-20">
-          {/* Details */}
           <div>
-            {/* Primary action */}
             <div className="bg-[var(--som-primary-50)] px-6 py-8 md:px-8">
-              <p className="m-0 text-[11px] uppercase tracking-[0.2em] text-[var(--som-primary)]">
-                Le plus rapide
-              </p>
+              <p className="m-0 text-[11px] uppercase tracking-[0.2em] text-[var(--som-primary)]">Le plus rapide</p>
               <p className="m-0 mt-2 text-[20px] font-medium text-[var(--som-ink)]">Écrivez-nous sur WhatsApp</p>
               <p className="m-0 mt-1 text-[14px] font-light text-[#4a4a4a]">
                 Commandes, disponibilités, conseils : on vous répond rapidement.
@@ -73,7 +68,6 @@ export function ContactContent({ contact }: { contact: StoreContact }) {
               </a>
             </div>
 
-            {/* Info rows */}
             <dl className="m-0 mt-4">
               <div className="grid gap-2 border-b border-[var(--som-border)] py-6 sm:grid-cols-[140px_1fr] sm:gap-6">
                 <dt className={rowLabel}>Téléphone</dt>
@@ -120,7 +114,6 @@ export function ContactContent({ contact }: { contact: StoreContact }) {
             </dl>
           </div>
 
-          {/* Map - desaturated to match the palette, full colour on hover */}
           <div className="relative min-h-[380px] overflow-hidden bg-[var(--som-primary-50)] lg:min-h-full">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3971.9631550495205!2d-3.9620294!3d5.4225692!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfc1930016d4bcdf%3A0x566d63be49c7de8d!2sSO'MAYA!5e0!3m2!1sfr!2sci!4v1785570866631!5m2!1sfr!2sci"

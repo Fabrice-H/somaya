@@ -1,29 +1,22 @@
 "use client";
 
-import { memo, useCallback } from "react";
-import { useProductFormStore, useProductFormImages } from "@/features/products/stores/product-form-store";
-import { ImageUploader } from "@/features/products/components/admin/image-uploader/ImageUploader";
+import { useProductFormImages, useProductFormStore } from "@/features/products/stores/product-form-store";
+import { PRODUCT_MAX_IMAGES } from "@/features/products/constants";
+import { ImageUploader } from "../image-uploader/ImageUploader";
+import { FormCard } from "./FormCard";
 
-export const ImagesSection = memo(function ImagesSection() {
+export function ImagesSection() {
   const images = useProductFormImages();
   const setField = useProductFormStore((s) => s.setField);
 
-  const handleImagesChange = useCallback(
-    (newImages: string[]) => {
-      setField("images", newImages);
-    },
-    [setField]
-  );
-
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm">
-      <h3 className="text-lg font-medium text-[#3c161e] mb-4">Images</h3>
+    <FormCard title="Images">
       <ImageUploader
         images={images}
-        onChange={handleImagesChange}
+        onChange={(next) => setField("images", next)}
         bucket="products"
-        maxImages={5}
+        maxImages={PRODUCT_MAX_IMAGES}
       />
-    </div>
+    </FormCard>
   );
-});
+}

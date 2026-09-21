@@ -96,7 +96,10 @@ export async function Footer() {
               </li>
               {contact.email && (
                 <li>
-                  <a href={`mailto:${contact.email}`} className={`${linkClass} inline-flex items-center gap-2.5 break-all`}>
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className={`${linkClass} inline-flex items-center gap-2.5 break-all`}
+                  >
                     <Mail size={16} strokeWidth={1.5} aria-hidden />
                     {contact.email}
                   </a>

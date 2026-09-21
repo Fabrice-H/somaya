@@ -1,6 +1,3 @@
-/**
- * Rich text editor props
- */
 export type RichTextEditorProps = {
   value: string;
   onChange: (value: string) => void;
@@ -13,9 +10,6 @@ export type RichTextEditorProps = {
   className?: string;
 };
 
-/**
- * Rich text viewer props
- */
 export type RichTextViewerProps = {
   content: string;
   className?: string;

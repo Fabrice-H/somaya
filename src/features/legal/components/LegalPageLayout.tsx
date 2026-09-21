@@ -11,7 +11,6 @@ interface LegalPageLayoutProps {
   children: React.ReactNode;
 }
 
-
 export async function LegalPageLayout({ title, lastUpdated, children }: LegalPageLayoutProps) {
   const contact = await getStoreContact();
   const whatsappUrl = whatsappHref(contact.whatsapp);
@@ -19,7 +18,6 @@ export async function LegalPageLayout({ title, lastUpdated, children }: LegalPag
 
   return (
     <div className="bg-white">
-      {/* Header */}
       <header className="px-4 pb-10 pt-10 text-center md:px-8 md:pb-14 md:pt-14">
         <nav aria-label="Fil d'Ariane" className="mb-6 text-[11px] uppercase tracking-[0.2em] text-[var(--som-gray)]">
           <Link href="/" className="transition-colors hover:text-[var(--som-primary)]">
@@ -42,7 +40,6 @@ export async function LegalPageLayout({ title, lastUpdated, children }: LegalPag
       </header>
 
       <div className="mx-auto grid max-w-[1100px] gap-12 border-t border-[var(--som-border)] px-4 pb-20 pt-10 md:px-8 md:pb-28 md:pt-14 lg:grid-cols-[220px_1fr] lg:gap-20">
-        {/* Summary (desktop) */}
         <aside className="hidden lg:block">
           <div className="sticky top-24">
             <LegalToc containerId="legal-content" />
@@ -54,10 +51,11 @@ export async function LegalPageLayout({ title, lastUpdated, children }: LegalPag
             {children}
           </article>
 
-          {/* Help */}
           <div className="mt-16 bg-[var(--som-primary-50)] px-6 py-8 md:px-10">
             <p className="m-0 text-[11px] uppercase tracking-[0.2em] text-[var(--som-primary)]">Une question ?</p>
-            <p className="m-0 mt-2 text-[18px] font-medium text-[var(--som-ink)]">Notre équipe vous répond sur WhatsApp</p>
+            <p className="m-0 mt-2 text-[18px] font-medium text-[var(--som-ink)]">
+              Notre équipe vous répond sur WhatsApp
+            </p>
             <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-3">
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn-primary">
                 <MessageCircle size={16} strokeWidth={1.5} aria-hidden />
@@ -69,7 +67,6 @@ export async function LegalPageLayout({ title, lastUpdated, children }: LegalPag
             </div>
           </div>
 
-          {/* Other legal pages */}
           {otherPages.length > 0 && (
             <nav aria-label="À lire aussi" className="mt-12">
               <p className="m-0 mb-3 text-[11px] uppercase tracking-[0.2em] text-[var(--som-gray)]">À lire aussi</p>

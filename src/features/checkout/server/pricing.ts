@@ -16,20 +16,22 @@ const parseVariant = (itemId: string | null) => {
 
 const ensureStock = (name: string, stock: number, quantity: number) => {
   if (stock < quantity) {
-    throw new PricingError(
-      stock <= 0 ? `« ${name} » n'est plus disponible` : `Il ne reste que ${stock} « ${name} »`
-    );
+    throw new PricingError(stock <= 0 ? `« ${name} » n'est plus disponible` : `Il ne reste que ${stock} « ${name} »`);
   }
 };
 
-const line = (data: Omit<PricedLine, "lineTotal">): PricedLine => ({ ...data, lineTotal: data.unitPrice * data.quantity });
+const line = (data: Omit<PricedLine, "lineTotal">): PricedLine => ({
+  ...data,
+  lineTotal: data.unitPrice * data.quantity,
+});
 
 export async function priceCheckoutLines(lines: CheckoutLine[]): Promise<PricedLine[]> {
-  const priceLotIds = lines.filter((l) => l.productId.startsWith(PRICE_LOT_PREFIX)).map((l) => l.lotId!).filter(Boolean);
+  const priceLotIds = lines
+    .filter((l) => l.productId.startsWith(PRICE_LOT_PREFIX))
+    .map((l) => l.lotId!)
+    .filter(Boolean);
   const productIds = lines.filter((l) => !l.productId.startsWith(PRICE_LOT_PREFIX)).map((l) => l.productId);
-  const productLotIds = lines
-    .filter((l) => !l.productId.startsWith(PRICE_LOT_PREFIX) && l.lotId)
-    .map((l) => l.lotId!);
+  const productLotIds = lines.filter((l) => !l.productId.startsWith(PRICE_LOT_PREFIX) && l.lotId).map((l) => l.lotId!);
 
   const [lotRows, productRows, productLotRows] = await Promise.all([
     priceLotIds.length

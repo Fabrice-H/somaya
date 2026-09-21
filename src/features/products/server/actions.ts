@@ -1,318 +1,150 @@
 "use server";
 
-import { db, products } from "@/shared/lib/db";
-import { eq, desc } from "drizzle-orm";
-import { requireAdmin } from "@/features/auth/server/session";
+import { after } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
-import type { Product as DbProduct, Category } from "@/shared/lib/db/schema";
-import { productSchema, productUpdateSchema } from "@/features/products/schemas";
-import { deleteImage } from "@/features/media/server/storage-actions";
+import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { db, products } from "@/shared/lib/db";
+import type { NewProduct } from "@/shared/lib/db/schema";
+import { sanitizeRichText } from "@/shared/lib/sanitize";
 import { generateSlug } from "@/shared/lib/utils";
+import { requireAdmin } from "@/features/auth/server/session";
+import { deleteImage } from "@/features/media/server/actions";
+import { ADMIN_PRODUCTS_PATH, PRODUCTS_CACHE_TAG } from "../constants";
+import { productIdSchema, productSchema, productUpdateSchema } from "../schemas";
+import type { ProductActionResult, ProductInput } from "../types";
 
-// Import types from types.ts (can't re-export from "use server" file)
-import type { Product, ProductInput } from "@/features/products/types";
+const UNAUTHORIZED: ProductActionResult = { success: false, error: "Non autorisé" };
+const NOT_FOUND: ProductActionResult = { success: false, error: "Produit non trouvé" };
 
-// Helper to generate a unique slug
+type ProductValues = z.output<typeof productUpdateSchema>;
+
 async function generateUniqueSlug(name: string, excludeId?: string): Promise<string> {
   const baseSlug = generateSlug(name);
   let slug = baseSlug;
-  let counter = 0;
-
-  while (true) {
+  for (let attempt = 1; ; attempt++) {
     const existing = await db.query.products.findFirst({
-      where: excludeId
-        ? eq(products.slug, slug)
-        : eq(products.slug, slug),
+      where: eq(products.slug, slug),
       columns: { id: true },
     });
-
-    // If no existing product with this slug, or it's the same product we're updating
-    if (!existing || (excludeId && existing.id === excludeId)) {
-      return slug;
-    }
-
-    // Generate a new slug with a unique suffix
-    counter++;
-    const uniqueSuffix = Date.now().toString(36).slice(-4) + counter.toString(36);
-    slug = `${baseSlug}-${uniqueSuffix}`;
+    if (!existing || existing.id === excludeId) return slug;
+    slug = `${baseSlug}-${Date.now().toString(36).slice(-4)}${attempt.toString(36)}`;
   }
 }
 
-// Helper to convert DB product to admin format
-function toAdminProduct(
-  product: DbProduct,
-  category?: Category | null
-): Product {
-  return {
-    id: product.id,
-    name: product.name,
-    slug: product.slug,
-    description: product.description,
-    price: Number(product.price),
-    old_price: product.oldPrice ? Number(product.oldPrice) : null,
-    category_id: product.categoryId,
-    images: product.images || [],
-    colors: product.colors || [],
-    sizes: product.sizes || [],
-    material: product.material,
-    stock: product.stock,
-    low_stock_threshold: product.lowStockThreshold,
-    sku: product.sku,
-    is_active: product.isActive,
-    is_featured: product.isFeatured,
-    is_new: product.isNew,
-    is_bestseller: product.isBestseller,
-    sort_order: product.sortOrder,
-    views_count: product.viewsCount,
-    created_at: product.createdAt.toISOString(),
-    updated_at: product.updatedAt.toISOString(),
-    category: category
-      ? { id: category.id, name: category.name, slug: category.slug }
-      : null,
+function toColumns(data: ProductValues): Partial<NewProduct> {
+  const columns: Partial<NewProduct> = {
+    name: data.name,
+    description: data.description === undefined ? undefined : sanitizeRichText(data.description),
+    price: data.price === undefined ? undefined : String(data.price),
+    oldPrice: data.old_price === undefined ? undefined : data.old_price ? String(data.old_price) : null,
+    categoryId: data.category_id === undefined ? undefined : data.category_id || null,
+    images: data.images,
+    colors: data.colors,
+    sizes: data.sizes,
+    material: data.material === undefined ? undefined : data.material || null,
+    stock: data.stock,
+    lowStockThreshold: data.low_stock_threshold,
+    sku: data.sku === undefined ? undefined : data.sku || null,
+    isActive: data.is_active,
+    isFeatured: data.is_featured,
+    isNew: data.is_new,
+    isBestseller: data.is_bestseller,
+    sortOrder: data.sort_order,
   };
+  return Object.fromEntries(Object.entries(columns).filter(([, value]) => value !== undefined));
 }
 
-// Actions
-export async function getProducts(): Promise<Product[]> {
-  const admin = await requireAdmin();
-  if (!admin) return [];
-
-  try {
-    const result = await db.query.products.findMany({
-      with: {
-        category: true,
-      },
-      orderBy: [desc(products.createdAt)],
-    });
-
-    return result.map((p) => toAdminProduct(p, p.category));
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    return [];
-  }
+function isUniqueViolation(error: unknown): boolean {
+  return error instanceof Error && error.message.includes("unique constraint");
 }
 
-export async function getProduct(id: string): Promise<Product | null> {
-  const admin = await requireAdmin();
-  if (!admin) return null;
-
-  try {
-    const result = await db.query.products.findFirst({
-      where: eq(products.id, id),
-      with: {
-        category: true,
-      },
-    });
-
-    if (!result) return null;
-    return toAdminProduct(result, result.category);
-  } catch (error) {
-    console.error("Error fetching product:", error);
-    return null;
-  }
+function revalidateProducts(id?: string) {
+  revalidatePath(ADMIN_PRODUCTS_PATH);
+  if (id) revalidatePath(`${ADMIN_PRODUCTS_PATH}/${id}`);
+  revalidateTag(PRODUCTS_CACHE_TAG, "max");
 }
 
-export async function createProduct(
-  input: ProductInput
-): Promise<{ success: boolean; error?: string; id?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
+export async function createProduct(input: ProductInput): Promise<ProductActionResult> {
+  if (!(await requireAdmin())) return UNAUTHORIZED;
 
   const parsed = productSchema.safeParse(input);
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0].message };
-  }
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message };
 
   try {
-    // Generate unique slug from name (server-side, like ledetailparfait)
     const slug = await generateUniqueSlug(parsed.data.name);
-
-    const [result] = await db
+    const [created] = await db
       .insert(products)
-      .values({
-        name: parsed.data.name,
-        slug,
-        description: parsed.data.description || null,
-        price: String(parsed.data.price),
-        oldPrice: parsed.data.old_price ? String(parsed.data.old_price) : null,
-        categoryId: parsed.data.category_id || null,
-        images: parsed.data.images,
-        colors: parsed.data.colors,
-        sizes: parsed.data.sizes,
-        material: parsed.data.material || null,
-        stock: parsed.data.stock,
-        lowStockThreshold: parsed.data.low_stock_threshold,
-        sku: parsed.data.sku || null,
-        isActive: parsed.data.is_active,
-        isFeatured: parsed.data.is_featured,
-        isNew: parsed.data.is_new,
-        isBestseller: parsed.data.is_bestseller,
-        sortOrder: parsed.data.sort_order,
-      })
+      .values({ ...toColumns(parsed.data), name: parsed.data.name, price: String(parsed.data.price), slug })
       .returning({ id: products.id });
 
-    revalidatePath("/admin/produits");
-    revalidatePath("/catalogue");
-    revalidateTag("products", "max"); // Invalidate all product caches
-
-    return { success: true, id: result.id };
-  } catch (error: unknown) {
-    console.error("Error creating product:", error);
-    if (
-      error instanceof Error &&
-      error.message.includes("unique constraint")
-    ) {
-      return { success: false, error: "Ce slug existe déjà" };
-    }
-    return { success: false, error: "Erreur lors de la création" };
-  }
-}
-
-export async function updateProduct(
-  id: string,
-  input: Partial<ProductInput>
-): Promise<{ success: boolean; error?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
-
-  try {
-    // Get current product to compare name for slug regeneration
-    const currentProduct = await db.query.products.findFirst({
-      where: eq(products.id, id),
-      columns: { name: true, slug: true },
-    });
-
-    if (!currentProduct) {
-      return { success: false, error: "Produit non trouvé" };
-    }
-
-    const updateData: Record<string, unknown> = {};
-
-    if (input.name !== undefined) updateData.name = input.name;
-    if (input.description !== undefined)
-      updateData.description = input.description;
-    if (input.price !== undefined) updateData.price = String(input.price);
-    if (input.old_price !== undefined)
-      updateData.oldPrice = input.old_price ? String(input.old_price) : null;
-    if (input.category_id !== undefined)
-      updateData.categoryId = input.category_id;
-    if (input.images !== undefined) updateData.images = input.images;
-    if (input.colors !== undefined) updateData.colors = input.colors;
-    if (input.sizes !== undefined) updateData.sizes = input.sizes;
-    if (input.material !== undefined) updateData.material = input.material;
-    if (input.stock !== undefined) updateData.stock = input.stock;
-    if (input.low_stock_threshold !== undefined)
-      updateData.lowStockThreshold = input.low_stock_threshold;
-    if (input.sku !== undefined) updateData.sku = input.sku;
-    if (input.is_active !== undefined) updateData.isActive = input.is_active;
-    if (input.is_featured !== undefined)
-      updateData.isFeatured = input.is_featured;
-    if (input.is_new !== undefined) updateData.isNew = input.is_new;
-    if (input.is_bestseller !== undefined)
-      updateData.isBestseller = input.is_bestseller;
-    if (input.sort_order !== undefined) updateData.sortOrder = input.sort_order;
-
-    // Regenerate slug if name changed (like ledetailparfait)
-    if (input.name && input.name !== currentProduct.name) {
-      updateData.slug = await generateUniqueSlug(input.name, id);
-    }
-
-    // Always update the updated_at timestamp
-    updateData.updatedAt = new Date();
-
-    await db.update(products).set(updateData).where(eq(products.id, id));
-
-    revalidatePath("/admin/produits");
-    revalidatePath(`/admin/produits/${id}`);
-    revalidatePath("/catalogue");
-    revalidateTag("products", "max"); // Invalidate all product caches
-
-    return { success: true };
-  } catch (error: unknown) {
-    console.error("Error updating product:", error);
-    if (
-      error instanceof Error &&
-      error.message.includes("unique constraint")
-    ) {
-      return { success: false, error: "Ce slug existe déjà" };
-    }
-    return { success: false, error: "Erreur lors de la mise à jour" };
-  }
-}
-
-export async function deleteProduct(
-  id: string
-): Promise<{ success: boolean; error?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
-
-  try {
-    // First, get the product to retrieve its images and lots
-    const product = await db.query.products.findFirst({
-      where: eq(products.id, id),
-      with: {
-        lots: true,
-      },
-    });
-
-    if (!product) {
-      return { success: false, error: "Produit non trouvé" };
-    }
-
-    // Delete the product from the database (lots will be cascade deleted)
-    await db.delete(products).where(eq(products.id, id));
-
-    // Delete product images from Cloudinary (fire and forget, don't block on errors)
-    const images = product.images || [];
-    if (images.length > 0) {
-      Promise.allSettled(images.map((url) => deleteImage(url))).catch(
-        (error) => {
-          console.error("Error deleting product images:", error);
-        }
-      );
-    }
-
-    // Delete lot images from Cloudinary
-    const lotImages = product.lots?.flatMap((lot) => lot.images || []) || [];
-    if (lotImages.length > 0) {
-      Promise.allSettled(lotImages.map((url) => deleteImage(url))).catch(
-        (error) => {
-          console.error("Error deleting lot images:", error);
-        }
-      );
-    }
-
-    revalidatePath("/admin/produits");
-    revalidatePath("/catalogue");
-    revalidateTag("products", "max"); // Invalidate all product caches
-
-    return { success: true };
+    revalidateProducts();
+    return { success: true, id: created.id };
   } catch (error) {
-    console.error("Error deleting product:", error);
-    return { success: false, error: "Erreur lors de la suppression" };
+    console.error("createProduct failed:", error);
+    return { success: false, error: isUniqueViolation(error) ? "Ce slug existe déjà" : "Erreur lors de la création" };
   }
 }
 
-export async function toggleProductActive(
-  id: string,
-  isActive: boolean
-): Promise<{ success: boolean; error?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
+export async function updateProduct(id: string, input: Partial<ProductInput>): Promise<ProductActionResult> {
+  if (!(await requireAdmin())) return UNAUTHORIZED;
+
+  const parsedId = productIdSchema.safeParse(id);
+  if (!parsedId.success) return NOT_FOUND;
+  const parsed = productUpdateSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0].message };
 
   try {
+    const current = await db.query.products.findFirst({
+      where: eq(products.id, parsedId.data),
+      columns: { name: true },
+    });
+    if (!current) return NOT_FOUND;
+
+    const { name } = parsed.data;
+    const slug = name && name !== current.name ? await generateUniqueSlug(name, parsedId.data) : undefined;
+
     await db
       .update(products)
-      .set({ isActive, updatedAt: new Date() })
-      .where(eq(products.id, id));
+      .set({ ...toColumns(parsed.data), ...(slug && { slug }), updatedAt: new Date() })
+      .where(eq(products.id, parsedId.data));
 
-    revalidatePath("/admin/produits");
-    revalidatePath("/catalogue");
-    revalidateTag("products", "max"); // Invalidate all product caches
-
+    revalidateProducts(parsedId.data);
     return { success: true };
   } catch (error) {
-    console.error("Error toggling product:", error);
-    return { success: false, error: "Erreur lors de la mise à jour" };
+    console.error("updateProduct failed:", error);
+    return {
+      success: false,
+      error: isUniqueViolation(error) ? "Ce slug existe déjà" : "Erreur lors de la mise à jour",
+    };
+  }
+}
+
+export async function deleteProduct(id: string): Promise<ProductActionResult> {
+  if (!(await requireAdmin())) return UNAUTHORIZED;
+
+  const parsedId = productIdSchema.safeParse(id);
+  if (!parsedId.success) return NOT_FOUND;
+
+  try {
+    const product = await db.query.products.findFirst({
+      where: eq(products.id, parsedId.data),
+      columns: { images: true },
+      with: { lots: { columns: { images: true } } },
+    });
+    if (!product) return NOT_FOUND;
+
+    await db.delete(products).where(eq(products.id, parsedId.data));
+
+    const images = [...(product.images ?? []), ...product.lots.flatMap((lot) => lot.images ?? [])];
+    if (images.length > 0) {
+      after(() => Promise.allSettled(images.map((url) => deleteImage(url))));
+    }
+
+    revalidateProducts();
+    return { success: true };
+  } catch (error) {
+    console.error("deleteProduct failed:", error);
+    return { success: false, error: "Erreur lors de la suppression" };
   }
 }

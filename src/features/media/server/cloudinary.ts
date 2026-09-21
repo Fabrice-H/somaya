@@ -1,11 +1,10 @@
+import "server-only";
 import { v2 as cloudinary } from "cloudinary";
+import { IMAGE_CONFIG } from "../constants";
+import type { SignedUpload, UploadResourceType } from "../types";
 
-// Lazy configuration function to ensure env vars are loaded
-function getConfiguredCloudinary() {
-  const config = cloudinary.config();
-
-  // Only configure if not already configured
-  if (!config.cloud_name) {
+function getCloudinary() {
+  if (!cloudinary.config().cloud_name) {
     cloudinary.config({
       cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
@@ -13,54 +12,24 @@ function getConfiguredCloudinary() {
       secure: true,
     });
   }
-
   return cloudinary;
 }
 
-// Export the configured instance getter
-export { cloudinary, getConfiguredCloudinary };
+export function signUpload(folder: string, resourceType: UploadResourceType): SignedUpload {
+  const client = getCloudinary();
+  const { cloud_name, api_key, api_secret } = client.config();
+  if (!cloud_name || !api_key || !api_secret) throw new Error("Configuration Cloudinary manquante");
 
-// Folder structure for organization
-export const CLOUDINARY_FOLDERS = {
-  products: "somaya/products",
-  categories: "somaya/categories",
-  store: "somaya/store",
-  featured: "somaya/featured",
-  lots: "somaya/lots",
-} as const;
+  const toSign: Record<string, string> = { timestamp: String(Math.round(Date.now() / 1000)), folder };
+  if (resourceType === "image") toSign.format = IMAGE_CONFIG.outputFormat;
 
-// Image transformation presets
-export const IMAGE_PRESETS = {
-  // Product thumbnails (for listings)
-  thumbnail: {
-    width: 400,
-    height: 500,
-    crop: "fill" as const,
-    quality: "auto" as const,
-    format: "auto" as const,
-  },
-  // Product detail images
-  detail: {
-    width: 800,
-    height: 1000,
-    crop: "fill" as const,
-    quality: "auto:best" as const,
-    format: "auto" as const,
-  },
-  // Category banners
-  categoryBanner: {
-    width: 600,
-    height: 400,
-    crop: "fill" as const,
-    quality: "auto" as const,
-    format: "auto" as const,
-  },
-  // Admin preview
-  adminPreview: {
-    width: 200,
-    height: 250,
-    crop: "fill" as const,
-    quality: "auto" as const,
-    format: "auto" as const,
-  },
-} as const;
+  const signature = client.utils.api_sign_request(toSign, api_secret);
+  return {
+    uploadUrl: `https://api.cloudinary.com/v1_1/${cloud_name}/${resourceType}/upload`,
+    params: { ...toSign, signature, api_key },
+  };
+}
+
+export async function destroyAsset(publicId: string, resourceType: UploadResourceType = "image") {
+  await getCloudinary().uploader.destroy(publicId, { resource_type: resourceType });
+}

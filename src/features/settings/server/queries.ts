@@ -2,11 +2,13 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { and, asc, eq, sql } from "drizzle-orm";
 import { categories, db, products } from "@/shared/lib/db";
+import { assertAdmin } from "@/features/auth/server/session";
 import { CONTACT_DEFAULTS } from "@/shared/config/site";
 import { CATEGORIES_CACHE_TAG } from "@/features/categories/constants";
 import { PRODUCTS_CACHE_TAG } from "@/features/products/constants";
 import { SETTINGS_CACHE_TAG } from "../constants";
-import type { StoreContact } from "../types";
+import type { StoreContact, StoreSettings } from "../types";
+import { toStoreSettings } from "../utils";
 
 const withoutAt = (handle: string) => handle.replace(/^@/, "");
 
@@ -52,3 +54,9 @@ export const getFooterCategories = unstable_cache(
   ["footer-categories"],
   { revalidate: 300, tags: [CATEGORIES_CACHE_TAG, PRODUCTS_CACHE_TAG] }
 );
+
+export async function getSettings(): Promise<StoreSettings | null> {
+  await assertAdmin();
+  const settings = await db.query.storeSettings.findFirst();
+  return settings ? toStoreSettings(settings) : null;
+}

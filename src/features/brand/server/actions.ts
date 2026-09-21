@@ -1,177 +1,81 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { db, aboutCollections } from "@/shared/lib/db";
-import { eq, asc } from "drizzle-orm";
+import { aboutCollections, db } from "@/shared/lib/db";
 import { requireAdmin } from "@/features/auth/server/session";
-import { z } from "zod";
+import { ABOUT_PAGE_PATH } from "../constants";
+import { collectionIdSchema, collectionOrderSchema, collectionPatchSchema, collectionSchema } from "../schemas";
+import type { CollectionActionResult, CollectionInput, CollectionPatch } from "../types";
 
-export interface AboutCollectionData {
-  id: string;
-  name: string;
-  year: string;
-  backgroundColor: string;
-  isActive: boolean;
-  sortOrder: number;
-}
+const UNAUTHORIZED = { success: false, error: "Non autorisé" } as const;
 
-const collectionSchema = z.object({
-  name: z.string().min(1, "Le nom est requis"),
-  year: z.string().min(4, "L'année est requise"),
-  backgroundColor: z.string().default("#511f29"),
-  isActive: z.boolean().default(true),
-  sortOrder: z.number().default(0),
-});
-
-export type CollectionInput = z.infer<typeof collectionSchema>;
-
-/**
- * Get all about collections
- */
-export async function getAboutCollections(): Promise<AboutCollectionData[]> {
-  const results = await db.query.aboutCollections.findMany({
-    orderBy: [asc(aboutCollections.sortOrder)],
-  });
-
-  return results.map((r) => ({
-    id: r.id,
-    name: r.name,
-    year: r.year,
-    backgroundColor: r.backgroundColor || "#511f29",
-    isActive: r.isActive,
-    sortOrder: r.sortOrder,
-  }));
-}
-
-/**
- * Get active about collections for public display
- */
-export async function getAboutCollectionsPublic(): Promise<AboutCollectionData[]> {
-  const results = await db.query.aboutCollections.findMany({
-    where: eq(aboutCollections.isActive, true),
-    orderBy: [asc(aboutCollections.sortOrder)],
-  });
-
-  return results.map((r) => ({
-    id: r.id,
-    name: r.name,
-    year: r.year,
-    backgroundColor: r.backgroundColor || "#511f29",
-    isActive: r.isActive,
-    sortOrder: r.sortOrder,
-  }));
-}
-
-/**
- * Create a new about collection
- */
-export async function createAboutCollection(
-  input: CollectionInput
-): Promise<{ success: boolean; error?: string; id?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
+export async function createAboutCollection(input: CollectionInput): Promise<CollectionActionResult> {
+  if (!(await requireAdmin())) return UNAUTHORIZED;
 
   const parsed = collectionSchema.safeParse(input);
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0].message };
-  }
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message };
 
   try {
-    const [result] = await db
-      .insert(aboutCollections)
-      .values({
-        name: parsed.data.name,
-        year: parsed.data.year,
-        backgroundColor: parsed.data.backgroundColor,
-        isActive: parsed.data.isActive,
-        sortOrder: parsed.data.sortOrder,
-      })
-      .returning({ id: aboutCollections.id });
-
-    revalidatePath("/a-propos");
-    revalidatePath("/admin/about-collections");
-
-    return { success: true, id: result.id };
-  } catch (error) {
-    console.error("Error creating about collection:", error);
+    const [row] = await db.insert(aboutCollections).values(parsed.data).returning({ id: aboutCollections.id });
+    revalidatePath(ABOUT_PAGE_PATH);
+    return { success: true, id: row.id };
+  } catch {
     return { success: false, error: "Erreur lors de la création" };
   }
 }
 
-/**
- * Update an about collection
- */
-export async function updateAboutCollection(
-  id: string,
-  input: Partial<CollectionInput>
-): Promise<{ success: boolean; error?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
+export async function updateAboutCollection(id: string, patch: CollectionPatch): Promise<CollectionActionResult> {
+  if (!(await requireAdmin())) return UNAUTHORIZED;
+
+  const parsedId = collectionIdSchema.safeParse(id);
+  const parsed = collectionPatchSchema.safeParse(patch);
+  if (!parsedId.success) return { success: false, error: "Collection introuvable" };
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message };
 
   try {
     await db
       .update(aboutCollections)
-      .set({
-        ...input,
-        updatedAt: new Date(),
-      })
-      .where(eq(aboutCollections.id, id));
-
-    revalidatePath("/a-propos");
-    revalidatePath("/admin/about-collections");
-
+      .set({ ...parsed.data, updatedAt: new Date() })
+      .where(eq(aboutCollections.id, parsedId.data));
+    revalidatePath(ABOUT_PAGE_PATH);
     return { success: true };
-  } catch (error) {
-    console.error("Error updating about collection:", error);
+  } catch {
     return { success: false, error: "Erreur lors de la mise à jour" };
   }
 }
 
-/**
- * Delete an about collection
- */
-export async function deleteAboutCollection(
-  id: string
-): Promise<{ success: boolean; error?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
+export async function deleteAboutCollection(id: string): Promise<CollectionActionResult> {
+  if (!(await requireAdmin())) return UNAUTHORIZED;
+
+  const parsedId = collectionIdSchema.safeParse(id);
+  if (!parsedId.success) return { success: false, error: "Collection introuvable" };
 
   try {
-    await db.delete(aboutCollections).where(eq(aboutCollections.id, id));
-
-    revalidatePath("/a-propos");
-    revalidatePath("/admin/about-collections");
-
+    await db.delete(aboutCollections).where(eq(aboutCollections.id, parsedId.data));
+    revalidatePath(ABOUT_PAGE_PATH);
     return { success: true };
-  } catch (error) {
-    console.error("Error deleting about collection:", error);
+  } catch {
     return { success: false, error: "Erreur lors de la suppression" };
   }
 }
 
-/**
- * Reorder about collections
- */
-export async function reorderAboutCollections(
-  orderedIds: string[]
-): Promise<{ success: boolean; error?: string }> {
-  const admin = await requireAdmin();
-  if (!admin) return { success: false, error: "Non autorisé" };
+export async function reorderAboutCollections(orderedIds: string[]): Promise<CollectionActionResult> {
+  if (!(await requireAdmin())) return UNAUTHORIZED;
+
+  const parsed = collectionOrderSchema.safeParse(orderedIds);
+  if (!parsed.success) return { success: false, error: "Ordre invalide" };
 
   try {
-    for (let i = 0; i < orderedIds.length; i++) {
-      await db
-        .update(aboutCollections)
-        .set({ sortOrder: i, updatedAt: new Date() })
-        .where(eq(aboutCollections.id, orderedIds[i]));
-    }
-
-    revalidatePath("/a-propos");
-    revalidatePath("/admin/about-collections");
-
+    const updatedAt = new Date();
+    await Promise.all(
+      parsed.data.map((id, sortOrder) =>
+        db.update(aboutCollections).set({ sortOrder, updatedAt }).where(eq(aboutCollections.id, id))
+      )
+    );
+    revalidatePath(ABOUT_PAGE_PATH);
     return { success: true };
-  } catch (error) {
-    console.error("Error reordering about collections:", error);
+  } catch {
     return { success: false, error: "Erreur lors du réordonnancement" };
   }
 }

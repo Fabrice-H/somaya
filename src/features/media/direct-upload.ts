@@ -1,119 +1,37 @@
-/**
- * Direct Cloudinary upload (client-side only)
- * This file should NEVER import from the cloudinary package (server-only)
- */
+import { SIGNATURE_ENDPOINT, UPLOAD_FOLDERS } from "./constants";
+import type { DirectUploadResult, SignedUpload, UploadResourceType } from "./types";
 
-export interface DirectUploadResult {
-  success: boolean;
-  url?: string;
-  publicId?: string;
-  error?: string;
-}
-
-interface SignatureResponse {
-  signature: string;
-  timestamp: number;
-  folder: string;
-  apiKey: string;
-  cloudName: string;
-}
-
-/**
- * Get upload signature from server
- */
-async function getUploadSignature(folder: string): Promise<SignatureResponse> {
-  const response = await fetch("/api/upload/signature", {
+async function requestSignedUpload(folder: string, resourceType: UploadResourceType): Promise<SignedUpload> {
+  const response = await fetch(SIGNATURE_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ folder }),
+    body: JSON.stringify({ folder, resourceType }),
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to get upload signature");
-  }
-
-  return response.json();
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.error || "Signature refusée");
+  return body;
 }
 
-/**
- * Upload image directly to Cloudinary (bypasses Vercel limits)
- * Uses unsigned upload with server-generated signature
- */
-export async function uploadToCloudinaryDirect(
-  file: File,
-  folder: string = "somaya/products"
-): Promise<DirectUploadResult> {
+async function uploadDirect(file: File, folder: string, resourceType: UploadResourceType): Promise<DirectUploadResult> {
   try {
-    // Get signed upload parameters from server
-    const { signature, timestamp, folder: signedFolder, apiKey, cloudName } =
-      await getUploadSignature(folder);
-
-    // Create form data for Cloudinary upload
-    // Order and parameters must match EXACTLY what was signed
+    const { uploadUrl, params } = await requestSignedUpload(folder, resourceType);
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("signature", signature);
-    formData.append("timestamp", timestamp.toString());
-    formData.append("folder", signedFolder);
-    formData.append("format", "webp"); // Convert to WebP (handles HEIC)
-    formData.append("api_key", apiKey);
+    for (const [key, value] of Object.entries(params)) formData.append(key, value);
 
-    // Upload directly to Cloudinary
-    const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-
-    const response = await fetch(uploadUrl, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Cloudinary upload error:", errorData);
-      return {
-        success: false,
-        error: errorData.error?.message || "Upload failed",
-      };
-    }
-
+    const response = await fetch(uploadUrl, { method: "POST", body: formData });
     const result = await response.json();
-
-    return {
-      success: true,
-      url: result.secure_url,
-      publicId: result.public_id,
-    };
+    if (!response.ok) return { success: false, error: result.error?.message || "Échec de l'upload" };
+    return { success: true, url: result.secure_url, publicId: result.public_id };
   } catch (error) {
-    console.error("Direct upload error:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Upload failed",
-    };
+    return { success: false, error: error instanceof Error ? error.message : "Échec de l'upload" };
   }
 }
 
-/**
- * Upload multiple images directly to Cloudinary
- */
-export async function uploadMultipleToCloudinaryDirect(
-  files: File[],
-  folder: string = "somaya/products",
-  onProgress?: (completed: number, total: number) => void
-): Promise<DirectUploadResult[]> {
-  const results: DirectUploadResult[] = [];
-  const total = files.length;
+export function uploadToCloudinaryDirect(file: File, folder: string = UPLOAD_FOLDERS.products) {
+  return uploadDirect(file, folder, "image");
+}
 
-  // Process with concurrency limit of 3
-  const concurrencyLimit = 3;
-
-  for (let i = 0; i < files.length; i += concurrencyLimit) {
-    const batch = files.slice(i, i + concurrencyLimit);
-    const batchResults = await Promise.all(
-      batch.map((file) => uploadToCloudinaryDirect(file, folder))
-    );
-    results.push(...batchResults);
-    onProgress?.(Math.min(i + concurrencyLimit, total), total);
-  }
-
-  return results;
+export function uploadVideoToCloudinaryDirect(file: File, folder: string = UPLOAD_FOLDERS.store) {
+  return uploadDirect(file, folder, "video");
 }

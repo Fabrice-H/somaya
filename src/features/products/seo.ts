@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SITE } from "@/shared/config/site";
-import { formatPriceXOF } from "@/shared/lib/utils";
+import { formatPrice } from "@/shared/lib/format";
 import type { ProductWithCategoryAndLots } from "@/shared/lib/db/schema";
 
 const productUrl = (slug: string) => `${SITE.url}/produit/${slug}`;
@@ -17,7 +17,7 @@ export function buildProductMetadata(product: ProductWithCategoryAndLots): Metad
     description,
     keywords: [product.name, product.category?.name ?? "Mode", SITE.name, "mode", "Abidjan", "Côte d'Ivoire"],
     openGraph: {
-      title: `${product.name} - ${formatPriceXOF(Number(product.price))}`,
+      title: `${product.name} - ${formatPrice(Number(product.price))}`,
       description,
       type: "website",
       locale: SITE.locale,

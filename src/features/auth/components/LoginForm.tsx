@@ -7,28 +7,19 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 export function LoginForm() {
-  const [state, formAction, isPending] = useActionState<LoginState, FormData>(
-    loginAction,
-    {}
-  );
+  const [state, formAction, isPending] = useActionState<LoginState, FormData>(loginAction, {});
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-serif text-[#3c161e] tracking-wide">
-            SO&apos;MAYA
-          </h1>
+          <h1 className="text-3xl font-serif text-[#3c161e] tracking-wide">SO&apos;MAYA</h1>
           <p className="text-sm text-[#3c161e]/60 mt-2">Administration</p>
         </div>
 
-        {/* Card */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-xl font-medium text-[#3c161e] mb-6 text-center">
-            Connexion
-          </h2>
+          <h2 className="text-xl font-medium text-[#3c161e] mb-6 text-center">Connexion</h2>
 
           {state.error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
@@ -38,10 +29,7 @@ export function LoginForm() {
 
           <form action={formAction} className="space-y-4">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-[#3c161e]/80 mb-1.5"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
                 Email
               </label>
               <input
@@ -58,10 +46,7 @@ export function LoginForm() {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-[#3c161e]/80 mb-1.5"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
                 Mot de passe
               </label>
               <div className="relative">
@@ -106,7 +91,6 @@ export function LoginForm() {
           </form>
         </div>
 
-        {/* Footer */}
         <p className="text-center text-xs text-[#3c161e]/50 mt-6">
           &copy; {new Date().getFullYear()} SO&apos;MAYA. Tous droits réservés.
         </p>

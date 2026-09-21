@@ -1,7 +1,6 @@
 import { config } from "dotenv";
 import { neon } from "@neondatabase/serverless";
 
-// Load environment variables
 config({ path: ".env.local" });
 
 const connectionString = process.env.DATABASE_URL;
@@ -13,9 +12,6 @@ if (!connectionString) {
 
 const sql = neon(connectionString);
 
-/**
- * Generate a URL-friendly slug from a string
- */
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
@@ -25,9 +21,6 @@ function generateSlug(name: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-/**
- * Generate a unique slug by appending a suffix if needed
- */
 async function generateUniqueSlug(name: string, excludeId: string): Promise<string> {
   const baseSlug = generateSlug(name);
   let slug = baseSlug;
@@ -42,7 +35,6 @@ async function generateUniqueSlug(name: string, excludeId: string): Promise<stri
       return slug;
     }
 
-    // Generate a new slug with a unique suffix
     counter++;
     const uniqueSuffix = Date.now().toString(36).slice(-4) + counter.toString(36);
     slug = `${baseSlug}-${uniqueSuffix}`;
@@ -53,7 +45,6 @@ async function fixProductSlugs() {
   console.log("🔧 Fixing product slugs...\n");
 
   try {
-    // Get all products
     const products = await sql`
       SELECT id, name, slug FROM products ORDER BY created_at ASC
     `;
@@ -66,7 +57,6 @@ async function fixProductSlugs() {
     for (const product of products) {
       const { id, name, slug } = product;
 
-      // Check if slug is empty, null, or doesn't match the expected format
       const expectedSlug = generateSlug(name);
       const isValidSlug = slug && /^[a-z0-9-]+$/.test(slug) && slug.length > 0;
 
@@ -91,7 +81,6 @@ async function fixProductSlugs() {
     console.log(`   Fixed: ${fixed}`);
     console.log(`   Skipped: ${skipped}`);
     console.log(`   Total: ${products.length}`);
-
   } catch (error) {
     console.error("❌ Error fixing slugs:", error);
     throw error;

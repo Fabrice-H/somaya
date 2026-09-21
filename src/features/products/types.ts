@@ -1,6 +1,3 @@
-import type { Category } from "@/features/categories/server/actions";
-import type { COLORS, SIZES } from "./constants";
-
 export type ProductSummaryLot = {
   id: string;
   name: string;
@@ -53,35 +50,10 @@ export type SelectedLotItem = {
   itemLabel?: string;
 };
 
-export type ColorValue = (typeof COLORS)[number]["value"];
-export type SizeValue = (typeof SIZES)[number];
-
 export interface ProductCategory {
   id: string;
   name: string;
   slug: string;
-}
-
-// Individual item within a lot (each is a purchasable article)
-export interface LotItemData {
-  id: string;
-  image: string;
-  stock: number;
-  label?: string;
-}
-
-export interface ProductLot {
-  id: string;
-  product_id: string;
-  name: string;
-  price: number;
-  items: LotItemData[]; // NEW: array of purchasable items
-  images: string[]; // DEPRECATED: kept for backward compat
-  stock: number; // DEPRECATED: kept for backward compat
-  is_available: boolean;
-  sort_order: number;
-  created_at: string;
-  updated_at: string;
 }
 
 export interface Product {
@@ -110,25 +82,9 @@ export interface Product {
   category?: ProductCategory | null;
 }
 
-export interface LotItemFormData {
-  id: string;
-  image: string;
-  stock: number;
-  label?: string;
-}
-
-export interface ProductLotFormData {
-  id?: string;
-  name: string;
-  price: number;
-  items: LotItemFormData[]; // Array of purchasable items
-  is_available: boolean;
-  sort_order: number;
-}
-
 export interface ProductInput {
   name: string;
-  slug?: string; // Auto-generated server-side if not provided
+  slug?: string;
   description?: string | null;
   price: number;
   old_price?: number | null;
@@ -147,25 +103,24 @@ export interface ProductInput {
   sort_order: number;
 }
 
-export interface ProductFilters {
-  search?: string;
-  categoryId?: string;
-  isActive?: boolean;
+export type ProductActionResult = { success: true; id?: string } | { success: false; error: string };
+
+export interface AdminProductFilters {
+  query: string;
+  categoryId: string;
+  stock: string;
 }
 
-export interface ProductFormProps {
-  product?: Product;
-  categories: Category[];
+export interface ProductStats {
+  total: number;
+  active: number;
+  lowStock: number;
+  outOfStock: number;
 }
 
-export interface ProductTableProps {
-  initialProducts: Product[];
+export interface CategoryOption {
+  id: string;
+  name: string;
 }
 
-export type BucketType = "products" | "categories" | "store" | "lots";
-
-export interface UploadedImage {
-  url: string;
-  isUploading?: boolean;
-  progress?: number;
-}
+export type ProductFormTab = "general" | "images" | "pricing" | "settings";

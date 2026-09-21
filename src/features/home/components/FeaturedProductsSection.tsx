@@ -14,7 +14,6 @@ export function FeaturedProductsSection({ products }: FeaturedProductsSectionPro
   return (
     <section id="nouveautes" className="bg-white px-4 py-14 md:px-8 md:py-20">
       <div className="mx-auto max-w-[1240px]">
-        {/* Header - same treatment as the categories section */}
         <div className="mb-10 text-center md:mb-12">
           <h2
             className="m-0 text-[26px] font-semibold uppercase tracking-[0.06em] text-[var(--som-ink)] md:text-[36px]"

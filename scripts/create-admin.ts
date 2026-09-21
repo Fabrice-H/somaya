@@ -1,10 +1,3 @@
-/**
- * Script to create an admin user
- *
- * Usage:
- * pnpm tsx scripts/create-admin.ts admin@somaya.ci votremotdepasse "Admin SO'MAYA"
- */
-
 import { config } from "dotenv";
 import { neon } from "@neondatabase/serverless";
 import bcrypt from "bcryptjs";
@@ -32,7 +25,6 @@ async function main() {
 
   console.log(`\nCreating admin user: ${email}...`);
 
-  // Check if user already exists
   const existing = await sql`
     SELECT id FROM admin_users WHERE email = ${email.toLowerCase()}
   `;
@@ -42,10 +34,8 @@ async function main() {
     process.exit(1);
   }
 
-  // Hash password with bcrypt
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-  // Insert user
   await sql`
     INSERT INTO admin_users (email, password_hash, name, is_active)
     VALUES (${email.toLowerCase()}, ${passwordHash}, ${name}, true)

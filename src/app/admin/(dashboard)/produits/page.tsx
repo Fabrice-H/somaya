@@ -1,69 +1,19 @@
-import { Suspense } from 'react';
-import { Package } from 'lucide-react';
-import { getProducts } from '@/features/products/server/actions';
-import { getCategories } from '@/features/categories/server/actions';
-import { ProductsClient } from '@/features/products/components/admin/ProductsClient';
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { getCategories } from "@/features/categories/server/queries";
+import { getAdminProducts } from "@/features/products/server/queries";
+import { ProductsClient } from "@/features/products/components/admin/ProductsClient";
+import { ProductsSkeleton } from "@/features/products/components/admin/list/ProductsSkeleton";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Produits | Admin SO'MAYA",
 };
 
 async function ProductsData() {
-  const [products, categories] = await Promise.all([
-    getProducts(),
-    getCategories(),
-  ]);
-
+  const [products, categories] = await Promise.all([getAdminProducts(), getCategories()]);
   return <ProductsClient products={products} categories={categories} />;
-}
-
-function ProductsSkeleton() {
-  return (
-    <div style={{ padding: '32px 40px' }}>
-      {/* Header skeleton */}
-      <div className="flex items-center justify-between gap-4 mb-8">
-        <div>
-          <div className="h-8 w-32 bg-[#fafafa] animate-pulse mb-2" />
-          <div className="h-4 w-48 bg-[#fafafa] animate-pulse" />
-        </div>
-        <div className="h-11 w-40 bg-[#fafafa] animate-pulse" />
-      </div>
-
-      {/* Stats skeleton */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8" style={{ maxWidth: 800 }}>
-        {[1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            className="bg-[#fafafa] border border-[#511f29]/10 animate-pulse"
-            style={{ height: 80 }}
-          />
-        ))}
-      </div>
-
-      {/* Filters skeleton */}
-      <div className="flex flex-wrap items-center gap-4 mb-6">
-        <div className="flex-1 min-w-[200px] max-w-md h-11 bg-[#fafafa] animate-pulse" />
-        <div className="h-11 w-48 bg-[#fafafa] animate-pulse" />
-        <div className="h-11 w-40 bg-[#fafafa] animate-pulse" />
-      </div>
-
-      {/* Grid skeleton */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-          <div key={i} className="bg-[#fafafa] animate-pulse">
-            <div className="aspect-square bg-[#eeeeec]" />
-            <div className="p-3">
-              <div className="h-4 w-3/4 bg-[#eeeeec] mb-2" />
-              <div className="h-3 w-1/2 bg-[#eeeeec] mb-2" />
-              <div className="h-4 w-2/3 bg-[#eeeeec]" />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 export default function AdminProductsPage() {

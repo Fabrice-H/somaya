@@ -1,55 +1,29 @@
-"use client";
+import { ANNOUNCEMENTS } from "@/shared/config/navigation";
 
-export default function AnnouncementBar() {
+function Messages({ hidden = false }: { hidden?: boolean }) {
   return (
-    <div style={{ background: "#511f29", color: "rgba(255,255,255,0.9)", overflow: "hidden", whiteSpace: "nowrap" }}>
-      <div
-        className="animate-marquee"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          willChange: "transform",
-        }}
-      >
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            fontSize: "11.5px",
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            padding: "9px 0",
-          }}
-        >
-          <span style={{ padding: "0 30px" }}>Livraison Abidjan en 24h</span>
-          <span style={{ opacity: 0.45 }}>✦</span>
-          <span style={{ padding: "0 30px" }}>Expédition internationale</span>
-          <span style={{ opacity: 0.45 }}>✦</span>
-          <span style={{ padding: "0 30px" }}>La qualité, notre référence</span>
-          <span style={{ opacity: 0.45 }}>✦</span>
-          <span style={{ padding: "0 30px" }}>Paiement à la livraison &amp; Mobile Money</span>
-          <span style={{ opacity: 0.45 }}>✦</span>
+    <span
+      aria-hidden={hidden || undefined}
+      className="inline-flex items-center py-[9px] text-[11.5px] uppercase tracking-[0.22em]"
+    >
+      {ANNOUNCEMENTS.map((message) => (
+        <span key={message} className="inline-flex items-center">
+          <span className="px-[30px]">{message}</span>
+          <span aria-hidden className="opacity-45">
+            ✦
+          </span>
         </span>
-        <span
-          aria-hidden="true"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            fontSize: "11.5px",
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            padding: "9px 0",
-          }}
-        >
-          <span style={{ padding: "0 30px" }}>Livraison Abidjan en 24h</span>
-          <span style={{ opacity: 0.45 }}>✦</span>
-          <span style={{ padding: "0 30px" }}>Expédition internationale</span>
-          <span style={{ opacity: 0.45 }}>✦</span>
-          <span style={{ padding: "0 30px" }}>La qualité, notre référence</span>
-          <span style={{ opacity: 0.45 }}>✦</span>
-          <span style={{ padding: "0 30px" }}>Paiement à la livraison &amp; Mobile Money</span>
-          <span style={{ opacity: 0.45 }}>✦</span>
-        </span>
+      ))}
+    </span>
+  );
+}
+
+export function AnnouncementBar() {
+  return (
+    <div className="overflow-hidden whitespace-nowrap bg-[var(--som-primary)] text-white/90">
+      <div className="animate-marquee inline-flex items-center will-change-transform motion-reduce:animate-none">
+        <Messages />
+        <Messages hidden />
       </div>
     </div>
   );

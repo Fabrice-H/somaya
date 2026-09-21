@@ -1,7 +1,7 @@
 import { BestSellersSection } from "@/features/home/components/BestSellersSection";
 import { CollectionsSection } from "@/features/home/components/CollectionsSection";
 import { FeaturedProductsSection } from "@/features/home/components/FeaturedProductsSection";
-import HeroSection from "@/features/home/components/HeroSection";
+import { HeroSection } from "@/features/home/components/HeroSection";
 import { getHomePageData } from "@/features/home/server/queries";
 import { TestimonialsSection } from "@/features/testimonials/components/TestimonialsSection";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, useCallback } from "react";
+import { useState, type DragEvent } from "react";
 import { ImagePreview } from "./ImagePreview";
 
 interface ImageGridProps {
@@ -9,33 +9,17 @@ interface ImageGridProps {
   onReorder: (fromIndex: number, toIndex: number) => void;
 }
 
-export const ImageGrid = memo(function ImageGrid({
-  images,
-  onRemove,
-  onReorder,
-}: ImageGridProps) {
+export function ImageGrid({ images, onRemove, onReorder }: ImageGridProps) {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-  const handleDragStart = useCallback((index: number) => {
-    setDraggedIndex(index);
-  }, []);
-
-  const handleDragOver = useCallback(
-    (e: React.DragEvent, index: number) => {
-      e.preventDefault();
-      if (draggedIndex === null || draggedIndex === index) return;
-
-      onReorder(draggedIndex, index);
-      setDraggedIndex(index);
-    },
-    [draggedIndex, onReorder]
-  );
-
-  const handleDragEnd = useCallback(() => {
-    setDraggedIndex(null);
-  }, []);
-
   if (images.length === 0) return null;
+
+  const handleDragOver = (e: DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+    onReorder(draggedIndex, index);
+    setDraggedIndex(index);
+  };
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -44,14 +28,13 @@ export const ImageGrid = memo(function ImageGrid({
           key={url}
           url={url}
           index={index}
-          isPrimary={index === 0}
           isDragging={draggedIndex === index}
           onRemove={() => onRemove(url)}
-          onDragStart={() => handleDragStart(index)}
+          onDragStart={() => setDraggedIndex(index)}
           onDragOver={(e) => handleDragOver(e, index)}
-          onDragEnd={handleDragEnd}
+          onDragEnd={() => setDraggedIndex(null)}
         />
       ))}
     </div>
   );
-});
+}

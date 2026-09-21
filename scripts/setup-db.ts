@@ -6,7 +6,6 @@ import bcrypt from "bcryptjs";
 
 const SALT_ROUNDS = 12;
 
-// Load environment variables
 config({ path: ".env.local" });
 
 const connectionString = process.env.DATABASE_URL;
@@ -21,11 +20,9 @@ const sql = neon(connectionString);
 async function runMigration() {
   console.log("🚀 Starting database setup...\n");
 
-  // Read migration file
   const migrationPath = path.join(__dirname, "../drizzle/0000_robust_maddog.sql");
   const migrationContent = fs.readFileSync(migrationPath, "utf-8");
 
-  // Split by statement breakpoint and execute each statement
   const statements = migrationContent
     .split("--> statement-breakpoint")
     .map((s) => s.trim())
@@ -42,7 +39,6 @@ async function runMigration() {
       console.log(`✅ [${i + 1}/${statements.length}] ${preview}...`);
     } catch (error: unknown) {
       const err = error as Error & { code?: string };
-      // Ignore "already exists" errors
       if (err.code === "42710" || err.code === "42P07" || err.message?.includes("already exists")) {
         console.log(`⏭️  [${i + 1}/${statements.length}] Already exists, skipping...`);
       } else {
@@ -63,7 +59,6 @@ async function createInitialAdmin() {
   const adminName = "Administrateur";
 
   try {
-    // Check if admin already exists
     const existing = await sql`
       SELECT id FROM admin_users WHERE email = ${adminEmail}
     `;
@@ -73,10 +68,8 @@ async function createInitialAdmin() {
       return;
     }
 
-    // Hash password
     const passwordHash = await bcrypt.hash(adminPassword, SALT_ROUNDS);
 
-    // Create admin user
     await sql`
       INSERT INTO admin_users (email, password_hash, name, is_active)
       VALUES (${adminEmail}, ${passwordHash}, ${adminName}, true)

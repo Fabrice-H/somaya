@@ -1,11 +1,8 @@
-import { AdminShell } from "@/shared/components/admin/AdminShell";
+import type { ReactNode } from "react";
 import { SessionProvider } from "next-auth/react";
+import { AdminShell } from "@/shared/components/admin/AdminShell";
 
-export default function AdminDashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminDashboardLayout({ children }: { children: ReactNode }) {
   return (
     <SessionProvider>
       <AdminShell>{children}</AdminShell>

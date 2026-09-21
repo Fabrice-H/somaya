@@ -3,11 +3,7 @@ import { notFound } from "next/navigation";
 import { ProductDetail } from "@/features/products/components/detail/ProductDetail";
 import { RelatedProducts } from "@/features/products/components/RelatedProducts";
 import { buildProductJsonLd, buildProductMetadata } from "@/features/products/seo";
-import {
-  getActiveProductSlugs,
-  getProductDetail,
-  getRelatedProducts,
-} from "@/features/products/server/queries";
+import { getActiveProductSlugs, getProductDetail, getRelatedProducts } from "@/features/products/server/queries";
 
 export const revalidate = 300;
 

@@ -13,10 +13,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
-// ============================================================
-// ENUMS
-// ============================================================
-
 export const orderStatusEnum = pgEnum("order_status", [
   "pending",
   "confirmed",
@@ -26,23 +22,10 @@ export const orderStatusEnum = pgEnum("order_status", [
   "cancelled",
 ]);
 
-export const paymentMethodEnum = pgEnum("payment_method", [
-  "cash",
-  "mobile_money",
-  "bank_transfer",
-]);
+export const paymentMethodEnum = pgEnum("payment_method", ["cash", "mobile_money", "bank_transfer"]);
 
-export const paymentStatusEnum = pgEnum("payment_status", [
-  "pending",
-  "paid",
-  "refunded",
-]);
+export const paymentStatusEnum = pgEnum("payment_status", ["pending", "paid", "refunded"]);
 
-// ============================================================
-// TABLES
-// ============================================================
-
-// Admin Users
 export const adminUsers = pgTable(
   "admin_users",
   {
@@ -58,7 +41,6 @@ export const adminUsers = pgTable(
   (table) => [index("idx_admin_users_email").on(table.email)]
 );
 
-// Categories
 export const categories = pgTable(
   "categories",
   {
@@ -75,7 +57,6 @@ export const categories = pgTable(
   (table) => [index("idx_categories_position").on(table.position)]
 );
 
-// Products
 export const products = pgTable(
   "products",
   {
@@ -111,15 +92,13 @@ export const products = pgTable(
   ]
 );
 
-// Lot Item type (each item in a lot is a purchasable article)
 export type LotItem = {
   id: string;
   image: string;
   stock: number;
-  label?: string; // Optional label like "Chaussure rouge"
+  label?: string;
 };
 
-// Product Lots (price groups with multiple items)
 export const productLots = pgTable(
   "product_lots",
   {
@@ -129,9 +108,7 @@ export const productLots = pgTable(
       .references(() => products.id, { onDelete: "cascade" }),
     name: varchar("name", { length: 100 }).notNull(),
     price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-    // NEW: items array - each item has its own image and stock
     items: jsonb("items").$type<LotItem[]>().default([]),
-    // DEPRECATED: kept for backward compatibility, use items instead
     images: jsonb("images").$type<string[]>().default([]),
     stock: integer("stock").default(0).notNull(),
     isAvailable: boolean("is_available").default(true).notNull(),
@@ -145,7 +122,6 @@ export const productLots = pgTable(
   ]
 );
 
-// Delivery Zones
 export const deliveryZones = pgTable("delivery_zones", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -158,7 +134,6 @@ export const deliveryZones = pgTable("delivery_zones", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-// Orders
 export const orders = pgTable(
   "orders",
   {
@@ -189,7 +164,6 @@ export const orders = pgTable(
   ]
 );
 
-// Order Items
 export const orderItems = pgTable(
   "order_items",
   {
@@ -212,7 +186,6 @@ export const orderItems = pgTable(
   (table) => [index("idx_order_items_order_id").on(table.orderId)]
 );
 
-// Store Settings (singleton)
 export const storeSettings = pgTable("store_settings", {
   id: uuid("id").primaryKey().default("00000000-0000-0000-0000-000000000001"),
   storeName: varchar("store_name", { length: 255 }).default("SO'MAYA").notNull(),
@@ -233,7 +206,6 @@ export const storeSettings = pgTable("store_settings", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-// Featured Collection (for home page section)
 export const featuredCollection = pgTable("featured_collection", {
   id: uuid("id").primaryKey().default("00000000-0000-0000-0000-000000000002"),
   eyebrow: varchar("eyebrow", { length: 100 }).default("La nouvelle saison"),
@@ -252,7 +224,6 @@ export const featuredCollection = pgTable("featured_collection", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-// Activity Logs
 export const activityLogs = pgTable(
   "activity_logs",
   {
@@ -268,7 +239,6 @@ export const activityLogs = pgTable(
   (table) => [index("idx_activity_logs_created").on(table.createdAt)]
 );
 
-// Testimonials
 export const testimonials = pgTable(
   "testimonials",
   {
@@ -286,7 +256,6 @@ export const testimonials = pgTable(
   (table) => [index("idx_testimonials_sort").on(table.sortOrder)]
 );
 
-// Instagram Posts (for home page section)
 export const instagramPosts = pgTable(
   "instagram_posts",
   {
@@ -300,19 +269,13 @@ export const instagramPosts = pgTable(
   (table) => [index("idx_instagram_posts_sort").on(table.sortOrder)]
 );
 
-// ============================================================
-// PRICE LOTS (Independent price groups with items)
-// ============================================================
-
-// Price Lot Item type (each item is a purchasable article)
 export type PriceLotItem = {
   id: string;
   image: string;
   stock: number;
-  label?: string; // Optional label like "Chaîne dorée"
+  label?: string;
 };
 
-// Price Lots (independent price groups - not linked to products)
 export const priceLots = pgTable(
   "price_lots",
   {
@@ -333,7 +296,6 @@ export const priceLots = pgTable(
   ]
 );
 
-// About Page Collections (for "Nos Collections" section on about page)
 export const aboutCollections = pgTable(
   "about_collections",
   {
@@ -349,8 +311,6 @@ export const aboutCollections = pgTable(
   (table) => [index("idx_about_collections_sort").on(table.sortOrder)]
 );
 
-// Hero Banner Settings (singleton for home page hero)
-// Layout options: "split" (text left, media right), "centered" (text centered over media), "fullwidth" (full media with overlay)
 export const heroBanner = pgTable("hero_banner", {
   id: uuid("id").primaryKey().default("00000000-0000-0000-0000-000000000003"),
   layout: varchar("layout", { length: 50 }).default("split").notNull(), // split, centered, fullwidth
@@ -358,7 +318,9 @@ export const heroBanner = pgTable("hero_banner", {
   title: varchar("title", { length: 255 }).default("L'élégance"),
   titleHighlight: varchar("title_highlight", { length: 100 }).default("commence"),
   titleSuffix: varchar("title_suffix", { length: 100 }).default("ici."),
-  description: text("description").default("Des pièces sélectionnées pour accompagner chaque femme et chaque homme au quotidien."),
+  description: text("description").default(
+    "Des pièces sélectionnées pour accompagner chaque femme et chaque homme au quotidien."
+  ),
   buttonText: varchar("button_text", { length: 100 }).default("Découvrir la collection"),
   buttonLink: varchar("button_link", { length: 255 }).default("#collections"),
   mediaType: varchar("media_type", { length: 20 }).default("video").notNull(), // image, video
@@ -371,10 +333,6 @@ export const heroBanner = pgTable("hero_banner", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
-
-// ============================================================
-// RELATIONS
-// ============================================================
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
   products: many(products),
@@ -425,10 +383,6 @@ export const priceLotsRelations = relations(priceLots, ({ one }) => ({
   }),
 }));
 
-// ============================================================
-// TYPES
-// ============================================================
-
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type NewAdminUser = typeof adminUsers.$inferInsert;
 
@@ -474,7 +428,6 @@ export type NewPriceLot = typeof priceLots.$inferInsert;
 export type AboutCollection = typeof aboutCollections.$inferSelect;
 export type NewAboutCollection = typeof aboutCollections.$inferInsert;
 
-// Helper types
 export type ProductWithCategory = Product & { category: Category | null };
 export type ProductWithCategoryAndLots = Product & { category: Category | null; lots: ProductLot[] };
 export type OrderWithItems = Order & { items: OrderItem[]; deliveryZone: DeliveryZone | null };

@@ -1,9 +1,11 @@
 "use client";
 
-import { memo } from "react";
 import { useProductFormStore } from "@/features/products/stores/product-form-store";
+import { toNonNegativeInt } from "@/features/products/utils";
+import { FormCard } from "./FormCard";
+import { FormField, INPUT_CLASS } from "./FormField";
 
-export const PricingSection = memo(function PricingSection() {
+export function PricingSection() {
   const price = useProductFormStore((s) => s.form.price);
   const sku = useProductFormStore((s) => s.form.sku);
   const stock = useProductFormStore((s) => s.form.stock);
@@ -11,88 +13,57 @@ export const PricingSection = memo(function PricingSection() {
   const setField = useProductFormStore((s) => s.setField);
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm">
-      <h3 className="text-lg font-medium text-[#3c161e] mb-4">Tarification</h3>
-
+    <FormCard title="Tarification">
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
-            Prix (FCFA) *
-          </label>
+        <FormField label="Prix (FCFA) *">
           <input
             type="number"
             value={price || ""}
-            onChange={(e) => {
-              const val = e.target.value;
-              setField("price", val === "" ? 0 : parseInt(val) || 0);
-            }}
+            onChange={(e) => setField("price", toNonNegativeInt(e.target.value))}
             required
             min={0}
             max={100000000}
-            className="w-full px-4 py-2.5 rounded-lg border border-black
-                     focus:outline-none focus:ring-2 focus:ring-black/10
-                     text-[#3c161e]"
+            className={INPUT_CLASS}
             placeholder="0"
           />
-        </div>
+        </FormField>
 
-        <div>
-          <label className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
-            SKU
-          </label>
+        <FormField label="SKU">
           <input
             type="text"
             value={sku || ""}
             onChange={(e) => setField("sku", e.target.value || null)}
             placeholder="Ex: PRD-001"
             maxLength={100}
-            className="w-full px-4 py-2.5 rounded-lg border border-black
-                     focus:outline-none focus:ring-2 focus:ring-black/10
-                     text-[#3c161e]"
+            className={INPUT_CLASS}
           />
-        </div>
+        </FormField>
 
         <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
-              Stock
-            </label>
+          <FormField label="Stock">
             <input
               type="number"
               value={stock || ""}
-              onChange={(e) => {
-                const val = e.target.value;
-                setField("stock", val === "" ? 0 : parseInt(val) || 0);
-              }}
+              onChange={(e) => setField("stock", toNonNegativeInt(e.target.value))}
               min={0}
               max={1000000}
-              className="w-full px-4 py-2.5 rounded-lg border border-black
-                       focus:outline-none focus:ring-2 focus:ring-black/10
-                       text-[#3c161e]"
+              className={INPUT_CLASS}
               placeholder="0"
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
-              Seuil alerte
-            </label>
+          </FormField>
+          <FormField label="Seuil alerte">
             <input
               type="number"
               value={lowStockThreshold || ""}
-              onChange={(e) => {
-                const val = e.target.value;
-                setField("low_stock_threshold", val === "" ? 0 : parseInt(val) || 0);
-              }}
+              onChange={(e) => setField("low_stock_threshold", toNonNegativeInt(e.target.value))}
               min={0}
               max={10000}
-              className="w-full px-4 py-2.5 rounded-lg border border-black
-                       focus:outline-none focus:ring-2 focus:ring-black/10
-                       text-[#3c161e]"
+              className={INPUT_CLASS}
               placeholder="5"
             />
-          </div>
+          </FormField>
         </div>
       </div>
-    </div>
+    </FormCard>
   );
-});
+}

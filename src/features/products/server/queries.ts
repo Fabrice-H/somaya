@@ -4,8 +4,9 @@ import { unstable_cache } from "next/cache";
 import { and, asc, desc, eq, ne } from "drizzle-orm";
 import { db, productLots, products } from "@/shared/lib/db";
 import { sanitizeRichText } from "@/shared/lib/sanitize";
+import { assertAdmin } from "@/features/auth/server/session";
 import { PRODUCTS_CACHE_TAG } from "../constants";
-import { toProductSummary, toShopProduct } from "./mappers";
+import { toAdminProduct, toProductSummary, toShopProduct } from "./mappers";
 
 const CACHE_OPTIONS = { revalidate: 120, tags: [PRODUCTS_CACHE_TAG] };
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -81,4 +82,23 @@ export async function getRelatedProducts(productId: string, categoryId: string |
 
 export async function getActiveProductSlugs() {
   return db.select({ slug: products.slug }).from(products).where(eq(products.isActive, true));
+}
+
+export async function getAdminProducts() {
+  await assertAdmin();
+  const rows = await db.query.products.findMany({
+    with: { category: true },
+    orderBy: [desc(products.createdAt)],
+  });
+  return rows.map(toAdminProduct);
+}
+
+export async function getAdminProduct(id: string) {
+  await assertAdmin();
+  if (!UUID_PATTERN.test(id)) return null;
+  const row = await db.query.products.findFirst({
+    where: eq(products.id, id),
+    with: { category: true },
+  });
+  return row ? toAdminProduct(row) : null;
 }

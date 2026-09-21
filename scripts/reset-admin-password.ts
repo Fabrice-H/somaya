@@ -1,10 +1,3 @@
-/**
- * Script to reset an admin user's password
- *
- * Usage:
- * pnpm tsx scripts/reset-admin-password.ts admin@somaya.ci newpassword
- */
-
 import { config } from "dotenv";
 import { neon } from "@neondatabase/serverless";
 import bcrypt from "bcryptjs";
@@ -32,7 +25,6 @@ async function main() {
 
   console.log(`\nResetting password for: ${email}...`);
 
-  // Check if user exists
   const existing = await sql`
     SELECT id FROM admin_users WHERE email = ${email.toLowerCase()}
   `;
@@ -42,10 +34,8 @@ async function main() {
     process.exit(1);
   }
 
-  // Hash new password with bcrypt
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-  // Update password
   await sql`
     UPDATE admin_users
     SET password_hash = ${passwordHash}, updated_at = NOW()

@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState } from "react";
+import { useState, type DragEvent } from "react";
 import Image from "next/image";
 import { X, GripVertical, Loader2 } from "lucide-react";
 import clsx from "clsx";
@@ -8,18 +8,16 @@ import clsx from "clsx";
 interface ImagePreviewProps {
   url: string;
   index: number;
-  isPrimary: boolean;
   isDragging: boolean;
-  onRemove: () => void;
+  onRemove: () => Promise<void>;
   onDragStart: () => void;
-  onDragOver: (e: React.DragEvent) => void;
+  onDragOver: (e: DragEvent) => void;
   onDragEnd: () => void;
 }
 
-export const ImagePreview = memo(function ImagePreview({
+export function ImagePreview({
   url,
   index,
-  isPrimary,
   isDragging,
   onRemove,
   onDragStart,
@@ -45,21 +43,12 @@ export const ImagePreview = memo(function ImagePreview({
       onDragEnd={onDragEnd}
       className={clsx(
         "relative group aspect-square rounded-lg overflow-hidden border-2 transition-all",
-        isDragging
-          ? "border-[#511f29] opacity-50 scale-95"
-          : "border-transparent hover:border-[#511f29]/30",
+        isDragging ? "border-[#511f29] opacity-50 scale-95" : "border-transparent hover:border-[#511f29]/30",
         isDeleting && "pointer-events-none opacity-50"
       )}
     >
-      <Image
-        src={url}
-        alt={`Image ${index + 1}`}
-        fill
-        className="object-cover"
-        sizes="(max-width: 640px) 50vw, 33vw"
-      />
+      <Image src={url} alt={`Image ${index + 1}`} fill className="object-cover" sizes="(max-width: 640px) 50vw, 33vw" />
 
-      {/* Overlay with actions */}
       <div
         className={clsx(
           "absolute inset-0 bg-black/40 transition-opacity flex items-center justify-center gap-2",
@@ -84,12 +73,11 @@ export const ImagePreview = memo(function ImagePreview({
         )}
       </div>
 
-      {/* Primary badge */}
-      {isPrimary && (
+      {index === 0 && (
         <span className="absolute top-2 left-2 px-2 py-0.5 bg-[#511f29] text-white text-xs rounded font-medium">
           Principale
         </span>
       )}
     </div>
   );
-});
+}
