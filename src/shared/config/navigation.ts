@@ -17,11 +17,13 @@ export const SHOP_SHORTCUTS = [
   { label: "Toute la boutique", href: "/catalogue" },
 ];
 
-export const SECONDARY_NAV = [
+export const MOBILE_NAV_BEFORE = [{ label: "Toute la boutique", href: "/catalogue" }];
+
+export const MOBILE_NAV_AFTER = [
   { label: "Par budget", href: "/lots" },
+  { label: "La marque", href: "/a-propos" },
   { label: "Programme fidélité", href: "/fidelite" },
   { label: "Mon compte", href: "/compte" },
-  { label: "La marque", href: "/a-propos" },
   { label: "Contact", href: "/contact" },
 ];
 
