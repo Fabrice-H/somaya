@@ -1,6 +1,6 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { ContactContent } from "@/features/contact/components/ContactContent";
-import { getPublicSettings } from "@/features/settings/server/actions";
+import { getStoreContact } from "@/features/settings/server/queries";
 
 export const metadata: Metadata = {
   title: "Contact | SO'MAYA - Mode & Accessoires",
@@ -9,11 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const settings = await getPublicSettings();
-
-  return (
-    <>
-        <ContactContent settings={settings} />
-    </>
-  );
+  return <ContactContent contact={await getStoreContact()} />;
 }

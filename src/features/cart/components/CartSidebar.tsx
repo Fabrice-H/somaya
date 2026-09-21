@@ -1,442 +1,107 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
-import { X, ShoppingBag } from "lucide-react";
-import { useCartStore } from "@/features/cart/store";
-
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("fr-CI", {
-    style: "decimal",
-    minimumFractionDigits: 0,
-  }).format(price) + " FCFA";
-}
+import { X } from "lucide-react";
+import { useHasMounted } from "@/shared/hooks/useHasMounted";
+import { formatPrice } from "@/shared/lib/format";
+import { useCartStore } from "../store";
+import { cartLineKey } from "../utils";
+import { CartLine } from "./CartLine";
 
 export function CartSidebar() {
-  const {
-    isOpen,
-    closeCart,
-    incrementItem,
-    decrementItem,
-    removeItem,
-    getItemCount,
-    getSubtotal,
-    getItems,
-  } = useCartStore();
-
-  const [isMounted, setIsMounted] = useState(false);
+  const hasMounted = useHasMounted();
+  const isOpen = useCartStore((state) => state.isOpen);
+  const closeCart = useCartStore((state) => state.closeCart);
+  const itemsByKey = useCartStore((state) => state.items);
+  const items = Object.values(itemsByKey);
+  const subtotal = items.reduce((sum, item) => sum + (item.lotPrice ?? item.price) * item.quantity, 0);
+  const count = items.reduce((sum, item) => sum + item.quantity, 0);
+  const open = hasMounted && isOpen;
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const cartItems = getItems();
-  const subtotal = getSubtotal();
-  const itemCount = getItemCount();
-  const hasItems = cartItems.length > 0;
-
-  if (!isMounted) return null;
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeCart();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open, closeCart]);
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+    <div className={`fixed inset-0 z-[110] ${open ? "" : "pointer-events-none"}`} inert={!open}>
+      <div
+        aria-hidden
+        onClick={closeCart}
+        className={`absolute inset-0 bg-black/30 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+      />
+      <aside
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cart-title"
+        className={`absolute bottom-0 right-0 top-0 flex w-full max-w-[440px] flex-col bg-white transition-transform duration-300 ease-out motion-reduce:transition-none ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-[var(--som-border)] px-6">
+          <h2 id="cart-title" className="m-0 text-[12px] font-medium uppercase tracking-[0.2em] text-[var(--som-ink)]">
+            Panier {count > 0 && <span className="text-[var(--som-gray)] tabular-nums">({count})</span>}
+          </h2>
+          <button
+            type="button"
             onClick={closeCart}
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 85,
-              background: "rgba(31,17,22,0.5)",
-              backdropFilter: "blur(3px)",
-            }}
-          />
-
-          {/* Sidebar */}
-          <motion.aside
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "tween", duration: 0.3 }}
-            style={{
-              position: "fixed",
-              top: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 86,
-              width: "min(424px,100%)",
-              background: "#fafafa",
-              display: "flex",
-              flexDirection: "column",
-              boxShadow: "-20px 0 60px rgba(31,17,22,0.28)",
-            }}
+            aria-label="Fermer le panier"
+            className="-mr-3 flex h-11 w-11 cursor-pointer items-center justify-center text-[var(--som-ink)]"
           >
-            {/* Header */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "24px 26px",
-                borderBottom: "1px solid rgba(0,0,0,0.12)",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "var(--font-stack)",
-                  fontSize: "23px",
-                  color: "#000000",
-                }}
-              >
-                Votre panier{" "}
-                <span style={{ fontSize: "14px", color: "#6b6b6b" }}>
-                  ({itemCount})
-                </span>
+            <X size={20} strokeWidth={1.4} />
+          </button>
+        </header>
+
+        {items.length === 0 ? (
+          <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
+            <Image src="/images/logo_mark.png" alt="" width={330} height={291} className="h-10 w-auto opacity-80" />
+            <p className="m-0 mt-6 text-[18px] font-medium text-[var(--som-ink)]">Votre panier est vide</p>
+            <p className="m-0 mt-2 text-[14px] font-light text-[var(--som-gray)]">
+              Nos pièces vous attendent, sélectionnées avec soin.
+            </p>
+            <Link href="/catalogue" onClick={closeCart} className="btn-secondary mt-8">
+              Découvrir la boutique
+            </Link>
+          </div>
+        ) : (
+          <>
+            <ul className="m-0 flex-1 list-none overflow-y-auto px-6 py-1">
+              {items.map((item) => (
+                <CartLine key={cartLineKey(item)} item={item} onNavigate={closeCart} />
+              ))}
+            </ul>
+
+            <footer className="shrink-0 border-t border-[var(--som-border)] px-6 pb-6 pt-5">
+              <div className="flex items-baseline justify-between">
+                <span className="text-[12px] uppercase tracking-[0.18em] text-[var(--som-ink)]">Sous-total</span>
+                <span className="text-[18px] tabular-nums text-[var(--som-ink)]">{formatPrice(subtotal)}</span>
               </div>
+              <p className="m-0 mt-1 text-[12px] font-light text-[var(--som-gray)]">
+                Livraison calculée à l&apos;étape suivante.
+              </p>
+              <Link href="/commande" onClick={closeCart} className="btn-primary mt-5 w-full">
+                Commander
+              </Link>
               <button
+                type="button"
                 onClick={closeCart}
-                aria-label="Fermer"
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "#000000",
-                  lineHeight: 0,
-                  padding: "2px",
-                }}
+                className="mt-2 flex min-h-11 w-full cursor-pointer items-center justify-center text-[11px] uppercase tracking-[0.18em] text-[var(--som-gray)] transition-colors hover:text-[var(--som-ink)]"
               >
-                <X size={22} strokeWidth={1.5} />
+                Continuer mes achats
               </button>
-            </div>
-
-            {/* Empty State */}
-            {!hasItems && (
-              <div
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "18px",
-                  padding: "48px 40px",
-                  textAlign: "center",
-                }}
-              >
-                <ShoppingBag size={40} color="#c7ab9b" strokeWidth={1.3} />
-                <div
-                  style={{
-                    fontSize: "14.5px",
-                    color: "#4a4a4a",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  Votre panier est vide.
-                  <br />
-                  Découvrez nos pièces d&apos;exception.
-                </div>
-                <Link
-                  href="/catalogue"
-                  onClick={closeCart}
-                  style={{
-                    background: "#511f29",
-                    color: "#ffffff",
-                    border: "none",
-                    cursor: "pointer",
-                    fontFamily: "var(--font-stack)",
-                    fontSize: "11.5px",
-                    fontWeight: 600,
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    padding: "14px 28px",
-                    borderRadius: "2px",
-                    textDecoration: "none",
-                  }}
-                >
-                  Découvrir la boutique
-                </Link>
-              </div>
-            )}
-
-            {/* Cart Items */}
-            {hasItems && (
-              <>
-                <div
-                  style={{
-                    flex: 1,
-                    overflowY: "auto",
-                    padding: "4px 26px",
-                  }}
-                >
-                  {cartItems.map((item) => {
-                    const uniqueKey = item.itemId
-                      ? `${item.productId}:${item.lotId}:${item.itemId}`
-                      : item.lotId
-                        ? `${item.productId}:${item.lotId}`
-                        : item.productId;
-
-                    // Display: Product - Lot - Item Label
-                    let displayName = item.productName;
-                    if (item.lotName) {
-                      displayName += ` - ${item.lotName}`;
-                    }
-                    if (item.itemLabel) {
-                      displayName += ` (${item.itemLabel})`;
-                    }
-
-                    const displayPrice = item.lotPrice ?? item.price;
-
-                    return (
-                      <div
-                        key={uniqueKey}
-                        style={{
-                          display: "flex",
-                          gap: "14px",
-                          padding: "18px 0",
-                          borderBottom: "1px solid rgba(0,0,0,0.08)",
-                        }}
-                      >
-                        {/* Image */}
-                        <Link
-                          href={`/produit/${item.productSlug}`}
-                          onClick={closeCart}
-                          style={{
-                            width: "70px",
-                            height: "88px",
-                            flexShrink: 0,
-                            overflow: "hidden",
-                            borderRadius: "2px",
-                            background: "#eeeeec",
-                            position: "relative",
-                          }}
-                        >
-                          <Image
-                            src={item.productImage}
-                            alt={displayName}
-                            fill
-                            style={{
-                              objectFit: "cover",
-                              objectPosition: "center 20%",
-                            }}
-                            sizes="70px"
-                          />
-                        </Link>
-
-                        {/* Info */}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div
-                            style={{
-                              fontSize: "9.5px",
-                              letterSpacing: "0.14em",
-                              textTransform: "uppercase",
-                              color: "#6b6b6b",
-                            }}
-                          >
-                            {item.categoryName}
-                          </div>
-                          <Link
-                            href={`/produit/${item.productSlug}`}
-                            onClick={closeCart}
-                            style={{
-                              fontFamily: "var(--font-stack)",
-                              fontSize: "15.5px",
-                              color: "#000000",
-                              display: "block",
-                              margin: "3px 0 10px",
-                              lineHeight: 1.2,
-                              textDecoration: "none",
-                            }}
-                          >
-                            {displayName}
-                          </Link>
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              gap: "10px",
-                            }}
-                          >
-                            {/* Quantity Controls */}
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                border: "1px solid rgba(0,0,0,0.2)",
-                                borderRadius: "3px",
-                              }}
-                            >
-                              <button
-                                onClick={() => decrementItem(item.productId, item.lotId, item.itemId)}
-                                aria-label="Moins"
-                                style={{
-                                  width: "28px",
-                                  height: "28px",
-                                  background: "none",
-                                  border: "none",
-                                  cursor: "pointer",
-                                  color: "#000000",
-                                  fontSize: "16px",
-                                  lineHeight: 1,
-                                }}
-                              >
-                                −
-                              </button>
-                              <span
-                                style={{
-                                  minWidth: "26px",
-                                  textAlign: "center",
-                                  fontSize: "13px",
-                                  color: "#000000",
-                                }}
-                              >
-                                {item.quantity}
-                              </span>
-                              <button
-                                onClick={() => incrementItem(item.productId, item.lotId, item.itemId)}
-                                aria-label="Plus"
-                                style={{
-                                  width: "28px",
-                                  height: "28px",
-                                  background: "none",
-                                  border: "none",
-                                  cursor: "pointer",
-                                  color: "#000000",
-                                  fontSize: "15px",
-                                  lineHeight: 1,
-                                }}
-                              >
-                                +
-                              </button>
-                            </div>
-                            <div
-                              style={{
-                                fontSize: "13.5px",
-                                fontWeight: 600,
-                                color: "#000000",
-                              }}
-                            >
-                              {formatPrice(displayPrice * item.quantity)}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Remove */}
-                        <button
-                          onClick={() => removeItem(item.productId, item.lotId, item.itemId)}
-                          aria-label="Retirer"
-                          style={{
-                            background: "none",
-                            border: "none",
-                            cursor: "pointer",
-                            color: "#8a8a8a",
-                            lineHeight: 0,
-                            padding: "2px",
-                            alignSelf: "flex-start",
-                          }}
-                        >
-                          <X size={16} strokeWidth={1.6} />
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Footer */}
-                <div
-                  style={{
-                    padding: "22px 26px",
-                    borderTop: "1px solid rgba(0,0,0,0.12)",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      justifyContent: "space-between",
-                      marginBottom: "5px",
-                    }}
-                  >
-                    <span style={{ fontSize: "13px", color: "#4a4a4a" }}>
-                      Sous-total
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-stack)",
-                        fontSize: "21px",
-                        color: "#000000",
-                      }}
-                    >
-                      {formatPrice(subtotal)}
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "11.5px",
-                      color: "#6b6b6b",
-                      marginBottom: "18px",
-                    }}
-                  >
-                    Livraison calculée à la commande · Abidjan 24h
-                  </div>
-                  <Link
-                    href="/commande"
-                    onClick={closeCart}
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      background: "#511f29",
-                      color: "#ffffff",
-                      border: "none",
-                      cursor: "pointer",
-                      fontFamily: "var(--font-stack)",
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      padding: "16px",
-                      borderRadius: "2px",
-                      textAlign: "center",
-                      textDecoration: "none",
-                      transition: "all 0.25s",
-                    }}
-                  >
-                    Passer la commande
-                  </Link>
-                  <button
-                    onClick={closeCart}
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      background: "transparent",
-                      color: "#000000",
-                      border: "1px solid rgba(0,0,0,0.3)",
-                      cursor: "pointer",
-                      fontFamily: "var(--font-stack)",
-                      fontSize: "11.5px",
-                      fontWeight: 600,
-                      letterSpacing: "0.13em",
-                      textTransform: "uppercase",
-                      padding: "13px",
-                      borderRadius: "2px",
-                      marginTop: "10px",
-                      transition: "all 0.25s",
-                    }}
-                  >
-                    Continuer mes achats
-                  </button>
-                </div>
-              </>
-            )}
-          </motion.aside>
-        </>
-      )}
-    </AnimatePresence>
+            </footer>
+          </>
+        )}
+      </aside>
+    </div>
   );
 }

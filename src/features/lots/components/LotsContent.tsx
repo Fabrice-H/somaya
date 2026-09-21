@@ -18,19 +18,19 @@ import {
 } from "@/shared/components/listing/ShopFilters";
 import { useCartStore } from "@/features/cart/store";
 import type { ProductSummary } from "@/features/products/types";
-import type { PriceLotPublic, PriceLotItemPublic } from "@/features/lots/server/queries";
+import type { PriceLotItem, PublicPriceLot } from "@/features/lots/types";
 
 // ============================================================
 // Types & helpers
 // ============================================================
 
 interface LotsContentProps {
-  lots: PriceLotPublic[];
+  lots: PublicPriceLot[];
   availablePrices: number[];
   categories: Array<{ id: string; name: string; slug: string }>;
 }
 
-type FlatItem = { item: PriceLotItemPublic; lot: PriceLotPublic };
+type FlatItem = { item: PriceLotItem; lot: PublicPriceLot };
 type SortOption = "price-asc" | "price-desc" | "name";
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [

@@ -1,7 +1,3 @@
-// ============================================================
-// Types for Price Lots (independent price groups)
-// ============================================================
-
 export type PriceLotItem = {
   id: string;
   image: string;
@@ -43,4 +39,18 @@ export type PriceLotItemFormData = {
   image: string;
   stock: number;
   label?: string;
+};
+
+export type PublicPriceLot = {
+  id: string;
+  name: string;
+  price: number;
+  category: { id: string; name: string; slug: string } | null;
+  items: PriceLotItem[];
+};
+
+export type PriceLotsCatalog = {
+  lots: PublicPriceLot[];
+  availablePrices: number[];
+  categories: { id: string; name: string; slug: string }[];
 };

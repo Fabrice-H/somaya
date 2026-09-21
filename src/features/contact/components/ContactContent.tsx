@@ -1,12 +1,8 @@
 import Link from "next/link";
 import { ArrowUpRight, MessageCircle } from "lucide-react";
-import type { StoreSettings } from "@/features/settings/server/actions";
+import type { StoreContact } from "@/features/settings/types";
+import { telHref, whatsappHref } from "@/shared/lib/phone";
 
-interface Props {
-  settings: StoreSettings | null;
-}
-
-// Multi-line setting (address, hours) -> lines
 function lines(value: string) {
   return value.split("\n").map((line, i) => (
     <span key={i} className="block">
@@ -18,27 +14,16 @@ function lines(value: string) {
 const rowLabel = "m-0 text-[11px] uppercase tracking-[0.2em] text-[var(--som-gray)]";
 const rowValue = "m-0 text-[15px] leading-relaxed text-[var(--som-ink)]";
 
-export function ContactContent({ settings }: Props) {
-  const phone = settings?.phone_number || "+225 07 78 78 42 68";
-  const whatsapp = settings?.whatsapp_number || "+225 05 08 90 56 66";
-  const address =
-    settings?.address || "Angré Château\nNon loin du Collège International les Vallées d'Angré\n08 BP 2190 Abj 08";
-  const instagram = settings?.instagram_handle || "so_maya_ci";
-  const facebook = settings?.facebook_url || "https://www.facebook.com/MadeyaCado";
-  const tiktok = settings?.tiktok_handle || "somayashop";
-  const hours = settings?.delivery_hours || "Lun - Sam : 9h00 - 19h00\nDimanche : Fermé";
-
-  const phoneUrl = phone.replace(/\s/g, "");
-  const whatsappClean = whatsapp.replace(/\s/g, "").replace(/^\+/, "");
-
+export function ContactContent({ contact }: { contact: StoreContact }) {
+  const { phone, whatsapp, address, hours } = contact;
   const socials = [
-    instagram && { label: "Instagram", href: `https://www.instagram.com/${instagram.replace("@", "")}/` },
-    tiktok && { label: "TikTok", href: `https://www.tiktok.com/@${tiktok.replace("@", "")}` },
-    facebook && {
+    { label: "Instagram", href: `https://www.instagram.com/${contact.instagram}/` },
+    { label: "TikTok", href: `https://www.tiktok.com/@${contact.tiktok}` },
+    {
       label: "Facebook",
-      href: facebook.startsWith("http") ? facebook : `https://www.facebook.com/${facebook}`,
+      href: contact.facebook.startsWith("http") ? contact.facebook : `https://www.facebook.com/${contact.facebook}`,
     },
-  ].filter(Boolean) as { label: string; href: string }[];
+  ];
 
   return (
     <div className="bg-white">
@@ -78,7 +63,7 @@ export function ContactContent({ settings }: Props) {
                 Commandes, disponibilités, conseils : on vous répond rapidement.
               </p>
               <a
-                href={`https://wa.me/${whatsappClean}?text=${encodeURIComponent("Bonjour SO'MAYA !")}`}
+                href={whatsappHref(whatsapp, "Bonjour SO'MAYA !")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary mt-6"
@@ -94,7 +79,7 @@ export function ContactContent({ settings }: Props) {
                 <dt className={rowLabel}>Téléphone</dt>
                 <dd className={rowValue}>
                   <a
-                    href={`tel:${phoneUrl}`}
+                    href={telHref(phone)}
                     className="inline-flex min-h-11 items-center gap-1.5 transition-colors hover:text-[var(--som-primary)] sm:min-h-0"
                   >
                     {phone}

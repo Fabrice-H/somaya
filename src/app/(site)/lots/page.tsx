@@ -1,6 +1,6 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { LotsContent } from "@/features/lots/components/LotsContent";
-import { getActivePriceLots } from "@/features/lots/server/queries";
+import { getPriceLotsCatalog } from "@/features/lots/server/queries";
 
 export const metadata: Metadata = {
   title: "Par Budget | SO'MAYA - Mode & Accessoires",
@@ -8,31 +8,7 @@ export const metadata: Metadata = {
     "Découvrez nos articles classés par lot de prix. Choisissez votre budget et trouvez facilement les articles qui correspondent à vos envies.",
 };
 
-// Force dynamic rendering (no SSG) until price_lots table exists
-export const dynamic = "force-dynamic";
-
 export default async function LotsPage() {
-  let lots: Awaited<ReturnType<typeof getActivePriceLots>>["lots"] = [];
-  let availablePrices: number[] = [];
-  let categories: Awaited<ReturnType<typeof getActivePriceLots>>["categories"] = [];
-
-  try {
-    const data = await getActivePriceLots();
-    lots = data.lots;
-    availablePrices = data.availablePrices;
-    categories = data.categories;
-  } catch (error) {
-    // Table might not exist yet
-    console.error("Error fetching price lots:", error);
-  }
-
-  return (
-    <>
-        <LotsContent
-          lots={lots}
-          availablePrices={availablePrices}
-          categories={categories}
-        />
-    </>
-  );
+  const { lots, availablePrices, categories } = await getPriceLotsCatalog();
+  return <LotsContent lots={lots} availablePrices={availablePrices} categories={categories} />;
 }

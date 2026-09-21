@@ -1,49 +1,54 @@
+import "server-only";
 import { unstable_cache } from "next/cache";
 import { and, asc, eq, sql } from "drizzle-orm";
-import { db, categories, products } from "@/shared/lib/db";
+import { categories, db, products } from "@/shared/lib/db";
+import { CONTACT_DEFAULTS } from "@/shared/config/site";
+import { CATEGORIES_CACHE_TAG } from "@/features/categories/constants";
+import { PRODUCTS_CACHE_TAG } from "@/features/products/constants";
+import { SETTINGS_CACHE_TAG } from "../constants";
+import type { StoreContact } from "../types";
 
-export type FooterData = {
-  categories: { id: string; name: string; slug: string }[];
-  contact: {
-    phone: string | null;
-    whatsapp: string | null;
-    email: string | null;
-    instagram: string | null;
-    facebook: string | null;
-    tiktok: string | null;
-  };
-};
+const withoutAt = (handle: string) => handle.replace(/^@/, "");
 
-/**
- * Footer data - active categories that have at least one active product
- * + contact details from store settings. Cached 5 min, refreshed by admin edits.
- */
-export const getFooterData = unstable_cache(
-  async (): Promise<FooterData> => {
-    const [categoryRows, settings] = await Promise.all([
-      db
-        .select({ id: categories.id, name: categories.name, slug: categories.slug })
-        .from(categories)
-        .innerJoin(products, and(eq(products.categoryId, categories.id), eq(products.isActive, true)))
-        .where(eq(categories.isActive, true))
-        .groupBy(categories.id, categories.name, categories.slug, categories.position)
-        .having(sql`count(${products.id}) > 0`)
-        .orderBy(asc(categories.position)),
-      db.query.storeSettings.findFirst(),
-    ]);
-
+export const getStoreContact = unstable_cache(
+  async (): Promise<StoreContact> => {
+    const settings = await db.query.storeSettings.findFirst();
     return {
-      categories: categoryRows.map((c) => ({ ...c, name: c.name.trim() })),
-      contact: {
-        phone: settings?.phoneNumber ?? null,
-        whatsapp: settings?.whatsappNumber ?? null,
-        email: settings?.email ?? null,
-        instagram: settings?.instagramHandle ?? null,
-        facebook: settings?.facebookUrl ?? null,
-        tiktok: settings?.tiktokHandle ?? null,
-      },
+      phone: settings?.phoneNumber || CONTACT_DEFAULTS.phone,
+      whatsapp: settings?.whatsappNumber || CONTACT_DEFAULTS.whatsapp,
+      email: settings?.email || null,
+      address: settings?.address || CONTACT_DEFAULTS.address,
+      hours: settings?.deliveryHours || CONTACT_DEFAULTS.hours,
+      instagram: withoutAt(settings?.instagramHandle || CONTACT_DEFAULTS.instagram),
+      facebook: settings?.facebookUrl || CONTACT_DEFAULTS.facebook,
+      tiktok: withoutAt(settings?.tiktokHandle || CONTACT_DEFAULTS.tiktok),
     };
   },
-  ["footer-data"],
-  { revalidate: 300, tags: ["store-settings", "categories", "products"] }
+  ["store-contact"],
+  { revalidate: 300, tags: [SETTINGS_CACHE_TAG] }
+);
+
+export const getDeliveryFee = unstable_cache(
+  async () => {
+    const settings = await db.query.storeSettings.findFirst({ columns: { deliveryFee: true } });
+    return Number(settings?.deliveryFee ?? 0);
+  },
+  ["delivery-fee"],
+  { revalidate: 300, tags: [SETTINGS_CACHE_TAG] }
+);
+
+export const getFooterCategories = unstable_cache(
+  async () => {
+    const rows = await db
+      .select({ id: categories.id, name: categories.name, slug: categories.slug })
+      .from(categories)
+      .innerJoin(products, and(eq(products.categoryId, categories.id), eq(products.isActive, true)))
+      .where(eq(categories.isActive, true))
+      .groupBy(categories.id, categories.name, categories.slug, categories.position)
+      .having(sql`count(${products.id}) > 0`)
+      .orderBy(asc(categories.position));
+    return rows.map((category) => ({ ...category, name: category.name.trim() }));
+  },
+  ["footer-categories"],
+  { revalidate: 300, tags: [CATEGORIES_CACHE_TAG, PRODUCTS_CACHE_TAG] }
 );

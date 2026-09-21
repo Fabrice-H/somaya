@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
-import { getFooterData } from "@/features/settings/server/queries";
+import { getStoreContact } from "@/features/settings/server/queries";
+import { LEGAL_LINKS } from "@/shared/config/navigation";
+import { whatsappHref } from "@/shared/lib/phone";
 import { LegalToc } from "./LegalToc";
 
 interface LegalPageLayoutProps {
@@ -9,17 +11,11 @@ interface LegalPageLayoutProps {
   children: React.ReactNode;
 }
 
-const LEGAL_PAGES = [
-  { label: "Livraison & Retours", href: "/livraison-retours" },
-  { label: "Conditions Générales de Vente", href: "/conditions-generales" },
-  { label: "Politique de Confidentialité", href: "/politique-confidentialite" },
-];
 
 export async function LegalPageLayout({ title, lastUpdated, children }: LegalPageLayoutProps) {
-  const { contact } = await getFooterData();
-  const whatsapp = contact.whatsapp || "+225 05 08 90 56 66";
-  const whatsappUrl = `https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`;
-  const otherPages = LEGAL_PAGES.filter((page) => page.label !== title && !title.startsWith(page.label));
+  const contact = await getStoreContact();
+  const whatsappUrl = whatsappHref(contact.whatsapp);
+  const otherPages = LEGAL_LINKS.filter((page) => page.label !== title);
 
   return (
     <div className="bg-white">

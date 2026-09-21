@@ -13,4 +13,6 @@ export const CONTACT_DEFAULTS = {
   instagram: "so_maya_ci",
   facebook: "https://www.facebook.com/MadeyaCado",
   tiktok: "somayashop",
+  address: "Angré Château\nNon loin du Collège International les Vallées d'Angré\n08 BP 2190 Abj 08",
+  hours: "Lun - Sam : 9h00 - 19h00\nDimanche : Fermé",
 } as const;
