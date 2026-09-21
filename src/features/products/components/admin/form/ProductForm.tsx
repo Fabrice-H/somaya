@@ -1,19 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useProductFormMeta, useProductFormStore } from "@/features/products/stores/product-form-store";
+import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
+import { useProductFormStore } from "@/features/products/stores/product-form-store";
 import { useProductSubmit } from "@/features/products/hooks/useProductSubmit";
 import { useDeleteProduct } from "@/features/products/hooks/useDeleteProduct";
 import { ADMIN_PRODUCTS_PATH } from "@/features/products/constants";
-import type { CategoryOption, Product, ProductFormTab } from "@/features/products/types";
+import type { CategoryOption, Product } from "@/features/products/types";
 import { DeleteProductDialog } from "../DeleteProductDialog";
-import { GeneralSection } from "./GeneralSection";
-import { ImagesSection } from "./ImagesSection";
-import { PricingSection } from "./PricingSection";
-import { ProductFormHeader } from "./ProductFormHeader";
-import { ProductFormTabs } from "./ProductFormTabs";
-import { StatusSection } from "./StatusSection";
+import { AdvancedSection } from "./AdvancedSection";
+import { InfoSection } from "./InfoSection";
+import { PhotosSection } from "./PhotosSection";
+import { PriceSection } from "./PriceSection";
+import { ProductFormActions } from "./ProductFormActions";
+import { SaveBar } from "./SaveBar";
+import { StockSection } from "./StockSection";
+import { VisibilitySection } from "./VisibilitySection";
 
 interface ProductFormProps {
   product?: Product;
@@ -22,9 +25,8 @@ interface ProductFormProps {
 
 export function ProductForm({ product, categories }: ProductFormProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<ProductFormTab>("general");
   const initialize = useProductFormStore((s) => s.initialize);
-  const { error } = useProductFormMeta();
+  const name = useProductFormStore((s) => s.form.name);
   const handleSubmit = useProductSubmit(product?.id);
   const deletion = useDeleteProduct(() => {
     router.push(ADMIN_PRODUCTS_PATH);
@@ -40,40 +42,31 @@ export function ProductForm({ product, categories }: ProductFormProps) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <ProductFormHeader isEditMode={isEditMode} onDelete={() => product && deletion.request(product.id)} />
-      <ProductFormTabs active={activeTab} onChange={setActiveTab} />
-
-      {error && <div className="mx-10 mt-6 p-4 bg-red-50 border border-red-200 text-red-700">{error}</div>}
-
-      <div style={{ padding: "32px 40px" }}>
-        {activeTab === "general" && (
-          <div style={{ maxWidth: 800 }}>
-            <GeneralSection categories={categories} isEditMode={isEditMode} />
-          </div>
-        )}
-        {activeTab === "images" && (
-          <div style={{ maxWidth: 800 }}>
-            <ImagesSection />
-          </div>
-        )}
-        {activeTab === "pricing" && (
-          <div style={{ maxWidth: 600 }}>
-            <PricingSection />
-          </div>
-        )}
-        {activeTab === "settings" && (
-          <div style={{ maxWidth: 600 }}>
-            <StatusSection />
-          </div>
-        )}
-      </div>
+      <AdminPage
+        eyebrow="Catalogue"
+        title={isEditMode ? "Modifier le produit" : "Ajouter un produit"}
+        description={isEditMode ? name || undefined : "Remplissez les étapes ci-dessous puis enregistrez."}
+        back={{ href: ADMIN_PRODUCTS_PATH, label: "Tous les produits" }}
+        actions={product && <ProductFormActions onDelete={() => deletion.request(product.id)} />}
+      >
+        <div className="flex max-w-[880px] flex-col gap-6">
+          <PhotosSection />
+          <InfoSection categories={categories} isEditMode={isEditMode} />
+          <PriceSection />
+          <StockSection />
+          <VisibilitySection />
+          <AdvancedSection />
+        </div>
+        <SaveBar />
+      </AdminPage>
 
       {deletion.targetId && (
         <DeleteProductDialog isDeleting={deletion.isDeleting} onCancel={deletion.cancel} onConfirm={deletion.confirm}>
-          <p className="text-sm text-[#6b6b6b] mb-2">
-            Vous êtes sur le point de supprimer <strong className="text-[#000000]">{product?.name}</strong>.
+          <p className="m-0 mb-2">
+            Vous êtes sur le point de supprimer{" "}
+            <strong className="font-medium text-[var(--som-ink)]">{product?.name}</strong>.
           </p>
-          <p className="text-sm text-[#6b6b6b]">
+          <p className="m-0">
             Cette action est irréversible et supprimera également toutes les images et lots associés.
           </p>
         </DeleteProductDialog>

@@ -51,12 +51,12 @@ export function DropZone({ onFilesSelected, uploading, progress, remaining }: Dr
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       className={clsx(
-        "flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-all",
+        "flex cursor-pointer flex-col items-center justify-center border border-dashed px-6 py-10 text-center transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--som-primary)]",
         uploading
-          ? "border-[#511f29]/30 bg-[#511f29]/5 cursor-wait"
+          ? "cursor-wait border-[var(--som-primary-200)] bg-[var(--som-primary-50)]"
           : isDragOver
-            ? "border-[#511f29] bg-[#511f29]/10"
-            : "border-[#511f29]/20 hover:border-[#511f29]/40 hover:bg-[#511f29]/5"
+            ? "border-[var(--som-primary)] bg-[var(--som-primary-50)]"
+            : "border-[var(--som-border-strong)] bg-[var(--som-surface-alt)] hover:border-[var(--som-primary)] hover:bg-[var(--som-primary-50)]"
       )}
     >
       <input
@@ -65,27 +65,34 @@ export function DropZone({ onFilesSelected, uploading, progress, remaining }: Dr
         multiple
         onChange={handleChange}
         disabled={uploading}
-        className="hidden"
+        className="sr-only"
       />
 
       {uploading ? (
-        <div className="flex flex-col items-center">
-          <Loader2 size={32} className="text-[#3c161e]/50 animate-spin mb-2" />
-          <span className="text-sm text-[#3c161e]/60">
-            {progress < 50 ? "Optimisation..." : "Upload..."} {progress}%
+        <div className="flex w-full max-w-[240px] flex-col items-center" role="status">
+          <Loader2 size={22} strokeWidth={1.5} className="mb-3 animate-spin text-[var(--som-primary)]" aria-hidden />
+          <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--som-ink)]">
+            {progress < 50 ? "Préparation…" : "Envoi…"} <span className="tabular-nums">{progress}%</span>
           </span>
-          <div className="w-48 h-2 bg-[#511f29]/10 rounded-full mt-2 overflow-hidden">
-            <div className="h-full bg-[#511f29] transition-all duration-300" style={{ width: `${progress}%` }} />
+          <div className="mt-3 h-[2px] w-full overflow-hidden bg-[var(--som-primary-100)]">
+            <div
+              className="h-full bg-[var(--som-primary)] transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
       ) : (
         <>
-          <Upload size={32} className="text-[#3c161e]/40 mb-2" />
-          <span className="text-sm text-[#3c161e]/60">Cliquez ou glissez vos images ici</span>
-          <span className="text-xs text-[#3c161e]/40 mt-1">
-            {remaining} image{plural} restante{plural}
+          <span className="flex h-11 w-11 items-center justify-center bg-white text-[var(--som-primary)]">
+            <Upload size={18} strokeWidth={1.5} aria-hidden />
           </span>
-          <span className="text-xs text-[#3c161e]/30 mt-0.5">Formats: {ACCEPTED_FORMATS}</span>
+          <span className="mt-4 text-[14px] text-[var(--som-ink)]">Ajouter des photos</span>
+          <span className="mt-1 text-[13px] font-light text-[var(--som-gray)]">
+            Cliquez ou glissez vos images ici · {remaining} restante{plural}
+          </span>
+          <span className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[var(--som-gray)]">
+            {ACCEPTED_FORMATS}
+          </span>
         </>
       )}
     </label>

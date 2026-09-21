@@ -29,7 +29,7 @@ export function useProductSubmit(productId?: string) {
           setError(result.error);
           return;
         }
-        router.push(ADMIN_PRODUCTS_PATH);
+        router.push(`${ADMIN_PRODUCTS_PATH}?saved=${productId ? "updated" : "created"}`);
       } catch (error) {
         setError(error instanceof Error ? error.message : "Une erreur est survenue");
       } finally {

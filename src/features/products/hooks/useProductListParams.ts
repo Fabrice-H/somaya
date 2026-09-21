@@ -16,6 +16,7 @@ export function useProductListParams() {
       else next.delete(key);
     }
     if (!("page" in params)) next.delete("page");
+    next.delete("saved");
     startTransition(() => {
       router.push(`${ADMIN_PRODUCTS_PATH}?${next.toString()}`, { scroll: false });
     });
@@ -26,6 +27,7 @@ export function useProductListParams() {
     query: searchParams.get("q") ?? "",
     categoryId: searchParams.get("category") ?? "",
     stock: searchParams.get("stock") ?? "",
+    saved: searchParams.get("saved"),
     isPending,
     update,
   };

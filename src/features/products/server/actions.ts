@@ -19,6 +19,10 @@ const NOT_FOUND: ProductActionResult = { success: false, error: "Produit non tro
 
 type ProductValues = z.output<typeof productUpdateSchema>;
 
+function keepSentFields(values: ProductValues, input: object): ProductValues {
+  return Object.fromEntries(Object.entries(values).filter(([key]) => key in input)) as ProductValues;
+}
+
 async function generateUniqueSlug(name: string, excludeId?: string): Promise<string> {
   const baseSlug = generateSlug(name);
   let slug = baseSlug;
@@ -93,6 +97,7 @@ export async function updateProduct(id: string, input: Partial<ProductInput>): P
   if (!parsedId.success) return NOT_FOUND;
   const parsed = productUpdateSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: parsed.error.issues[0].message };
+  const sentFields = keepSentFields(parsed.data, input);
 
   try {
     const current = await db.query.products.findFirst({
@@ -101,12 +106,12 @@ export async function updateProduct(id: string, input: Partial<ProductInput>): P
     });
     if (!current) return NOT_FOUND;
 
-    const { name } = parsed.data;
+    const { name } = sentFields;
     const slug = name && name !== current.name ? await generateUniqueSlug(name, parsedId.data) : undefined;
 
     await db
       .update(products)
-      .set({ ...toColumns(parsed.data), ...(slug && { slug }), updatedAt: new Date() })
+      .set({ ...toColumns(sentFields), ...(slug && { slug }), updatedAt: new Date() })
       .where(eq(products.id, parsedId.data));
 
     revalidateProducts(parsedId.data);

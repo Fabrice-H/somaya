@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 
 interface DeleteProductDialogProps {
   isDeleting: boolean;
@@ -10,32 +10,37 @@ interface DeleteProductDialogProps {
 
 export function DeleteProductDialog({ isDeleting, onCancel, onConfirm, children }: DeleteProductDialogProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div role="alertdialog" aria-modal="true" className="bg-white p-6 max-w-sm w-full mx-4 shadow-xl">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-full">
-            <AlertTriangle size={20} />
-          </div>
-          <h3 className="text-lg font-semibold text-[#000000]">Supprimer le produit</h3>
-        </div>
-        <div className="mb-6">{children}</div>
-        <div className="flex items-center justify-end gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={isDeleting}
-            className="h-10 px-4 text-sm text-[#000000] hover:bg-[#fafafa] transition-colors"
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
+      <div
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="delete-product-title"
+        className="w-full max-w-[420px] border border-[var(--som-border)] bg-white shadow-[0_18px_30px_-20px_rgba(0,0,0,0.18)]"
+      >
+        <div className="p-6">
+          <span className="flex h-10 w-10 items-center justify-center bg-[var(--som-error-tint)] text-[var(--som-error)]">
+            <Trash2 size={17} strokeWidth={1.5} aria-hidden />
+          </span>
+          <h3
+            id="delete-product-title"
+            className="m-0 mt-5 text-[13px] font-medium uppercase tracking-[0.14em] text-[var(--som-ink)]"
           >
+            Supprimer le produit
+          </h3>
+          <div className="mt-2 text-[14px] font-light leading-relaxed text-[var(--som-gray)]">{children}</div>
+        </div>
+        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-[var(--som-border)] px-6 py-4">
+          <button type="button" onClick={onCancel} disabled={isDeleting} className="btn-secondary btn-sm">
             Annuler
           </button>
           <button
             type="button"
             onClick={onConfirm}
             disabled={isDeleting}
-            className="h-10 px-4 bg-red-600 text-white text-sm font-medium hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center gap-2"
+            className="btn-primary btn-sm !bg-[var(--som-error)] hover:opacity-90"
           >
-            {isDeleting && <Loader2 size={14} className="animate-spin" />}
-            {isDeleting ? "Suppression..." : "Supprimer"}
+            {isDeleting && <Loader2 size={14} className="animate-spin" aria-hidden />}
+            {isDeleting ? "Suppression…" : "Supprimer"}
           </button>
         </div>
       </div>

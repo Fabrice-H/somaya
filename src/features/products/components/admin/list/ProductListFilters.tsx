@@ -1,19 +1,20 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Search } from "lucide-react";
+import { SearchField } from "@/shared/components/admin/ui/SearchField";
 import { STOCK_FILTER_OPTIONS } from "@/features/products/constants";
 import type { AdminProductFilters, CategoryOption } from "@/features/products/types";
 
-const SELECT_CLASS = "h-11 px-4 bg-[#fafafa] border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-[#000000] text-sm outline-none cursor-pointer";
+const SELECT_CLASS = "input-som cursor-pointer !min-h-11 !py-0 !text-[14px] sm:!w-[200px]";
 
 interface ProductListFiltersProps {
   filters: AdminProductFilters;
   categories: CategoryOption[];
+  resultLabel: string;
   onChange: (params: Record<string, string | null>) => void;
 }
 
-export function ProductListFilters({ filters, categories, onChange }: ProductListFiltersProps) {
+export function ProductListFilters({ filters, categories, resultLabel, onChange }: ProductListFiltersProps) {
   const [search, setSearch] = useState(filters.query);
 
   const handleSubmit = (e: FormEvent) => {
@@ -22,23 +23,23 @@ export function ProductListFilters({ filters, categories, onChange }: ProductLis
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-4 mb-6">
-      <form onSubmit={handleSubmit} className="flex-1 min-w-[200px] max-w-md">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6b6b6b]" size={18} />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Rechercher un produit..."
-            className="w-full h-11 pl-10 pr-4 bg-[#fafafa] border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-[#000000] text-sm outline-none transition-colors focus:border-black"
-          />
-        </div>
+    <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+      <form
+        onSubmit={handleSubmit}
+        role="search"
+        className="sm:w-[360px] [&_.input-group-som]:!min-h-11 [&_label]:!max-w-none"
+      >
+        <SearchField
+          value={search}
+          onChange={setSearch}
+          placeholder="Rechercher un produit…"
+          label="Rechercher un produit"
+        />
       </form>
-
       <select
         value={filters.categoryId}
         onChange={(e) => onChange({ category: e.target.value || null })}
+        aria-label="Filtrer par catégorie"
         className={SELECT_CLASS}
       >
         <option value="">Toutes les catégories</option>
@@ -48,10 +49,10 @@ export function ProductListFilters({ filters, categories, onChange }: ProductLis
           </option>
         ))}
       </select>
-
       <select
         value={filters.stock}
         onChange={(e) => onChange({ stock: e.target.value || null })}
+        aria-label="Filtrer par stock"
         className={SELECT_CLASS}
       >
         <option value="">Tous les stocks</option>
@@ -61,6 +62,9 @@ export function ProductListFilters({ filters, categories, onChange }: ProductLis
           </option>
         ))}
       </select>
+      <p className="m-0 text-[11px] uppercase tracking-[0.16em] tabular-nums text-[var(--som-gray)] sm:ml-auto">
+        {resultLabel}
+      </p>
     </div>
   );
 }

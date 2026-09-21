@@ -1,18 +1,22 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
+import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
 import { useProductListParams } from "@/features/products/hooks/useProductListParams";
 import { useDeleteProduct } from "@/features/products/hooks/useDeleteProduct";
-import { ADMIN_PRODUCTS_PER_PAGE } from "@/features/products/constants";
+import { ADMIN_PRODUCTS_PATH, ADMIN_PRODUCTS_PER_PAGE } from "@/features/products/constants";
 import { computeProductStats, filterAdminProducts } from "@/features/products/utils";
 import type { CategoryOption, Product } from "@/features/products/types";
 import { DeleteProductDialog } from "./DeleteProductDialog";
-import { AdminProductCard } from "./list/AdminProductCard";
 import { ProductListFilters } from "./list/ProductListFilters";
 import { ProductsEmptyState } from "./list/ProductsEmptyState";
-import { ProductsHeader } from "./list/ProductsHeader";
 import { ProductsPagination } from "./list/ProductsPagination";
 import { ProductStatsGrid } from "./list/ProductStatsGrid";
+import { ProductsTable } from "./list/ProductsTable";
+import { SavedNotice } from "./list/SavedNotice";
+import { useToggleVisibility } from "./list/useToggleVisibility";
 
 interface ProductsClientProps {
   products: Product[];
@@ -24,8 +28,9 @@ function pluralize(count: number) {
 }
 
 export function ProductsClient({ products, categories }: ProductsClientProps) {
-  const { page, query, categoryId, stock, isPending, update } = useProductListParams();
+  const { page, query, categoryId, stock, saved, isPending, update } = useProductListParams();
   const deletion = useDeleteProduct();
+  const visibility = useToggleVisibility();
 
   const filtered = useMemo(
     () => filterAdminProducts(products, { query, categoryId, stock }),
@@ -38,32 +43,39 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
   const visible = filtered.slice(start, start + ADMIN_PRODUCTS_PER_PAGE);
 
   return (
-    <div style={{ padding: "32px 40px" }}>
-      <ProductsHeader />
+    <AdminPage
+      eyebrow="Catalogue"
+      title="Produits"
+      description="Ajoutez, modifiez ou masquez les pièces de votre boutique."
+      actions={
+        <Link href={`${ADMIN_PRODUCTS_PATH}/nouveau`} className="btn-primary btn-sm">
+          <Plus size={16} strokeWidth={1.5} aria-hidden />
+          Ajouter un produit
+        </Link>
+      }
+    >
+      {saved && <SavedNotice created={saved === "created"} onDismiss={() => update({})} />}
       <ProductStatsGrid stats={stats} />
-      <ProductListFilters filters={{ query, categoryId, stock }} categories={categories} onChange={update} />
-
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-[#6b6b6b]">
-          {filtered.length === products.length
+      <ProductListFilters
+        filters={{ query, categoryId, stock }}
+        categories={categories}
+        resultLabel={
+          filtered.length === products.length
             ? `${products.length} ${pluralize(products.length)}`
-            : `${filtered.length} sur ${products.length} ${pluralize(products.length)}`}
-        </p>
-        {totalPages > 1 && (
-          <p className="text-sm text-[#6b6b6b]">
-            Page {page} sur {totalPages}
-          </p>
-        )}
-      </div>
+            : `${filtered.length} sur ${products.length}`
+        }
+        onChange={update}
+      />
 
       {visible.length === 0 ? (
         <ProductsEmptyState filtered={Boolean(query || categoryId || stock)} />
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {visible.map((product) => (
-            <AdminProductCard key={product.id} product={product} onDelete={deletion.request} />
-          ))}
-        </div>
+        <ProductsTable
+          products={visible}
+          pendingId={visibility.pendingId}
+          onToggleVisibility={visibility.toggle}
+          onDelete={deletion.request}
+        />
       )}
 
       {totalPages > 1 && (
@@ -77,12 +89,12 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
 
       {deletion.targetId && (
         <DeleteProductDialog isDeleting={deletion.isDeleting} onCancel={deletion.cancel} onConfirm={deletion.confirm}>
-          <p className="text-sm text-[#6b6b6b]">
+          <p className="m-0">
             Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible et supprimera également toutes
             les images associées.
           </p>
         </DeleteProductDialog>
       )}
-    </div>
+    </AdminPage>
   );
 }

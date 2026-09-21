@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertCircle, X } from "lucide-react";
 import type { UploadBucket } from "@/features/media/types";
 import { useImageUpload } from "@/features/products/hooks/useImageUpload";
 import { DropZone } from "./DropZone";
@@ -26,12 +27,21 @@ export function ImageUploader({ images, onChange, bucket, maxImages }: ImageUplo
   };
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm flex items-center justify-between">
-          <span>{error}</span>
-          <button type="button" onClick={clearError} className="text-red-500 hover:text-red-700 text-xs underline">
-            Fermer
+        <div
+          role="alert"
+          className="flex items-center gap-2 border-l-2 border-[var(--som-error)] bg-[var(--som-error-tint)] py-1 pl-3 pr-1 text-[13px] text-[var(--som-error)]"
+        >
+          <AlertCircle size={16} strokeWidth={1.5} aria-hidden className="shrink-0" />
+          <span className="flex-1">{error}</span>
+          <button
+            type="button"
+            onClick={clearError}
+            aria-label="Fermer le message"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center hover:opacity-70"
+          >
+            <X size={15} strokeWidth={1.5} aria-hidden />
           </button>
         </div>
       )}
@@ -45,8 +55,8 @@ export function ImageUploader({ images, onChange, bucket, maxImages }: ImageUplo
         remaining={maxImages - images.length}
       />
 
-      <p className="text-xs text-[#3c161e]/40 text-center">
-        Les images sont automatiquement optimisées et converties en WebP pour de meilleures performances.
+      <p className="m-0 text-[12px] font-light text-[var(--som-gray)]">
+        Les photos sont automatiquement allégées pour un chargement rapide.
       </p>
     </div>
   );
