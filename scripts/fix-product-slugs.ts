@@ -57,7 +57,6 @@ async function fixProductSlugs() {
     for (const product of products) {
       const { id, name, slug } = product;
 
-      const expectedSlug = generateSlug(name);
       const isValidSlug = slug && /^[a-z0-9-]+$/.test(slug) && slug.length > 0;
 
       if (!isValidSlug || !slug) {

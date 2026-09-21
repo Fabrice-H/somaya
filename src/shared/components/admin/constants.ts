@@ -1,4 +1,4 @@
-import { FolderOpen, Layers, LayoutDashboard, MessageSquareQuote, Package, Settings, ShoppingBag } from "lucide-react";
+import { FolderOpen, Layers, LayoutDashboard, Package, Settings, ShoppingBag } from "lucide-react";
 import type { BadgeTone } from "./ui/Badge";
 
 export const ADMIN_NAVIGATION = [

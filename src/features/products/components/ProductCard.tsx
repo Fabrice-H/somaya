@@ -173,7 +173,7 @@ export function ProductCard({
             </s>
           )}
           <span
-            className={`text-[14px] font-normal ${
+            className={`text-[14px] font-semibold ${
               outOfStock ? "text-[#9a9a9a]" : onSale ? "text-[var(--som-accent-deep)]" : "text-[var(--som-ink)]"
             }`}
           >
