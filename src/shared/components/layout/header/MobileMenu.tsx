@@ -44,8 +44,8 @@ export function MobileMenu({
         role="dialog"
         aria-modal="true"
         aria-label="Menu"
-        className={`absolute inset-y-0 left-0 flex w-[84%] max-w-[380px] flex-col bg-white shadow-[8px_0_32px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out motion-reduce:transition-none ${
-          open ? "translate-x-0" : "-translate-x-full"
+        className={`absolute inset-y-0 left-0 flex w-[84%] max-w-[380px] flex-col bg-white transition-[transform,box-shadow] duration-300 ease-out motion-reduce:transition-none ${
+          open ? "translate-x-0 shadow-[8px_0_32px_rgba(0,0,0,0.12)]" : "-translate-x-full shadow-none"
         }`}
       >
         <div className="flex h-[68px] shrink-0 items-center justify-between border-b border-[#e6e6e6] pl-6 pr-3">
