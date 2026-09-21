@@ -1,4 +1,4 @@
-import { Check, X } from "lucide-react";
+import { Check, TriangleAlert } from "lucide-react";
 
 type StatusMessageProps = {
   type: "success" | "error";
@@ -8,19 +8,18 @@ type StatusMessageProps = {
 export function StatusMessage({ type, text }: StatusMessageProps) {
   const success = type === "success";
   return (
-    <div
-      style={{
-        padding: 16,
-        marginTop: 24,
-        background: success ? "rgba(34, 197, 94, 0.1)" : "rgba(239, 68, 68, 0.1)",
-        border: `1px solid ${success ? "rgba(34, 197, 94, 0.3)" : "rgba(239, 68, 68, 0.3)"}`,
-        color: success ? "#15803d" : "#dc2626",
-      }}
+    <p
+      role="status"
+      className={`m-0 mb-6 flex items-center gap-2 text-[13px] ${
+        success ? "text-[var(--som-success)]" : "bg-[var(--som-error-tint)] px-4 py-3 text-[var(--som-error)]"
+      }`}
     >
-      <div className="flex items-center gap-2 text-sm">
-        {success ? <Check size={16} /> : <X size={16} />}
-        {text}
-      </div>
-    </div>
+      {success ? (
+        <Check size={15} strokeWidth={1.5} aria-hidden />
+      ) : (
+        <TriangleAlert size={15} strokeWidth={1.5} aria-hidden />
+      )}
+      {text}
+    </p>
   );
 }

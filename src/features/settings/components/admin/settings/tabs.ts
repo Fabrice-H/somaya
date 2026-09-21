@@ -1,15 +1,13 @@
-import { ImageIcon, Palette, Phone, Star, Store, Truck } from "lucide-react";
-
 export const SETTINGS_TABS = [
-  { id: "boutique", label: "Boutique", icon: Store },
-  { id: "contact", label: "Contact", icon: Phone },
-  { id: "livraison", label: "Livraison", icon: Truck },
-  { id: "apparence", label: "Apparence", icon: Palette },
-  { id: "hero", label: "Hero Banner", icon: ImageIcon },
-  { id: "temoignages", label: "Témoignages", icon: Star },
+  { value: "boutique", label: "Boutique" },
+  { value: "contact", label: "Contact" },
+  { value: "livraison", label: "Livraison" },
+  { value: "apparence", label: "Apparence" },
+  { value: "hero", label: "Hero banner" },
+  { value: "temoignages", label: "Témoignages" },
 ] as const;
 
-export type SettingsTab = (typeof SETTINGS_TABS)[number]["id"];
+export type SettingsTab = (typeof SETTINGS_TABS)[number]["value"];
 
 const FORM_TABS: readonly SettingsTab[] = ["boutique", "contact", "livraison", "apparence"];
 

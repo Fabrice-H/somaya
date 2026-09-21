@@ -1,6 +1,5 @@
 "use client";
 
-import clsx from "clsx";
 import { Film, Loader2 } from "lucide-react";
 import { VIDEO_CONFIG } from "../constants";
 import { useVideoUploader } from "../hooks/useVideoUploader";
@@ -34,10 +33,11 @@ export function VideoDropzone({ value, onChange }: VideoDropzoneProps) {
         }}
         onDragOver={(event) => event.preventDefault()}
         onClick={() => !isUploading && inputRef.current?.click()}
-        className={clsx(
-          "border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all",
-          isUploading ? "border-[var(--som-primary)] bg-[#511f29]/5" : "border-gray-200 hover:border-[#511f29]/50 hover:bg-[#511f29]/5"
-        )}
+        className={`flex min-h-[168px] flex-col items-center justify-center border border-dashed px-6 py-8 text-center transition-colors ${
+          isUploading
+            ? "cursor-wait border-[var(--som-primary-300)] bg-[var(--som-primary-50)]"
+            : "cursor-pointer border-[var(--som-border-strong)] bg-[var(--som-surface-alt)] hover:border-[var(--som-ink)] hover:bg-white"
+        }`}
       >
         <input
           ref={inputRef}
@@ -49,25 +49,34 @@ export function VideoDropzone({ value, onChange }: VideoDropzoneProps) {
         />
 
         {isUploading ? (
-          <div className="flex flex-col items-center gap-3">
-            <Loader2 size={32} className="text-[#3c161e] animate-spin" />
-            <p className="text-[#3c161e] font-medium">Upload en cours...</p>
-            <p className="text-xs text-gray-500">Cela peut prendre quelques instants</p>
-          </div>
+          <>
+            <Loader2 size={18} strokeWidth={1.5} className="animate-spin text-[var(--som-primary)]" aria-hidden />
+            <p className="m-0 mt-3 text-[13px] text-[var(--som-ink)]">Téléchargement en cours…</p>
+            <p className="m-0 mt-1 text-[12px] font-light text-[var(--som-gray)]">
+              Cela peut prendre quelques instants.
+            </p>
+            <span className="mt-4 block h-[2px] w-full max-w-[240px] animate-pulse bg-[var(--som-primary)]" />
+          </>
         ) : (
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-14 h-14 rounded-full bg-[#511f29]/10 flex items-center justify-center">
-              <Film size={24} className="text-[#3c161e]" />
-            </div>
-            <div>
-              <p className="font-medium text-[#000000]">Glissez une vidéo ici ou cliquez pour sélectionner</p>
-              <p className="text-sm text-gray-500 mt-1">MP4, MOV, WebM · Max 100 MB</p>
-            </div>
-          </div>
+          <>
+            <span className="flex h-10 w-10 items-center justify-center border border-[var(--som-border)] bg-white text-[var(--som-ink)]">
+              <Film size={16} strokeWidth={1.5} aria-hidden />
+            </span>
+            <p className="m-0 mt-4 text-[14px] text-[var(--som-ink)]">
+              Glissez une vidéo ici ou cliquez pour sélectionner
+            </p>
+            <p className="m-0 mt-1.5 text-[11px] uppercase tracking-[0.16em] text-[var(--som-gray)]">
+              MP4, MOV, WebM · 100 Mo max
+            </p>
+          </>
         )}
       </div>
 
-      {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+      {error && (
+        <p role="alert" className="error-som m-0">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

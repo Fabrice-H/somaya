@@ -1,36 +1,47 @@
-import clsx from "clsx";
-import { fieldClass, labelClass } from "./styles";
+import { Field } from "@/shared/components/admin/ui/Field";
 
 type TextFieldProps = {
+  id: string;
   label: string;
   value: string | null;
   onChange: (value: string) => void;
   placeholder?: string;
+  hint?: string;
   className?: string;
   multiline?: boolean;
 };
 
-export function TextField({ label, value, onChange, placeholder, className, multiline }: TextFieldProps) {
+export function TextField({
+  id,
+  label,
+  value,
+  onChange,
+  placeholder,
+  hint,
+  className = "",
+  multiline,
+}: TextFieldProps) {
   return (
-    <div>
-      <label className={labelClass}>{label}</label>
+    <Field id={id} label={label} hint={hint}>
       {multiline ? (
         <textarea
+          id={id}
           value={value || ""}
           onChange={(event) => onChange(event.target.value)}
           rows={3}
-          className={clsx(fieldClass, "resize-none", className)}
+          className={`input-som ${className}`}
           placeholder={placeholder}
         />
       ) : (
         <input
+          id={id}
           type="text"
           value={value || ""}
           onChange={(event) => onChange(event.target.value)}
-          className={clsx(fieldClass, className)}
+          className={`input-som ${className}`}
           placeholder={placeholder}
         />
       )}
-    </div>
+    </Field>
   );
 }

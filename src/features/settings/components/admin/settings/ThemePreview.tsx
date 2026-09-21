@@ -6,32 +6,29 @@ type ThemePreviewProps = {
 
 export function ThemePreview({ storeName, primary, secondary }: ThemePreviewProps) {
   return (
-    <div className="pt-6 border-t border-[#511f29]/10">
-      <h3 className="text-sm font-semibold text-[#000000] mb-4">Aperçu</h3>
-      <div className="p-6" style={{ background: "#fafafa", border: "1px solid rgba(81, 31, 41, 0.1)" }}>
-        <div className="flex items-center justify-between p-4 mb-4" style={{ background: primary }}>
-          <span className="font-semibold" style={{ color: secondary }}>
-            {storeName || "SO'MAYA"}
-          </span>
-          <div className="flex gap-4 text-sm" style={{ color: secondary, opacity: 0.8 }}>
-            <span>Catalogue</span>
-            <span>Contact</span>
-          </div>
+    <div className="border border-[var(--som-border)] bg-[var(--som-surface-alt)]">
+      <div className="flex items-center justify-between gap-4 px-5 py-4" style={{ background: primary }}>
+        <span className="text-[14px] font-medium uppercase tracking-[0.2em]" style={{ color: secondary }}>
+          {storeName || "SO'MAYA"}
+        </span>
+        <div className="flex gap-5 text-[11px] uppercase tracking-[0.16em]" style={{ color: secondary, opacity: 0.8 }}>
+          <span>Catalogue</span>
+          <span>Contact</span>
         </div>
-        <div className="flex gap-3">
-          <span
-            className="inline-block px-5 py-2.5 text-sm font-semibold"
-            style={{ background: primary, color: secondary }}
-          >
-            Ajouter au panier
-          </span>
-          <span
-            className="inline-block px-5 py-2.5 text-sm font-semibold border-2"
-            style={{ borderColor: primary, color: primary }}
-          >
-            Voir plus
-          </span>
-        </div>
+      </div>
+      <div className="flex flex-wrap gap-3 p-6">
+        <span
+          className="inline-flex min-h-10 items-center px-6 text-[11px] font-medium uppercase tracking-[0.16em]"
+          style={{ background: primary, color: secondary }}
+        >
+          Ajouter au panier
+        </span>
+        <span
+          className="inline-flex min-h-10 items-center border px-6 text-[11px] font-medium uppercase tracking-[0.16em]"
+          style={{ borderColor: primary, color: primary }}
+        >
+          Voir plus
+        </span>
       </div>
     </div>
   );

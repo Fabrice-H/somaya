@@ -1,11 +1,14 @@
-import clsx from "clsx";
 import { ChevronDown, ChevronUp, Eye, EyeOff, Trash2 } from "lucide-react";
+import { Badge } from "@/shared/components/admin/ui/Badge";
 import type { AboutCollectionData, CollectionPatch } from "../../../types";
 import { ColorSelect } from "./ColorSelect";
 
-const smallFieldClass =
-  "bg-white border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-[#000000] outline-none focus:border-black";
-const arrowClass = "p-1 hover:bg-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed";
+const fieldClass =
+  "h-10 w-full border border-[var(--som-border-input)] bg-white px-3 text-[14px] font-light text-[var(--som-ink)] outline-none transition-colors hover:border-[var(--som-border-input-hover)] focus:border-[var(--som-ink)]";
+const moveClass =
+  "flex h-8 w-9 cursor-pointer items-center justify-center text-[var(--som-gray)] transition-colors hover:text-[var(--som-ink)] disabled:cursor-not-allowed disabled:opacity-30";
+const actionClass =
+  "flex h-10 w-10 cursor-pointer items-center justify-center border border-transparent text-[var(--som-gray)] transition-colors";
 
 type CollectionRowProps = {
   collection: AboutCollectionData;
@@ -28,68 +31,90 @@ export function CollectionRow({
   onMove,
   onDelete,
 }: CollectionRowProps) {
+  const visibilityLabel = collection.isActive ? "Masquer la collection" : "Afficher la collection";
+
   return (
-    <div
-      className="flex items-center gap-3 p-3 bg-[#fafafa] border border-[var(--som-border)] transition-opacity"
+    <li
+      className="flex items-center gap-3 border-b border-[var(--som-border)] px-3 py-4 transition-opacity last:border-b-0 lg:px-4"
       style={{ opacity: saving ? 0.6 : 1 }}
     >
-      <div className="flex flex-col gap-0.5">
-        <button type="button" onClick={() => onMove("up")} disabled={isFirst} className={arrowClass} title="Monter">
-          <ChevronUp size={14} className="text-[#6b6b6b]" />
+      <div className="flex shrink-0 flex-col">
+        <button type="button" onClick={() => onMove("up")} disabled={isFirst} aria-label="Monter" className={moveClass}>
+          <ChevronUp size={16} strokeWidth={1.5} aria-hidden />
         </button>
-        <button type="button" onClick={() => onMove("down")} disabled={isLast} className={arrowClass} title="Descendre">
-          <ChevronDown size={14} className="text-[#6b6b6b]" />
+        <button
+          type="button"
+          onClick={() => onMove("down")}
+          disabled={isLast}
+          aria-label="Descendre"
+          className={moveClass}
+        >
+          <ChevronDown size={16} strokeWidth={1.5} aria-hidden />
         </button>
       </div>
 
-      <div className="w-10 h-12 flex-shrink-0" style={{ backgroundColor: collection.backgroundColor }} />
+      <span
+        aria-hidden
+        className="h-9 w-9 shrink-0 rounded-full border border-[var(--som-border)]"
+        style={{ backgroundColor: collection.backgroundColor }}
+      />
 
-      <div className="flex-1 min-w-0">
+      <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-[minmax(0,1fr)_88px_minmax(0,150px)]">
         <input
           type="text"
           value={collection.name}
           onChange={(event) => onEdit({ name: event.target.value })}
           onBlur={(event) => onSave({ name: event.target.value })}
-          className={`w-full h-9 px-3 text-sm ${smallFieldClass}`}
+          aria-label="Nom de la collection"
           placeholder="Nom"
+          className={`${fieldClass} font-normal`}
         />
-        <div className="flex gap-2 mt-2">
-          <input
-            type="text"
-            value={collection.year}
-            onChange={(event) => onEdit({ year: event.target.value })}
-            onBlur={(event) => onSave({ year: event.target.value })}
-            className={`w-20 h-8 px-2 text-xs ${smallFieldClass}`}
-            placeholder="Année"
-          />
-          <ColorSelect
-            value={collection.backgroundColor}
-            onChange={(backgroundColor) => onSave({ backgroundColor })}
-            className={`flex-1 h-8 px-2 text-xs ${smallFieldClass}`}
-          />
-        </div>
+        <input
+          type="text"
+          inputMode="numeric"
+          value={collection.year}
+          onChange={(event) => onEdit({ year: event.target.value })}
+          onBlur={(event) => onSave({ year: event.target.value })}
+          aria-label="Année"
+          placeholder="Année"
+          className={`${fieldClass} tabular-nums`}
+        />
+        <ColorSelect
+          value={collection.backgroundColor}
+          onChange={(backgroundColor) => onSave({ backgroundColor })}
+          ariaLabel="Couleur de fond"
+          className={fieldClass}
+        />
       </div>
 
-      <button
-        type="button"
-        onClick={() => onSave({ isActive: !collection.isActive })}
-        className={clsx(
-          "p-2 transition-colors",
-          collection.isActive ? "text-green-600 hover:bg-green-50" : "text-[#6b6b6b] hover:bg-white"
-        )}
-        title={collection.isActive ? "Visible" : "Masqué"}
-      >
-        {collection.isActive ? <Eye size={18} /> : <EyeOff size={18} />}
-      </button>
+      <div className="hidden w-[84px] shrink-0 justify-center md:flex">
+        <Badge tone={collection.isActive ? "success" : "neutral"}>{collection.isActive ? "Visible" : "Masquée"}</Badge>
+      </div>
 
-      <button
-        type="button"
-        onClick={onDelete}
-        className="p-2 text-red-500 hover:bg-red-50 transition-colors"
-        title="Supprimer"
-      >
-        <Trash2 size={18} />
-      </button>
-    </div>
+      <div className="flex shrink-0 items-center">
+        <button
+          type="button"
+          onClick={() => onSave({ isActive: !collection.isActive })}
+          aria-label={visibilityLabel}
+          title={visibilityLabel}
+          className={`${actionClass} hover:text-[var(--som-ink)]`}
+        >
+          {collection.isActive ? (
+            <Eye size={17} strokeWidth={1.5} aria-hidden />
+          ) : (
+            <EyeOff size={17} strokeWidth={1.5} aria-hidden />
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={onDelete}
+          aria-label="Supprimer la collection"
+          title="Supprimer"
+          className={`${actionClass} hover:text-[var(--som-error)]`}
+        >
+          <Trash2 size={17} strokeWidth={1.5} aria-hidden />
+        </button>
+      </div>
+    </li>
   );
 }

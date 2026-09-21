@@ -1,7 +1,8 @@
-import { Plus, Users } from "lucide-react";
+import { Layers, Plus } from "lucide-react";
+import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
+import { EmptyState } from "@/shared/components/admin/ui/EmptyState";
 import type { AboutCollectionData, CollectionPatch } from "../../../types";
 import { CollectionRow } from "./CollectionRow";
-import { cardStyle, primaryButtonClass } from "./styles";
 
 type CollectionListProps = {
   collections: AboutCollectionData[];
@@ -25,24 +26,27 @@ export function CollectionList({
   onDelete,
 }: CollectionListProps) {
   return (
-    <div className="bg-white" style={cardStyle}>
-      <h2 className="text-base font-semibold text-[#000000] mb-4">Vos collections ({collections.length})</h2>
-
+    <AdminCard
+      title="Vos collections"
+      padded={false}
+      action={<span className="text-[12px] tabular-nums text-[var(--som-gray)]">{collections.length}</span>}
+    >
       {collections.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 mx-auto mb-4 bg-[#fafafa] flex items-center justify-center">
-            <Users size={24} className="text-[#6b6b6b]" />
-          </div>
-          <p className="text-[#6b6b6b] text-sm mb-4">Aucune collection configurée</p>
-          {showCreate && (
-            <button type="button" onClick={onCreate} className={`${primaryButtonClass} h-10 px-5`}>
-              <Plus size={14} />
-              Créer une collection
-            </button>
-          )}
-        </div>
+        <EmptyState
+          icon={Layers}
+          title="Aucune collection configurée"
+          description="Ajoutez votre première collection pour l'afficher sur « Notre Histoire »."
+          action={
+            showCreate && (
+              <button type="button" onClick={onCreate} className="btn-primary btn-sm">
+                <Plus size={15} strokeWidth={1.5} aria-hidden />
+                Créer une collection
+              </button>
+            )
+          }
+        />
       ) : (
-        <div className="space-y-3">
+        <ul className="m-0 list-none p-0">
           {collections.map((collection, index) => (
             <CollectionRow
               key={collection.id}
@@ -56,8 +60,8 @@ export function CollectionList({
               onDelete={() => onDelete(collection.id)}
             />
           ))}
-        </div>
+        </ul>
       )}
-    </div>
+    </AdminCard>
   );
 }

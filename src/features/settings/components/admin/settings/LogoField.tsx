@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { X } from "lucide-react";
 import { ImageUpload } from "@/features/media/components/ImageUpload";
-import { hintClass, labelClass } from "./styles";
 
 type LogoFieldProps = {
   value: string;
@@ -11,30 +10,20 @@ type LogoFieldProps = {
 export function LogoField({ value, onChange }: LogoFieldProps) {
   return (
     <div>
-      <label className={labelClass}>Logo de la boutique</label>
-      <p className={hintClass} style={{ marginBottom: 12, marginTop: 0 }}>
-        Uploadez une image ou laissez vide pour afficher le nom en texte
-      </p>
+      <p className="label-som m-0">Logo de la boutique</p>
+      <p className="help-som m-0 mb-3">Téléchargez une image, ou laissez vide pour afficher le nom en texte.</p>
 
       {value ? (
-        <div className="flex items-start gap-4">
-          <div
-            className="relative shrink-0 flex items-center justify-center overflow-hidden bg-[#fafafa]"
-            style={{ width: 200, height: 80, border: "1px solid rgba(81, 31, 41, 0.15)" }}
+        <div className="relative flex h-[96px] w-full max-w-[260px] items-center justify-center border border-[var(--som-border)] bg-[var(--som-surface-alt)]">
+          <Image src={value} alt="Logo actuel" fill className="object-contain p-4" sizes="260px" />
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            aria-label="Retirer le logo"
+            className="absolute right-2 top-2 flex h-9 w-9 cursor-pointer items-center justify-center border border-[var(--som-border)] bg-white text-[var(--som-ink)] transition-colors hover:border-[var(--som-ink)]"
           >
-            <Image src={value} alt="Logo" fill className="object-contain p-2" sizes="200px" />
-            <button
-              type="button"
-              onClick={() => onChange("")}
-              aria-label="Retirer le logo"
-              className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center bg-red-600 text-white rounded-full"
-            >
-              <X size={12} />
-            </button>
-          </div>
-          <div className="flex-1">
-            <p className="text-sm text-[#6b6b6b] mb-2">Logo actuel</p>
-          </div>
+            <X size={15} strokeWidth={1.5} aria-hidden />
+          </button>
         </div>
       ) : (
         <ImageUpload images={[]} onChange={(urls) => onChange(urls[0] || "")} bucket="store" maxImages={1} />

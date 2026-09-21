@@ -1,9 +1,10 @@
 "use client";
 
+import { Plus } from "lucide-react";
+import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
 import { useAboutCollections } from "../../hooks/useAboutCollections";
 import type { AboutCollectionData } from "../../types";
 import { CollectionList } from "./about-collections/CollectionList";
-import { CollectionsHeader } from "./about-collections/CollectionsHeader";
 import { CollectionsHelp } from "./about-collections/CollectionsHelp";
 import { CollectionsPreview } from "./about-collections/CollectionsPreview";
 import { NewCollectionForm } from "./about-collections/NewCollectionForm";
@@ -18,40 +19,49 @@ export function AboutCollectionsClient({ initialCollections }: AboutCollectionsC
   const openForm = () => state.setIsAdding(true);
 
   return (
-    <div>
-      <CollectionsHeader showAdd={!state.isAdding} onAdd={openForm} />
+    <AdminPage
+      eyebrow="Notre histoire"
+      title="Collections À propos"
+      description="Section affichée sur la page « Notre Histoire »."
+      actions={
+        !state.isAdding && (
+          <button type="button" onClick={openForm} className="btn-primary">
+            <Plus size={16} strokeWidth={1.5} aria-hidden />
+            Ajouter
+          </button>
+        )
+      }
+    >
       {state.message && <StatusMessage type={state.message.type} text={state.message.text} />}
 
-      <div style={{ padding: "32px 0" }}>
-        <div className="grid lg:grid-cols-2 gap-8" style={{ maxWidth: 1200 }}>
-          <div className="space-y-6">
-            {state.isAdding && (
-              <NewCollectionForm
-                draft={state.draft}
-                saving={state.saving === "new"}
-                onChange={state.setDraft}
-                onSubmit={state.add}
-                onCancel={() => state.setIsAdding(false)}
-              />
-            )}
-            <CollectionList
-              collections={state.collections}
-              saving={state.saving}
-              showCreate={!state.isAdding}
-              onCreate={openForm}
-              onEdit={state.patchLocal}
-              onSave={state.save}
-              onMove={state.move}
-              onDelete={state.remove}
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="min-w-0 space-y-6">
+          {state.isAdding && (
+            <NewCollectionForm
+              draft={state.draft}
+              saving={state.saving === "new"}
+              onChange={state.setDraft}
+              onSubmit={state.add}
+              onCancel={() => state.setIsAdding(false)}
             />
-          </div>
+          )}
+          <CollectionList
+            collections={state.collections}
+            saving={state.saving}
+            showCreate={!state.isAdding}
+            onCreate={openForm}
+            onEdit={state.patchLocal}
+            onSave={state.save}
+            onMove={state.move}
+            onDelete={state.remove}
+          />
+        </div>
 
-          <div>
-            <CollectionsPreview collections={state.collections} />
-            <CollectionsHelp />
-          </div>
+        <div className="space-y-6">
+          <CollectionsPreview collections={state.collections} />
+          <CollectionsHelp />
         </div>
       </div>
-    </div>
+    </AdminPage>
   );
 }

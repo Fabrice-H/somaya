@@ -19,11 +19,13 @@ export function ImageUpload({ images, onChange, bucket, maxImages = IMAGE_CONFIG
   return (
     <div className="space-y-4">
       {uploader.error && (
-        <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{uploader.error}</div>
+        <p role="alert" className="m-0 bg-[var(--som-error-tint)] px-4 py-3 text-[13px] text-[var(--som-error)]">
+          {uploader.error}
+        </p>
       )}
 
       {images.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {images.map((url, index) => (
             <ImageTile
               key={url}

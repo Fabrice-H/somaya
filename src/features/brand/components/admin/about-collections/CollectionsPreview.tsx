@@ -1,39 +1,35 @@
+import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
 import type { AboutCollectionData } from "../../../types";
-import { cardStyle } from "./styles";
 
 export function CollectionsPreview({ collections }: { collections: AboutCollectionData[] }) {
   const active = collections.filter((collection) => collection.isActive);
 
   return (
-    <div className="bg-white" style={cardStyle}>
-      <h2 className="text-base font-semibold text-[#000000] mb-2">Aperçu</h2>
-      <p className="text-sm text-[#6b6b6b] mb-4">Rendu sur la page &quot;Notre Histoire&quot;</p>
-
+    <AdminCard title="Aperçu" description="Rendu sur la page « Notre Histoire ».">
       {active.length === 0 ? (
-        <div className="text-center py-12 bg-[#fafafa]">
-          <p className="text-[#6b6b6b] text-sm">Aucune collection active à afficher</p>
-        </div>
+        <p className="m-0 border border-dashed border-[var(--som-border-strong)] bg-[var(--som-surface-alt)] px-6 py-12 text-center text-[13px] font-light text-[var(--som-gray)]">
+          Aucune collection active à afficher.
+        </p>
       ) : (
         <div className="grid grid-cols-3 gap-1">
           {active.map((collection, index) => (
             <div
               key={collection.id}
-              className="relative aspect-[3/4] flex flex-col justify-end p-3 overflow-hidden"
+              className="relative flex aspect-[3/4] flex-col justify-end overflow-hidden p-3"
               style={{ backgroundColor: collection.backgroundColor }}
             >
-              <span className="absolute top-2 right-2 text-white/40 text-[9px]">{collection.year}</span>
-              <span className="text-[8px] text-white tracking-widest uppercase mb-0.5">
+              <span className="absolute right-2 top-2 text-[9px] tabular-nums text-white/50">{collection.year}</span>
+              <span className="mb-0.5 text-[8px] uppercase tracking-[0.2em] text-white/80">
                 Collection {String(index + 1).padStart(2, "0")}
               </span>
-              <span className="text-white text-sm font-serif leading-tight">{collection.name}</span>
+              <span className="text-[13px] leading-tight text-white">{collection.name}</span>
             </div>
           ))}
         </div>
       )}
-
-      <p className="text-xs text-[#6b6b6b] mt-4">
-        Les collections sont affichées dans l&apos;ordre défini ci-contre. Utilisez les flèches pour réorganiser.
+      <p className="m-0 mt-4 text-[12px] font-light text-[var(--som-gray)]">
+        Les collections apparaissent dans l&apos;ordre de la liste.
       </p>
-    </div>
+    </AdminCard>
   );
 }

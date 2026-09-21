@@ -1,7 +1,6 @@
+import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
+import { Field } from "@/shared/components/admin/ui/Field";
 import type { SettingsFieldUpdater, SettingsInput } from "../../../types";
-import { Field } from "./Field";
-import { inputClass } from "./styles";
-import { TabSection } from "./TabSection";
 
 type DeliveryTabProps = {
   form: SettingsInput;
@@ -10,28 +9,31 @@ type DeliveryTabProps = {
 
 export function DeliveryTab({ form, onChange }: DeliveryTabProps) {
   return (
-    <TabSection title="Livraison" description="Frais et informations de livraison">
-      <div className="grid grid-cols-2 gap-4">
-        <Field label="Frais de livraison (FCFA)" hint="Frais appliqués à chaque commande">
+    <AdminCard title="Livraison" description="Frais et créneaux communiqués à vos clientes.">
+      <div className="grid gap-6 md:grid-cols-2">
+        <Field id="delivery_fee" label="Frais de livraison (FCFA)" hint="Appliqués à chaque commande.">
           <input
+            id="delivery_fee"
             type="number"
+            inputMode="numeric"
             value={form.delivery_fee || ""}
             onChange={(event) => onChange("delivery_fee", parseInt(event.target.value, 10) || 0)}
             min={0}
             placeholder="0"
-            className={inputClass}
+            className="input-som tabular-nums"
           />
         </Field>
-        <Field label="Horaires de livraison" hint="Affiché dans le footer">
+        <Field id="delivery_hours" label="Horaires de livraison" hint="Affichés dans le pied de page.">
           <input
+            id="delivery_hours"
             type="text"
             value={form.delivery_hours}
             onChange={(event) => onChange("delivery_hours", event.target.value)}
-            placeholder="Lun-Sam: 14h-20h"
-            className={inputClass}
+            placeholder="Lun-Sam : 14h-20h"
+            className="input-som"
           />
         </Field>
       </div>
-    </TabSection>
+    </AdminCard>
   );
 }

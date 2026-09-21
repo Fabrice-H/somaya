@@ -1,31 +1,18 @@
-const cardStyle = { border: "1px solid rgba(81, 31, 41, 0.1)", padding: 24 };
+import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
+
+const card = "animate-pulse border border-[var(--som-border)] bg-white";
 
 export function HeroBannerSkeleton() {
   return (
-    <div>
-      <div
-        className="flex items-center justify-between gap-4 bg-[#fafafa] border-b border-[#511f29]/10"
-        style={{ padding: "24px 40px" }}
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#eeeeec] animate-pulse" />
-          <div>
-            <div className="h-6 w-40 bg-[#eeeeec] animate-pulse mb-2" />
-            <div className="h-4 w-64 bg-[#eeeeec] animate-pulse" />
-          </div>
+    <AdminPage eyebrow="Page d'accueil" title="Hero banner">
+      <div className="h-12 border-b border-[var(--som-border)]" />
+      <div className="mt-8 grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="space-y-6">
+          <div className={`${card} h-[200px]`} />
+          <div className={`${card} h-[320px]`} />
         </div>
-        <div className="h-11 w-32 bg-[#eeeeec] animate-pulse" />
+        <div className={`${card} h-[380px]`} />
       </div>
-
-      <div style={{ padding: "32px 40px" }}>
-        <div className="grid lg:grid-cols-2 gap-8" style={{ maxWidth: 1200 }}>
-          <div className="space-y-6">
-            <div className="bg-white animate-pulse" style={{ ...cardStyle, height: 200 }} />
-            <div className="bg-white animate-pulse" style={{ ...cardStyle, height: 400 }} />
-          </div>
-          <div className="bg-white animate-pulse" style={{ ...cardStyle, height: 500 }} />
-        </div>
-      </div>
-    </div>
+    </AdminPage>
   );
 }
