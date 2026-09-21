@@ -45,9 +45,9 @@ export function SettingsClient({ settings, testimonials, heroBanner }: SettingsC
           </div>
         )}
 
-        {activeTab === "hero" && <HeroBannerForm data={heroBanner} embedded />}
+        {activeTab === "hero" && <HeroBannerForm data={heroBanner} />}
 
-        {activeTab === "temoignages" && <TestimonialsManager initialData={testimonials} embedded />}
+        {activeTab === "temoignages" && <TestimonialsManager initialData={testimonials} />}
       </div>
     </AdminPage>
   );

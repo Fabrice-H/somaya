@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
 import { Tabs } from "@/shared/components/admin/ui/Tabs";
 import { useHeroBannerForm } from "../../hooks/useHeroBannerForm";
 import type { HeroBannerData } from "../../types";
@@ -16,10 +15,9 @@ import { VisibilityCard } from "./hero-banner/VisibilityCard";
 
 type HeroBannerFormProps = {
   data: HeroBannerData | null;
-  embedded?: boolean;
 };
 
-export function HeroBannerForm({ data, embedded = false }: HeroBannerFormProps) {
+export function HeroBannerForm({ data }: HeroBannerFormProps) {
   const { form, updateField, submit, isPending, message } = useHeroBannerForm(data);
   const [activeTab, setActiveTab] = useState<HeroTab>("layout");
   const actions = <HeroSaveActions isPending={isPending} message={message} onSave={submit} />;
@@ -44,28 +42,15 @@ export function HeroBannerForm({ data, embedded = false }: HeroBannerFormProps) 
     </>
   );
 
-  if (embedded) {
-    return (
-      <div>
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <p className="m-0 text-[14px] font-light text-[var(--som-gray)]">
-            Personnalisez la bannière de la page d&apos;accueil.
-          </p>
-          {actions}
-        </div>
-        {body}
-      </div>
-    );
-  }
-
   return (
-    <AdminPage
-      eyebrow="Page d'accueil"
-      title="Hero banner"
-      description="Personnalisez la bannière de la page d'accueil."
-      actions={actions}
-    >
+    <div>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <p className="m-0 text-[14px] font-light text-[var(--som-gray)]">
+          Personnalisez la bannière de la page d&apos;accueil.
+        </p>
+        {actions}
+      </div>
       {body}
-    </AdminPage>
+    </div>
   );
 }

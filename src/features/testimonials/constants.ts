@@ -1,6 +1,6 @@
 export const TESTIMONIALS_CACHE_TAG = "testimonials";
 
-export const ADMIN_TESTIMONIALS_PATH = "/admin/temoignages";
+export const ADMIN_SETTINGS_PATH = "/admin/reglages";
 
 export const MAX_RATING = 5;
 

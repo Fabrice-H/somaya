@@ -6,7 +6,7 @@ type TestimonialsActionsProps = {
   onAdd: () => void;
 };
 
-export function TestimonialsActions({ feedback, onAdd }: TestimonialsActionsProps) {
+function TestimonialsActions({ feedback, onAdd }: TestimonialsActionsProps) {
   return (
     <>
       {feedback && (

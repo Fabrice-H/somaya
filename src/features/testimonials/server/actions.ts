@@ -4,14 +4,14 @@ import { eq } from "drizzle-orm";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { db, testimonials } from "@/shared/lib/db";
 import { requireAdmin } from "@/features/auth/server/session";
-import { ADMIN_TESTIMONIALS_PATH, TESTIMONIALS_CACHE_TAG } from "../constants";
+import { ADMIN_SETTINGS_PATH, TESTIMONIALS_CACHE_TAG } from "../constants";
 import { testimonialSchema, testimonialUpdateSchema } from "../schemas";
 import type { TestimonialActionResult, TestimonialInput } from "../types";
 
 const UNAUTHORIZED: TestimonialActionResult = { success: false, error: "Non autorisé" };
 
 function revalidateTestimonials() {
-  revalidatePath(ADMIN_TESTIMONIALS_PATH);
+  revalidatePath(ADMIN_SETTINGS_PATH);
   revalidateTag(TESTIMONIALS_CACHE_TAG, "max");
 }
 

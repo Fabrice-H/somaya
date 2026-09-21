@@ -1,20 +1,18 @@
 "use client";
 
 import clsx from "clsx";
-import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
 import { useTestimonialsManager } from "@/features/testimonials/hooks/useTestimonialsManager";
 import { TestimonialForm } from "./TestimonialForm";
 import { TestimonialListItem } from "./TestimonialListItem";
 import { TestimonialsEmptyState } from "./TestimonialsEmptyState";
-import { TestimonialsActions, TestimonialsManagerHeader } from "./TestimonialsManagerHeader";
+import { TestimonialsManagerHeader } from "./TestimonialsManagerHeader";
 import type { TestimonialData } from "@/features/testimonials/types";
 
 type TestimonialsManagerProps = {
   initialData: TestimonialData[];
-  embedded?: boolean;
 };
 
-export function TestimonialsManager({ initialData, embedded = false }: TestimonialsManagerProps) {
+export function TestimonialsManager({ initialData }: TestimonialsManagerProps) {
   const manager = useTestimonialsManager(initialData);
 
   const content = (
@@ -53,23 +51,10 @@ export function TestimonialsManager({ initialData, embedded = false }: Testimoni
     </div>
   );
 
-  if (embedded) {
-    return (
-      <div>
-        <TestimonialsManagerHeader feedback={manager.feedback} onAdd={manager.startAdd} />
-        <div className="p-4">{content}</div>
-      </div>
-    );
-  }
-
   return (
-    <AdminPage
-      eyebrow="Contenu"
-      title="Témoignages"
-      description="Gérez les avis clients affichés sur la page d'accueil."
-      actions={<TestimonialsActions feedback={manager.feedback} onAdd={manager.startAdd} />}
-    >
-      {content}
-    </AdminPage>
+    <div>
+      <TestimonialsManagerHeader feedback={manager.feedback} onAdd={manager.startAdd} />
+      <div className="p-4">{content}</div>
+    </div>
   );
 }
