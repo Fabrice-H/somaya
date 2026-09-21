@@ -13,11 +13,8 @@ export const ADMIN_NAVIGATION = [
   },
   { label: "Ventes", items: [{ name: "Commandes", href: "/admin/commandes", icon: ShoppingBag }] },
   {
-    label: "Contenu",
-    items: [
-      { name: "Témoignages", href: "/admin/temoignages", icon: MessageSquareQuote },
-      { name: "Réglages", href: "/admin/reglages", icon: Settings },
-    ],
+    label: "Configuration",
+    items: [{ name: "Réglages", href: "/admin/reglages", icon: Settings }],
   },
 ] as const;
 
