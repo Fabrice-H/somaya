@@ -5,7 +5,7 @@ import { useHasMounted } from "@/shared/hooks/useHasMounted";
 import { NavLink } from "./NavLink";
 
 const iconButton =
-  "flex h-11 w-11 cursor-pointer items-center justify-center text-[var(--som-ink)] transition-opacity hover:opacity-60";
+  "h-11 w-11 cursor-pointer items-center justify-center text-[var(--som-ink)] transition-opacity hover:opacity-60";
 
 type HeaderActionsProps = {
   searchOpen: boolean;
@@ -28,13 +28,15 @@ export function HeaderActions({ searchOpen, onToggleSearch, isActive }: HeaderAc
         aria-label="Rechercher"
         aria-expanded={searchOpen}
         aria-controls="search-panel"
-        className={iconButton}
+        className={`${iconButton} flex`}
       >
         <Search size={19} strokeWidth={1.4} />
       </button>
-      <NavLink href="/contact" active={isActive("/contact")} className="mr-2 hidden lg:inline-flex">
-        Contact
-      </NavLink>
+      <span className="mr-2 hidden lg:block">
+        <NavLink href="/contact" active={isActive("/contact")}>
+          Contact
+        </NavLink>
+      </span>
       <Link
         href="/fidelite"
         aria-label="Programme fidélité"
@@ -53,7 +55,7 @@ export function HeaderActions({ searchOpen, onToggleSearch, isActive }: HeaderAc
       >
         <User size={20} strokeWidth={1.4} />
       </Link>
-      <button type="button" onClick={openCart} aria-label={cartLabel} className={`${iconButton} relative -mr-3`}>
+      <button type="button" onClick={openCart} aria-label={cartLabel} className={`${iconButton} relative -mr-3 flex`}>
         <ShoppingBag size={20} strokeWidth={1.4} />
         {count > 0 && (
           <span
