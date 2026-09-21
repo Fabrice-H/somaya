@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, products } from "@/shared/lib/db";
 import type { NewProduct } from "@/shared/lib/db/schema";
-import { sanitizeRichText } from "@/shared/lib/sanitize";
+import { sanitizeRichText } from "@/shared/lib/rich-text";
 import { generateSlug } from "@/shared/lib/utils";
 import { requireAdmin } from "@/features/auth/server/session";
 import { deleteImage } from "@/features/media/server/actions";

@@ -3,7 +3,7 @@ import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { and, asc, desc, eq, ne } from "drizzle-orm";
 import { db, productLots, products } from "@/shared/lib/db";
-import { sanitizeRichText } from "@/shared/lib/sanitize";
+import { sanitizeRichText } from "@/shared/lib/rich-text";
 import { assertAdmin } from "@/features/auth/server/session";
 import { PRODUCTS_CACHE_TAG } from "../constants";
 import { toAdminProduct, toProductSummary, toShopProduct } from "./mappers";
