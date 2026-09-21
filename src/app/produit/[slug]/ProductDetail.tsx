@@ -277,8 +277,8 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    background: "#f5f0eb",
-                    color: "#94786b",
+                    background: "#fafafa",
+                    color: "#6b6b6b",
                   }}
                 >
                   Aucune image
@@ -299,7 +299,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                   <span
                     style={{
                       background: "#fff",
-                      color: "#511F29",
+                      color: "#000000",
                       fontSize: "18px",
                       fontWeight: 700,
                       textTransform: "uppercase",
@@ -317,8 +317,8 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                     position: "absolute",
                     top: "16px",
                     left: "16px",
-                    background: "#511F29",
-                    color: "#fcd3b4",
+                    background: "#511f29",
+                    color: "#ffffff",
                     fontSize: "9.5px",
                     fontWeight: 600,
                     letterSpacing: "0.14em",
@@ -335,8 +335,8 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                     position: "absolute",
                     top: "16px",
                     left: "16px",
-                    background: "#511F29",
-                    color: "#fcd3b4",
+                    background: "#511f29",
+                    color: "#ffffff",
                     fontSize: "9.5px",
                     fontWeight: 600,
                     letterSpacing: "0.14em",
@@ -363,7 +363,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                       overflow: "hidden",
                       border:
                         selectedImage === index
-                          ? "2px solid #511F29"
+                          ? "2px solid #000000"
                           : "2px solid transparent",
                       opacity: selectedImage === index ? 1 : 0.6,
                       cursor: "pointer",
@@ -395,7 +395,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                   fontSize: "11px",
                   letterSpacing: "0.2em",
                   textTransform: "uppercase",
-                  color: "#511F29",
+                  color: "#000000",
                   textDecoration: "none",
                   marginBottom: "16px",
                 }}
@@ -407,11 +407,11 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
             {/* Name */}
             <h1
               style={{
-                fontFamily: "var(--font-serif), serif",
+                fontFamily: "var(--font-stack)",
                 fontWeight: 500,
                 fontSize: "clamp(28px, 3.5vw, 48px)",
                 lineHeight: 1.1,
-                color: "#2a181d",
+                color: "#000000",
                 margin: "0 0 20px",
               }}
             >
@@ -428,8 +428,8 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                     display: "inline-flex",
                     alignItems: "center",
                     gap: "6px",
-                    background: "linear-gradient(135deg, #511F29 0%, #6b2a36 100%)",
-                    color: "#fcd3b4",
+                    background: "linear-gradient(135deg, #1f1f1f 0%, #000000 100%)",
+                    color: "#ffffff",
                     fontSize: "11px",
                     fontWeight: 600,
                     letterSpacing: "0.08em",
@@ -448,10 +448,10 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                   <div>
                     <p
                       style={{
-                        fontFamily: "var(--font-serif), serif",
+                        fontFamily: "var(--font-stack)",
                         fontSize: "clamp(28px, 3vw, 36px)",
                         fontWeight: 500,
-                        color: "#2a181d",
+                        color: "#000000",
                         margin: 0,
                       }}
                     >
@@ -473,7 +473,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                     <p
                       style={{
                         fontSize: "13px",
-                        color: "#94786b",
+                        color: "#6b6b6b",
                         margin: "0 0 4px",
                         textTransform: "uppercase",
                         letterSpacing: "0.05em",
@@ -483,10 +483,10 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                     </p>
                     <p
                       style={{
-                        fontFamily: "var(--font-serif), serif",
+                        fontFamily: "var(--font-stack)",
                         fontSize: "clamp(28px, 3vw, 36px)",
                         fontWeight: 500,
-                        color: "#2a181d",
+                        color: "#000000",
                         margin: 0,
                       }}
                     >
@@ -507,10 +507,10 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               >
                 <p
                   style={{
-                    fontFamily: "var(--font-serif), serif",
+                    fontFamily: "var(--font-stack)",
                     fontSize: "clamp(28px, 3vw, 36px)",
                     fontWeight: 500,
-                    color: "#2a181d",
+                    color: "#000000",
                     margin: 0,
                   }}
                 >
@@ -520,7 +520,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                   <p
                     style={{
                       fontSize: "18px",
-                      color: "#94786b",
+                      color: "#6b6b6b",
                       textDecoration: "line-through",
                       margin: 0,
                     }}
@@ -537,7 +537,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                 style={{
                   fontSize: "15px",
                   lineHeight: 1.7,
-                  color: "#6e5a50",
+                  color: "#4a4a4a",
                   margin: "0 0 32px",
                 }}
               >
@@ -575,7 +575,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                         width: "24px",
                         height: "24px",
                         borderRadius: "50%",
-                        background: "#511F29",
+                        background: "#511f29",
                         color: "#fff",
                         fontSize: "12px",
                         fontWeight: 700,
@@ -587,7 +587,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                       style={{
                         fontSize: "14px",
                         fontWeight: 600,
-                        color: "#2a181d",
+                        color: "#000000",
                       }}
                     >
                       Quantité
@@ -634,7 +634,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      border: "1px solid rgba(81,31,41,0.2)",
+                      border: "1px solid rgba(0,0,0,0.2)",
                       borderRadius: "8px",
                       overflow: "hidden",
                     }}
@@ -648,10 +648,10 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        background: quantity <= 1 ? "#f5f5f5" : "#faf6f1",
+                        background: quantity <= 1 ? "#f5f5f5" : "#fafafa",
                         border: "none",
                         cursor: quantity <= 1 ? "not-allowed" : "pointer",
-                        color: quantity <= 1 ? "#ccc" : "#511F29",
+                        color: quantity <= 1 ? "#ccc" : "#000000",
                         transition: "all 0.2s",
                       }}
                       aria-label="Diminuer la quantité"
@@ -667,10 +667,10 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                         justifyContent: "center",
                         fontSize: "18px",
                         fontWeight: 600,
-                        color: "#2a181d",
+                        color: "#000000",
                         background: "#fff",
-                        borderLeft: "1px solid rgba(81,31,41,0.1)",
-                        borderRight: "1px solid rgba(81,31,41,0.1)",
+                        borderLeft: "1px solid rgba(0,0,0,0.1)",
+                        borderRight: "1px solid rgba(0,0,0,0.1)",
                       }}
                     >
                       {quantity}
@@ -684,10 +684,10 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        background: quantity >= availableStock ? "#f5f5f5" : "#faf6f1",
+                        background: quantity >= availableStock ? "#f5f5f5" : "#fafafa",
                         border: "none",
                         cursor: quantity >= availableStock ? "not-allowed" : "pointer",
-                        color: quantity >= availableStock ? "#ccc" : "#511F29",
+                        color: quantity >= availableStock ? "#ccc" : "#000000",
                         transition: "all 0.2s",
                       }}
                       aria-label="Augmenter la quantité"
@@ -699,13 +699,13 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                   {/* Total price */}
                   {quantity > 1 && (
                     <div>
-                      <span style={{ fontSize: "13px", color: "#94786b" }}>Total: </span>
+                      <span style={{ fontSize: "13px", color: "#6b6b6b" }}>Total: </span>
                       <span
                         style={{
-                          fontFamily: "var(--font-serif), serif",
+                          fontFamily: "var(--font-stack)",
                           fontSize: "20px",
                           fontWeight: 600,
-                          color: "#511F29",
+                          color: "#000000",
                         }}
                       >
                         {formatPrice(totalPrice)}
@@ -740,7 +740,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                   <p
                     style={{
                       fontSize: "13px",
-                      color: "#94786b",
+                      color: "#6b6b6b",
                       margin: "12px 0 0",
                     }}
                   >
@@ -763,9 +763,9 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                   background: addedToCart
                     ? "#22c55e"
                     : canAddToCart
-                      ? "#511F29"
-                      : "#94786b",
-                  color: addedToCart ? "#fff" : "#fcd3b4",
+                      ? "#000000"
+                      : "#6b6b6b",
+                  color: "#fff",
                   fontSize: "12.5px",
                   fontWeight: 600,
                   letterSpacing: "0.14em",
@@ -802,7 +802,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
             <p
               style={{
                 fontSize: "13px",
-                color: "#94786b",
+                color: "#6b6b6b",
                 textAlign: "center",
                 marginTop: "20px",
               }}
@@ -821,7 +821,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                   fontSize: "11.5px",
                   letterSpacing: "0.3em",
                   textTransform: "uppercase",
-                  color: "#94786b",
+                  color: "#6b6b6b",
                   marginBottom: "14px",
                 }}
               >
@@ -829,11 +829,11 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               </div>
               <h2
                 style={{
-                  fontFamily: "var(--font-serif), serif",
+                  fontFamily: "var(--font-stack)",
                   fontWeight: 500,
                   fontSize: "clamp(28px, 3vw, 42px)",
                   lineHeight: 1,
-                  color: "#2a181d",
+                  color: "#000000",
                   margin: 0,
                 }}
               >
@@ -982,7 +982,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                       height: "8px",
                       borderRadius: "50%",
                       background:
-                        selectedImage === index ? "#fcd3b4" : "rgba(255,255,255,0.3)",
+                        selectedImage === index ? "#f4f4f2" : "rgba(255,255,255,0.3)",
                       border: "none",
                       cursor: "pointer",
                       padding: 0,

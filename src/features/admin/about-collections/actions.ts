@@ -18,7 +18,7 @@ export interface AboutCollectionData {
 const collectionSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
   year: z.string().min(4, "L'année est requise"),
-  backgroundColor: z.string().default("#511F29"),
+  backgroundColor: z.string().default("#511f29"),
   isActive: z.boolean().default(true),
   sortOrder: z.number().default(0),
 });
@@ -37,7 +37,7 @@ export async function getAboutCollections(): Promise<AboutCollectionData[]> {
     id: r.id,
     name: r.name,
     year: r.year,
-    backgroundColor: r.backgroundColor || "#511F29",
+    backgroundColor: r.backgroundColor || "#511f29",
     isActive: r.isActive,
     sortOrder: r.sortOrder,
   }));
@@ -56,7 +56,7 @@ export async function getAboutCollectionsPublic(): Promise<AboutCollectionData[]
     id: r.id,
     name: r.name,
     year: r.year,
-    backgroundColor: r.backgroundColor || "#511F29",
+    backgroundColor: r.backgroundColor || "#511f29",
     isActive: r.isActive,
     sortOrder: r.sortOrder,
   }));

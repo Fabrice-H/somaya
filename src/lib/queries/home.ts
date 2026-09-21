@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
-import { db, products, categories, storeSettings, productLots, featuredCollection, heroBanner, testimonials, instagramPosts, priceLots } from "@/lib/db";
+import { db, products, categories, productLots, heroBanner, testimonials, priceLots } from "@/lib/db";
 import { eq, desc, asc, and } from "drizzle-orm";
-import type { Category, StoreSettings, ProductWithCategoryAndLots, FeaturedCollection, HeroBanner, Testimonial, InstagramPost } from "@/lib/db/schema";
+import type { Category, StoreSettings, ProductWithCategoryAndLots, HeroBanner, Testimonial } from "@/lib/db/schema";
 
 // ============================================================
 // Types for Home Page Data
@@ -17,6 +17,9 @@ export type HomePageProduct = {
   isNew: boolean;
   isBestseller: boolean;
   isFeatured: boolean;
+  /** Product-level stock, used when the product has no lots */
+  stock?: number;
+  createdAt?: string;
   category: {
     id: string;
     name: string;
@@ -39,22 +42,6 @@ export type HomePageCategory = {
   description: string | null;
   imageUrl: string | null;
   position: number;
-};
-
-export type HomeFeaturedCollection = {
-  id: string;
-  eyebrow: string | null;
-  title: string | null;
-  description: string | null;
-  stat1_value: string | null;
-  stat1_label: string | null;
-  stat2_value: string | null;
-  stat2_label: string | null;
-  button_text: string | null;
-  button_link: string | null;
-  images: string[];
-  category_id: string | null;
-  is_active: boolean;
 };
 
 export type HomeHeroBanner = {
@@ -85,18 +72,6 @@ export type HomeTestimonial = {
   rating: number;
 };
 
-export type HomeInstagramPost = {
-  id: string;
-  image: string;
-  postUrl: string | null;
-};
-
-export type HomeInstagramData = {
-  posts: HomeInstagramPost[];
-  username: string;
-  profileUrl: string;
-};
-
 export type HomePriceLotItem = {
   id: string;
   image: string;
@@ -124,12 +99,8 @@ export type HomePageData = {
   bestsellers: HomePageProduct[];
   featuredProducts: HomePageProduct[];
   newProducts: HomePageProduct[];
-  featuredCollection: HomeFeaturedCollection | null;
-  hommesProducts: HomePageProduct[];
-  femmesProducts: HomePageProduct[];
   heroBanner: HomeHeroBanner | null;
   testimonials: HomeTestimonial[];
-  instagram: HomeInstagramData;
   priceLots: HomePriceLot[];
 };
 
@@ -137,7 +108,7 @@ export type HomePageData = {
 // Helper to transform DB product to home page format
 // ============================================================
 
-function toHomePageProduct(
+export function toHomePageProduct(
   product: ProductWithCategoryAndLots
 ): HomePageProduct {
   return {
@@ -150,6 +121,8 @@ function toHomePageProduct(
     isNew: product.isNew,
     isBestseller: product.isBestseller,
     isFeatured: product.isFeatured,
+    stock: product.stock,
+    createdAt: new Date(product.createdAt).toISOString(),
     category: product.category
       ? {
           id: product.category.id,
@@ -285,19 +258,13 @@ export const getNewProducts = unstable_cache(
 );
 
 /**
- * Get products by category slug - cached for 2 minutes
+ * "Coups de cœur" - new products first, completed with the latest
+ * products so the section always fills its 2 rows - cached for 2 minutes
  */
-export const getProductsByCategorySlug = unstable_cache(
-  async (slug: string, limit = 4): Promise<HomePageProduct[]> => {
-    // First find the category
-    const category = await db.query.categories.findFirst({
-      where: and(eq(categories.slug, slug), eq(categories.isActive, true)),
-    });
-
-    if (!category) return [];
-
+export const getCoupsDeCoeurProducts = unstable_cache(
+  async (limit = 8): Promise<HomePageProduct[]> => {
     const result = await db.query.products.findMany({
-      where: and(eq(products.isActive, true), eq(products.categoryId, category.id)),
+      where: eq(products.isActive, true),
       with: {
         category: true,
         lots: {
@@ -305,54 +272,14 @@ export const getProductsByCategorySlug = unstable_cache(
           orderBy: [asc(productLots.sortOrder)],
         },
       },
-      orderBy: [asc(products.sortOrder), desc(products.createdAt)],
+      orderBy: [desc(products.isNew), desc(products.createdAt)],
       limit,
     });
 
     return result.map(toHomePageProduct);
   },
-  ["home-category-products"],
-  { revalidate: 120, tags: ["products", "categories"] }
-);
-
-// ============================================================
-// Featured Collection - For home page hero section
-// ============================================================
-
-const FEATURED_COLLECTION_ID = "00000000-0000-0000-0000-000000000002";
-
-function toHomeFeaturedCollection(data: FeaturedCollection): HomeFeaturedCollection {
-  return {
-    id: data.id,
-    eyebrow: data.eyebrow,
-    title: data.title,
-    description: data.description,
-    stat1_value: data.stat1Value,
-    stat1_label: data.stat1Label,
-    stat2_value: data.stat2Value,
-    stat2_label: data.stat2Label,
-    button_text: data.buttonText,
-    button_link: data.buttonLink,
-    images: data.images || [],
-    category_id: data.categoryId,
-    is_active: data.isActive,
-  };
-}
-
-/**
- * Get featured collection for home page - cached for 2 minutes
- */
-export const getFeaturedCollectionData = unstable_cache(
-  async (): Promise<HomeFeaturedCollection | null> => {
-    const result = await db.query.featuredCollection.findFirst({
-      where: eq(featuredCollection.id, FEATURED_COLLECTION_ID),
-    });
-
-    if (!result || !result.isActive) return null;
-    return toHomeFeaturedCollection(result);
-  },
-  ["home-featured-collection"],
-  { revalidate: 120, tags: ["featured-collection"] }
+  ["home-coups-de-coeur"],
+  { revalidate: 120, tags: ["products", "new"] }
 );
 
 // ============================================================
@@ -431,44 +358,6 @@ export const getHomeTestimonials = unstable_cache(
 );
 
 // ============================================================
-// Instagram - For home page
-// ============================================================
-
-function toHomeInstagramPost(data: InstagramPost): HomeInstagramPost {
-  return {
-    id: data.id,
-    image: data.image,
-    postUrl: data.postUrl,
-  };
-}
-
-/**
- * Get active Instagram posts for home page - cached for 2 minutes
- */
-export const getHomeInstagramData = unstable_cache(
-  async (limit = 6): Promise<HomeInstagramData> => {
-    const [postsResult, settingsResult] = await Promise.all([
-      db.query.instagramPosts.findMany({
-        where: eq(instagramPosts.isActive, true),
-        orderBy: [asc(instagramPosts.sortOrder)],
-        limit,
-      }),
-      db.query.storeSettings.findFirst(),
-    ]);
-
-    const username = settingsResult?.instagramHandle || "so_maya_ci";
-
-    return {
-      posts: postsResult.map(toHomeInstagramPost),
-      username,
-      profileUrl: `https://www.instagram.com/${username}/`,
-    };
-  },
-  ["home-instagram"],
-  { revalidate: 120, tags: ["instagram", "store-settings"] }
-);
-
-// ============================================================
 // Price Lots - For home page "Par Budget" section
 // ============================================================
 
@@ -522,25 +411,17 @@ export async function getHomePageData(): Promise<HomePageData> {
     bestsellersData,
     featuredData,
     newProductsData,
-    featuredCollectionData,
-    hommesData,
-    femmesData,
     heroBannerData,
     testimonialsData,
-    instagramData,
     priceLotsData,
   ] = await Promise.all([
     getStoreSettings(),
     getHomeCategories(6),
     getBestsellerProducts(4),
     getFeaturedProducts(8),
-    getNewProducts(4),
-    getFeaturedCollectionData(),
-    getProductsByCategorySlug("hommes", 4),
-    getProductsByCategorySlug("femmes", 4),
+    getCoupsDeCoeurProducts(8),
     getHeroBannerData(),
     getHomeTestimonials(6),
-    getHomeInstagramData(6),
     getHomePriceLots(8),
   ]);
 
@@ -550,12 +431,8 @@ export async function getHomePageData(): Promise<HomePageData> {
     bestsellers: bestsellersData,
     featuredProducts: featuredData,
     newProducts: newProductsData,
-    featuredCollection: featuredCollectionData,
-    hommesProducts: hommesData,
-    femmesProducts: femmesData,
     heroBanner: heroBannerData,
     testimonials: testimonialsData,
-    instagram: instagramData,
     priceLots: priceLotsData,
   };
 }

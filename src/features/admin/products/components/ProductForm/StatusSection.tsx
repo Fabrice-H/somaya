@@ -23,10 +23,10 @@ export const StatusSection = memo(function StatusSection() {
           style={{ borderBottom: "1px solid rgba(81, 31, 41, 0.1)" }}
         >
           <div>
-            <h4 className="text-base font-semibold text-[#2a181d] mb-1">
+            <h4 className="text-base font-semibold text-[#000000] mb-1">
               Produit actif
             </h4>
-            <p className="text-sm text-[#94786b]">
+            <p className="text-sm text-[#6b6b6b]">
               Visible dans le catalogue et disponible à l&apos;achat
             </p>
           </div>
@@ -35,8 +35,8 @@ export const StatusSection = memo(function StatusSection() {
             onClick={() => setField("is_active", !is_active)}
             className="w-7 h-7 flex items-center justify-center border-2 transition-all"
             style={{
-              borderColor: is_active ? "#2a181d" : "rgba(81, 31, 41, 0.3)",
-              background: is_active ? "#2a181d" : "transparent",
+              borderColor: is_active ? "#000000" : "rgba(81, 31, 41, 0.3)",
+              background: is_active ? "#000000" : "transparent",
             }}
           >
             {is_active && <Check size={16} className="text-white" strokeWidth={3} />}
@@ -49,10 +49,10 @@ export const StatusSection = memo(function StatusSection() {
           style={{ borderBottom: "1px solid rgba(81, 31, 41, 0.1)" }}
         >
           <div>
-            <h4 className="text-base font-semibold text-[#2a181d] mb-1">
+            <h4 className="text-base font-semibold text-[#000000] mb-1">
               Coup de coeur
             </h4>
-            <p className="text-sm text-[#94786b]">
+            <p className="text-sm text-[#6b6b6b]">
               Mis en avant sur la page d&apos;accueil
             </p>
           </div>
@@ -61,8 +61,8 @@ export const StatusSection = memo(function StatusSection() {
             onClick={() => setField("is_featured", !is_featured)}
             className="w-7 h-7 flex items-center justify-center border-2 transition-all"
             style={{
-              borderColor: is_featured ? "#2a181d" : "rgba(81, 31, 41, 0.3)",
-              background: is_featured ? "#2a181d" : "transparent",
+              borderColor: is_featured ? "#000000" : "rgba(81, 31, 41, 0.3)",
+              background: is_featured ? "#000000" : "transparent",
             }}
           >
             {is_featured && <Check size={16} className="text-white" strokeWidth={3} />}
@@ -72,17 +72,17 @@ export const StatusSection = memo(function StatusSection() {
         {/* Badge Nouveauté */}
         <div className="flex items-center justify-between py-6">
           <div>
-            <h4 className="text-base font-semibold text-[#2a181d] mb-1">
+            <h4 className="text-base font-semibold text-[#000000] mb-1">
               Badge Nouveauté
             </h4>
-            <p className="text-sm text-[#94786b]">
+            <p className="text-sm text-[#6b6b6b]">
               Afficher le badge &quot;NEW&quot; sur ce produit
             </p>
           </div>
           <select
             value={is_new ? "yes" : "no"}
             onChange={(e) => setField("is_new", e.target.value === "yes")}
-            className="h-11 px-4 pr-10 bg-transparent border border-[#511F29]/20 text-[#2a181d] text-sm outline-none cursor-pointer appearance-none"
+            className="h-11 px-4 pr-10 bg-transparent border border-black text-[#000000] text-sm outline-none cursor-pointer appearance-none focus:ring-2 focus:ring-black/10"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394786b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
               backgroundRepeat: "no-repeat",

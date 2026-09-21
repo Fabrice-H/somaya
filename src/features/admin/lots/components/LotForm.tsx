@@ -183,23 +183,23 @@ export function LotForm({ lot, categories }: LotFormProps) {
     <form onSubmit={handleSubmit}>
       {/* Header */}
       <div
-        className="flex items-center justify-between gap-4 flex-wrap bg-[#faf6f1] border-b border-[#511F29]/10"
+        className="flex items-center justify-between gap-4 flex-wrap bg-[#fafafa] border-b border-black"
         style={{ padding: "24px 40px" }}
       >
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="w-10 h-10 flex items-center justify-center border border-[#511F29]/20 hover:bg-white transition-colors"
+            className="w-10 h-10 flex items-center justify-center border border-black hover:bg-white transition-colors"
           >
-            <ArrowLeft size={18} className="text-[#2a181d]" />
+            <ArrowLeft size={18} className="text-[#000000]" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-[#2a181d]">
+            <h1 className="text-xl font-semibold text-[#000000]">
               {isEditMode ? "Modifier le lot" : "Nouveau lot de prix"}
             </h1>
             {name && (
-              <p className="text-sm text-[#94786b] mt-0.5">{name}</p>
+              <p className="text-sm text-[#6b6b6b] mt-0.5">{name}</p>
             )}
           </div>
         </div>
@@ -218,7 +218,7 @@ export function LotForm({ lot, categories }: LotFormProps) {
           <button
             type="submit"
             disabled={isPending || !name}
-            className="inline-flex items-center gap-2 h-11 px-6 bg-[#511F29] text-[#fcd3b4] text-sm font-semibold transition-colors hover:bg-[#3d171f] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 h-11 px-6 bg-[#511f29] text-white text-sm font-semibold transition-colors hover:bg-[#3d171f] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isPending ? (
               <Loader2 size={16} className="animate-spin" />
@@ -232,7 +232,7 @@ export function LotForm({ lot, categories }: LotFormProps) {
 
       {/* Tabs */}
       <div
-        className="flex gap-1 overflow-x-auto bg-[#faf6f1] border-b border-[#511F29]/10"
+        className="flex gap-1 overflow-x-auto bg-[#fafafa] border-b border-black"
         style={{ padding: "0 40px" }}
       >
         {tabs.map((tab) => (
@@ -245,10 +245,10 @@ export function LotForm({ lot, categories }: LotFormProps) {
               padding: "14px 20px",
               fontSize: 13,
               fontWeight: 500,
-              color: activeTab === tab.key ? "#511F29" : "#94786b",
+              color: activeTab === tab.key ? "#511f29" : "#6b6b6b",
               borderBottom:
                 activeTab === tab.key
-                  ? "2px solid #511F29"
+                  ? "2px solid #511f29"
                   : "2px solid transparent",
               marginBottom: -1,
             }}
@@ -275,10 +275,10 @@ export function LotForm({ lot, categories }: LotFormProps) {
           <div style={{ maxWidth: 1000 }}>
             {/* Basic Info */}
             <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-              <h3 className="text-lg font-medium text-[#511F29] mb-4">Informations du lot</h3>
+              <h3 className="text-lg font-medium text-[#3c161e] mb-4">Informations du lot</h3>
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm text-[#94786b] mb-1.5">
+                  <label className="block text-sm text-[#6b6b6b] mb-1.5">
                     Nom du lot *
                   </label>
                   <input
@@ -286,11 +286,11 @@ export function LotForm({ lot, categories }: LotFormProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ex: Chaînes 10k"
-                    className="w-full h-11 px-4 border border-[#511F29]/20 focus:outline-none focus:ring-2 focus:ring-[#511F29]/20 text-[#2a181d]"
+                    className="w-full h-11 px-4 border border-black focus:outline-none focus:ring-2 focus:ring-black/10 text-[#000000]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-[#94786b] mb-1.5">
+                  <label className="block text-sm text-[#6b6b6b] mb-1.5">
                     Prix (FCFA) *
                   </label>
                   <input
@@ -302,17 +302,17 @@ export function LotForm({ lot, categories }: LotFormProps) {
                     }}
                     placeholder="10000"
                     min="0"
-                    className="w-full h-11 px-4 border border-[#511F29]/20 focus:outline-none focus:ring-2 focus:ring-[#511F29]/20 text-[#2a181d]"
+                    className="w-full h-11 px-4 border border-black focus:outline-none focus:ring-2 focus:ring-black/10 text-[#000000]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-[#94786b] mb-1.5">
+                  <label className="block text-sm text-[#6b6b6b] mb-1.5">
                     Catégorie
                   </label>
                   <select
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full h-11 px-4 border border-[#511F29]/20 focus:outline-none focus:ring-2 focus:ring-[#511F29]/20 bg-white text-[#2a181d]"
+                    className="w-full h-11 px-4 border border-black focus:outline-none focus:ring-2 focus:ring-black/10 bg-white text-[#000000]"
                   >
                     <option value="">Sans catégorie</option>
                     {categories.map((cat) => (
@@ -328,13 +328,13 @@ export function LotForm({ lot, categories }: LotFormProps) {
             {/* Items */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-[#511F29]">
+                <h3 className="text-lg font-medium text-[#3c161e]">
                   Articles ({items.length})
                 </h3>
                 <button
                   type="button"
                   onClick={handleAddItem}
-                  className="inline-flex items-center gap-2 h-9 px-4 bg-[#faf6f1] text-[#511F29] text-sm font-medium hover:bg-[#f0e8e0] transition-colors"
+                  className="inline-flex items-center gap-2 h-9 px-4 bg-[#fafafa] text-[#3c161e] text-sm font-medium hover:bg-[#f0e8e0] transition-colors"
                 >
                   <Plus size={16} />
                   Ajouter un article
@@ -342,13 +342,13 @@ export function LotForm({ lot, categories }: LotFormProps) {
               </div>
 
               {items.length === 0 ? (
-                <div className="text-center py-12 border-2 border-dashed border-[#511F29]/20">
-                  <Package size={48} className="mx-auto text-[#511F29]/20 mb-4" />
-                  <p className="text-[#94786b] mb-4">Aucun article dans ce lot</p>
+                <div className="text-center py-12 border-2 border-dashed border-black">
+                  <Package size={48} className="mx-auto text-[#3c161e]/20 mb-4" />
+                  <p className="text-[#6b6b6b] mb-4">Aucun article dans ce lot</p>
                   <button
                     type="button"
                     onClick={handleAddItem}
-                    className="inline-flex items-center gap-2 h-10 px-5 bg-[#511F29] text-[#fcd3b4] text-sm font-medium hover:bg-[#3d171f] transition-colors"
+                    className="inline-flex items-center gap-2 h-10 px-5 bg-[#511f29] text-white text-sm font-medium hover:bg-[#3d171f] transition-colors"
                   >
                     <Plus size={16} />
                     Ajouter le premier article
@@ -376,19 +376,19 @@ export function LotForm({ lot, categories }: LotFormProps) {
         {activeTab === "settings" && (
           <div style={{ maxWidth: 600 }}>
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-medium text-[#511F29] mb-4">Options</h3>
+              <h3 className="text-lg font-medium text-[#3c161e] mb-4">Options</h3>
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={isActive}
                   onChange={(e) => setIsActive(e.target.checked)}
-                  className="w-5 h-5 rounded border-[#511F29]/30 text-[#511F29] focus:ring-[#511F29]/20"
+                  className="w-5 h-5 rounded border-black text-[#3c161e] focus:ring-black/10"
                 />
                 <div>
-                  <span className="text-sm font-medium text-[#2a181d]">
+                  <span className="text-sm font-medium text-[#000000]">
                     Lot actif
                   </span>
-                  <p className="text-xs text-[#94786b]">
+                  <p className="text-xs text-[#6b6b6b]">
                     Le lot sera visible sur le site
                   </p>
                 </div>
@@ -406,15 +406,15 @@ export function LotForm({ lot, categories }: LotFormProps) {
               <div className="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-full">
                 <AlertTriangle size={20} />
               </div>
-              <h3 className="text-lg font-semibold text-[#2a181d]">
+              <h3 className="text-lg font-semibold text-[#000000]">
                 Supprimer le lot
               </h3>
             </div>
-            <p className="text-sm text-[#94786b] mb-2">
+            <p className="text-sm text-[#6b6b6b] mb-2">
               Vous êtes sur le point de supprimer{" "}
-              <strong className="text-[#2a181d]">{lot?.name}</strong>.
+              <strong className="text-[#000000]">{lot?.name}</strong>.
             </p>
-            <p className="text-sm text-[#94786b] mb-6">
+            <p className="text-sm text-[#6b6b6b] mb-6">
               Cette action est irréversible et supprimera également toutes les
               images associées.
             </p>
@@ -423,7 +423,7 @@ export function LotForm({ lot, categories }: LotFormProps) {
                 type="button"
                 onClick={() => setShowDeleteDialog(false)}
                 disabled={isDeleting}
-                className="h-10 px-4 text-sm text-[#2a181d] hover:bg-[#faf6f1] transition-colors"
+                className="h-10 px-4 text-sm text-[#000000] hover:bg-[#fafafa] transition-colors"
               >
                 Annuler
               </button>
@@ -470,7 +470,7 @@ function ItemCard({
   };
 
   return (
-    <div className="border border-[#511F29]/10 overflow-hidden bg-[#faf6f1]">
+    <div className="border border-black overflow-hidden bg-[#fafafa]">
       {/* Image */}
       <div className="relative aspect-square bg-white">
         {item.image ? (
@@ -491,13 +491,13 @@ function ItemCard({
             </button>
           </>
         ) : (
-          <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-[#f5f0eb] transition-colors">
+          <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-[#fafafa] transition-colors">
             {isUploading ? (
-              <Loader2 size={32} className="text-[#511F29]/30 animate-spin" />
+              <Loader2 size={32} className="text-[#3c161e]/30 animate-spin" />
             ) : (
               <>
-                <Upload size={32} className="text-[#511F29]/30 mb-2" />
-                <span className="text-sm text-[#94786b]">Ajouter image</span>
+                <Upload size={32} className="text-[#3c161e]/30 mb-2" />
+                <span className="text-sm text-[#6b6b6b]">Ajouter image</span>
               </>
             )}
             <input
@@ -517,7 +517,7 @@ function ItemCard({
           value={item.label || ""}
           onChange={(e) => onUpdate({ label: e.target.value })}
           placeholder="Label (optionnel)"
-          className="w-full h-9 px-3 border border-[#511F29]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#511F29]/20 bg-white text-[#2a181d]"
+          className="w-full h-9 px-3 border border-black text-sm focus:outline-none focus:ring-2 focus:ring-black/10 bg-white text-[#000000]"
         />
         <div className="flex items-center gap-2">
           <div className="flex-1">
@@ -530,7 +530,7 @@ function ItemCard({
               }}
               min="0"
               placeholder="Stock"
-              className="w-full h-9 px-3 border border-[#511F29]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#511F29]/20 bg-white text-[#2a181d]"
+              className="w-full h-9 px-3 border border-black text-sm focus:outline-none focus:ring-2 focus:ring-black/10 bg-white text-[#000000]"
             />
           </div>
           <button

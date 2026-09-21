@@ -24,7 +24,7 @@ export const ProductRow = memo(
     return (
       <tr
         className={clsx(
-          "hover:bg-[#faf6f1]/50 transition-colors",
+          "hover:bg-[#fafafa]/50 transition-colors",
           isLoading && "opacity-50"
         )}
       >
@@ -40,14 +40,14 @@ export const ProductRow = memo(
                 className="w-10 h-10 object-cover rounded-lg"
               />
             ) : (
-              <div className="w-10 h-10 bg-[#511F29]/10 rounded-lg flex items-center justify-center">
-                <span className="text-[#511F29]/30 text-xs">N/A</span>
+              <div className="w-10 h-10 bg-[#511f29]/10 rounded-lg flex items-center justify-center">
+                <span className="text-[#3c161e]/30 text-xs">N/A</span>
               </div>
             )}
             <div>
-              <p className="font-medium text-[#511F29]">{product.name}</p>
+              <p className="font-medium text-[#3c161e]">{product.name}</p>
               {product.sku && (
-                <span className="text-xs text-[#511F29]/60">
+                <span className="text-xs text-[#3c161e]/60">
                   SKU: {product.sku}
                 </span>
               )}
@@ -56,17 +56,17 @@ export const ProductRow = memo(
         </td>
 
         {/* Category */}
-        <td className="px-4 py-3 text-sm text-[#511F29]/70">
+        <td className="px-4 py-3 text-sm text-[#3c161e]/70">
           {product.category?.name || "-"}
         </td>
 
         {/* Price */}
         <td className="px-4 py-3">
-          <p className="text-sm font-medium text-[#511F29]">
+          <p className="text-sm font-medium text-[#3c161e]">
             {formatPriceXOF(product.price)}
           </p>
           {product.old_price && (
-            <p className="text-xs text-[#511F29]/50 line-through">
+            <p className="text-xs text-[#3c161e]/50 line-through">
               {formatPriceXOF(product.old_price)}
             </p>
           )}
@@ -79,7 +79,7 @@ export const ProductRow = memo(
               "text-sm",
               product.stock <= product.low_stock_threshold
                 ? "text-red-600 font-medium"
-                : "text-[#511F29]/70"
+                : "text-[#3c161e]/70"
             )}
           >
             {product.stock}

@@ -2,7 +2,7 @@
 
 export default function AnnouncementBar() {
   return (
-    <div style={{ background: "#511F29", color: "#f6e7dc", overflow: "hidden", whiteSpace: "nowrap" }}>
+    <div style={{ background: "#511f29", color: "rgba(255,255,255,0.9)", overflow: "hidden", whiteSpace: "nowrap" }}>
       <div
         className="animate-marquee"
         style={{

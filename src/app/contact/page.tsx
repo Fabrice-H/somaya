@@ -16,7 +16,7 @@ export default async function ContactPage() {
   return (
     <>
       <HeaderWrapper />
-      <main style={{ paddingTop: "20px" }}>
+      <main>
         <ContactContent settings={settings} />
       </main>
       <Footer />

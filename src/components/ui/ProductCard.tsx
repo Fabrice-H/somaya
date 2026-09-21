@@ -88,7 +88,7 @@ export function ProductCard({ product }: ProductCardProps) {
           width: "100%",
           aspectRatio: "4/5",
           overflow: "hidden",
-          background: "#ece0d3",
+          background: "#eeeeec",
           borderRadius: "2px",
         }}
       >
@@ -119,13 +119,13 @@ export function ProductCard({ product }: ProductCardProps) {
                   ? "#6b6b6b"
                   : badge.style === "new"
                     ? "#2d5a3d"
-                    : "#511F29",
+                    : "#000000",
               color:
                 badge.style === "outofstock"
                   ? "#ffffff"
                   : badge.style === "new"
                     ? "#d4f5dc"
-                    : "#fcd3b4",
+                    : "#f4f4f2",
               fontSize: "9.5px",
               fontWeight: 600,
               letterSpacing: "0.14em",
@@ -153,9 +153,9 @@ export function ProductCard({ product }: ProductCardProps) {
             alignItems: "center",
             justifyContent: "center",
             gap: "8px",
-            background: isOutOfStock ? "rgba(107,107,107,0.9)" : "rgba(81,31,41,0.95)",
-            color: "#fbf3ec",
-            fontFamily: "var(--font-sans), sans-serif",
+            background: isOutOfStock ? "rgba(107,107,107,0.9)" : "rgba(0,0,0,0.95)",
+            color: "#ffffff",
+            fontFamily: "var(--font-stack)",
             fontSize: "11px",
             fontWeight: 600,
             letterSpacing: "0.12em",
@@ -186,7 +186,7 @@ export function ProductCard({ product }: ProductCardProps) {
               fontSize: "10.5px",
               letterSpacing: "0.16em",
               textTransform: "uppercase",
-              color: "#94786b",
+              color: "#6b6b6b",
               marginBottom: "7px",
             }}
           >
@@ -196,11 +196,11 @@ export function ProductCard({ product }: ProductCardProps) {
         <Link href={productUrl} style={{ textDecoration: "none" }}>
           <h3
             style={{
-              fontFamily: "var(--font-serif), serif",
+              fontFamily: "var(--font-stack)",
               fontWeight: 500,
               fontSize: "19px",
               margin: "0 0 9px",
-              color: "#2a181d",
+              color: "#000000",
             }}
           >
             {product.name}
@@ -211,7 +211,7 @@ export function ProductCard({ product }: ProductCardProps) {
             style={{
               fontSize: "14.5px",
               fontWeight: 600,
-              color: "#511F29",
+              color: "#000000",
             }}
           >
             {formatPrice(price)}
@@ -220,7 +220,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <span
               style={{
                 fontSize: "13px",
-                color: "#b09a8d",
+                color: "#8a8a8a",
                 textDecoration: "line-through",
               }}
             >

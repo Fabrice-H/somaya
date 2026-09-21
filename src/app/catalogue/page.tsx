@@ -3,7 +3,7 @@ import { HeaderWrapper } from "@/components/layout/HeaderWrapper";
 import { Footer } from "@/components/layout/Footer";
 import { CatalogueContent } from "./CatalogueContent";
 import { getCategories } from "@/lib/queries/categories";
-import { getProducts } from "@/lib/queries/products";
+import { getShopProducts } from "@/lib/queries/products";
 
 export const metadata: Metadata = {
   title: "Catalogue | SO'MAYA - Mode & Accessoires",
@@ -18,17 +18,14 @@ interface PageProps {
 export default async function CataloguePage({ searchParams }: PageProps) {
   const { q: searchQuery } = await searchParams;
 
-  const [categories, { products }] = await Promise.all([
-    getCategories(),
-    getProducts({ isActive: true, limit: 100 }),
-  ]);
+  const [categories, products] = await Promise.all([getCategories(), getShopProducts()]);
 
   return (
     <>
       <HeaderWrapper />
       <main>
         <CatalogueContent
-          categories={categories}
+          categories={categories.map((c) => ({ id: c.id, name: c.name, slug: c.slug, imageUrl: c.imageUrl }))}
           products={products}
           initialSearchQuery={searchQuery || ""}
         />

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { CartSidebar } from "@/components/cart/CartSidebar";
+import { useWishlistStore } from "@/stores/wishlist-store";
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -62,6 +63,10 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   // Use a stable query client that persists across renders
   const [queryClient] = useState(() => getQueryClient());
+
+  useEffect(() => {
+    useWishlistStore.persist.rehydrate();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

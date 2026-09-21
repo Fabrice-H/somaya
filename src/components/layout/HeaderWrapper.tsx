@@ -10,6 +10,7 @@ export async function HeaderWrapper() {
         id: c.id,
         name: c.name,
         slug: c.slug,
+        imageUrl: c.imageUrl,
       }))}
     />
   );

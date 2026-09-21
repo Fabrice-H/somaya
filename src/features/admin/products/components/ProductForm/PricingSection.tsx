@@ -12,11 +12,11 @@ export const PricingSection = memo(function PricingSection() {
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm">
-      <h3 className="text-lg font-medium text-[#511F29] mb-4">Tarification</h3>
+      <h3 className="text-lg font-medium text-[#3c161e] mb-4">Tarification</h3>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-[#511F29]/80 mb-1.5">
+          <label className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
             Prix (FCFA) *
           </label>
           <input
@@ -29,15 +29,15 @@ export const PricingSection = memo(function PricingSection() {
             required
             min={0}
             max={100000000}
-            className="w-full px-4 py-2.5 rounded-lg border border-[#511F29]/20
-                     focus:outline-none focus:ring-2 focus:ring-[#511F29]/30
-                     text-[#511F29]"
+            className="w-full px-4 py-2.5 rounded-lg border border-black
+                     focus:outline-none focus:ring-2 focus:ring-black/10
+                     text-[#3c161e]"
             placeholder="0"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-[#511F29]/80 mb-1.5">
+          <label className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
             SKU
           </label>
           <input
@@ -46,15 +46,15 @@ export const PricingSection = memo(function PricingSection() {
             onChange={(e) => setField("sku", e.target.value || null)}
             placeholder="Ex: PRD-001"
             maxLength={100}
-            className="w-full px-4 py-2.5 rounded-lg border border-[#511F29]/20
-                     focus:outline-none focus:ring-2 focus:ring-[#511F29]/30
-                     text-[#511F29]"
+            className="w-full px-4 py-2.5 rounded-lg border border-black
+                     focus:outline-none focus:ring-2 focus:ring-black/10
+                     text-[#3c161e]"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-[#511F29]/80 mb-1.5">
+            <label className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
               Stock
             </label>
             <input
@@ -66,14 +66,14 @@ export const PricingSection = memo(function PricingSection() {
               }}
               min={0}
               max={1000000}
-              className="w-full px-4 py-2.5 rounded-lg border border-[#511F29]/20
-                       focus:outline-none focus:ring-2 focus:ring-[#511F29]/30
-                       text-[#511F29]"
+              className="w-full px-4 py-2.5 rounded-lg border border-black
+                       focus:outline-none focus:ring-2 focus:ring-black/10
+                       text-[#3c161e]"
               placeholder="0"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-[#511F29]/80 mb-1.5">
+            <label className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
               Seuil alerte
             </label>
             <input
@@ -85,9 +85,9 @@ export const PricingSection = memo(function PricingSection() {
               }}
               min={0}
               max={10000}
-              className="w-full px-4 py-2.5 rounded-lg border border-[#511F29]/20
-                       focus:outline-none focus:ring-2 focus:ring-[#511F29]/30
-                       text-[#511F29]"
+              className="w-full px-4 py-2.5 rounded-lg border border-black
+                       focus:outline-none focus:ring-2 focus:ring-black/10
+                       text-[#3c161e]"
               placeholder="5"
             />
           </div>

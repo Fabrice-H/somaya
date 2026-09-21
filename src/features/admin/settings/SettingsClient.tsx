@@ -13,7 +13,6 @@ import {
   X,
   Check,
   Star,
-  Camera,
   ImageIcon,
 } from 'lucide-react';
 import { ImageUpload } from '../components/ImageUpload';
@@ -23,17 +22,15 @@ import {
   updateSettings,
 } from './actions';
 import type { TestimonialData } from '../testimonials/actions';
-import type { InstagramPostData, InstagramSettings } from '../instagram/actions';
 import type { HeroBannerData } from '../hero-banner/actions';
 import { TestimonialsManager } from '../testimonials/TestimonialsManager';
-import { InstagramManager } from '../instagram/InstagramManager';
 import { HeroBannerForm } from '../hero-banner/HeroBannerForm';
 
 // ============================================================
 // TYPES
 // ============================================================
 
-type Tab = 'boutique' | 'contact' | 'livraison' | 'apparence' | 'hero' | 'temoignages' | 'instagram';
+type Tab = 'boutique' | 'contact' | 'livraison' | 'apparence' | 'hero' | 'temoignages';
 
 const TABS: { id: Tab; label: string; icon: typeof Store }[] = [
   { id: 'boutique', label: 'Boutique', icon: Store },
@@ -42,14 +39,11 @@ const TABS: { id: Tab; label: string; icon: typeof Store }[] = [
   { id: 'apparence', label: 'Apparence', icon: Palette },
   { id: 'hero', label: 'Hero Banner', icon: ImageIcon },
   { id: 'temoignages', label: 'Témoignages', icon: Star },
-  { id: 'instagram', label: 'Instagram', icon: Camera },
 ];
 
 interface SettingsClientProps {
   settings: StoreSettings;
   testimonials: TestimonialData[];
-  instagramPosts: InstagramPostData[];
-  instagramSettings: InstagramSettings;
   heroBanner: HeroBannerData | null;
 }
 
@@ -60,8 +54,6 @@ interface SettingsClientProps {
 export function SettingsClient({
   settings,
   testimonials,
-  instagramPosts,
-  instagramSettings,
   heroBanner,
 }: SettingsClientProps) {
   const router = useRouter();
@@ -113,9 +105,9 @@ export function SettingsClient({
 
   // Styles
   const inputClass =
-    'w-full h-12 px-4 bg-[#faf6f1] border border-[#511F29]/15 text-[#2a181d] text-sm outline-none transition-colors focus:border-[#511F29]/40';
-  const labelClass = 'block text-sm font-medium text-[#2a181d] mb-2';
-  const hintClass = 'text-xs text-[#94786b] mt-1.5';
+    'w-full h-12 px-4 bg-[#fafafa] border border-black text-[#000000] text-sm outline-none transition-colors focus:border-black';
+  const labelClass = 'block text-sm font-medium text-[#000000] mb-2';
+  const hintClass = 'text-xs text-[#6b6b6b] mt-1.5';
 
   // Check if current tab needs the form wrapper (settings tabs vs standalone components)
   const isSettingsTab = ['boutique', 'contact', 'livraison', 'apparence'].includes(activeTab);
@@ -124,12 +116,12 @@ export function SettingsClient({
     <div>
       {/* Header */}
       <div
-        className="flex items-center justify-between gap-4 flex-wrap bg-[#faf6f1] border-b border-[#511F29]/10"
+        className="flex items-center justify-between gap-4 flex-wrap bg-[#fafafa] border-b border-[#511f29]/10"
         style={{ padding: '24px 40px' }}
       >
         <div>
-          <h1 className="text-xl font-semibold text-[#2a181d]">Réglages</h1>
-          <p className="text-sm text-[#94786b] mt-0.5">
+          <h1 className="text-xl font-semibold text-[#000000]">Réglages</h1>
+          <p className="text-sm text-[#6b6b6b] mt-0.5">
             Configurez les paramètres de votre boutique
           </p>
         </div>
@@ -139,7 +131,7 @@ export function SettingsClient({
             type="button"
             onClick={handleSubmit}
             disabled={isPending}
-            className="inline-flex items-center gap-2 h-11 px-6 bg-[#511F29] text-[#fcd3b4] text-sm font-semibold transition-colors hover:bg-[#3d171f] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 h-11 px-6 bg-[#511f29] text-white text-sm font-semibold transition-colors hover:bg-[#3d171f] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isPending ? (
               <Loader2 size={16} className="animate-spin" />
@@ -198,8 +190,8 @@ export function SettingsClient({
                     style={{
                       fontSize: 14,
                       fontWeight: 500,
-                      background: isActive ? '#511F29' : 'transparent',
-                      color: isActive ? '#fcd3b4' : '#94786b',
+                      background: isActive ? '#511f29' : 'transparent',
+                      color: isActive ? '#f1e1e5' : '#6b6b6b',
                     }}
                   >
                     <Icon size={18} />
@@ -225,10 +217,10 @@ export function SettingsClient({
                 {activeTab === 'boutique' && (
                   <div className="space-y-6">
                     <div>
-                      <h2 className="text-lg font-semibold text-[#2a181d] mb-1">
+                      <h2 className="text-lg font-semibold text-[#000000] mb-1">
                         Informations de la boutique
                       </h2>
-                      <p className="text-sm text-[#94786b]">
+                      <p className="text-sm text-[#6b6b6b]">
                         Nom et identité visuelle de votre boutique
                       </p>
                     </div>
@@ -275,7 +267,7 @@ export function SettingsClient({
                                 width: 200,
                                 height: 80,
                                 border: '1px solid rgba(81, 31, 41, 0.15)',
-                                background: '#faf6f1',
+                                background: '#fafafa',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -298,7 +290,7 @@ export function SettingsClient({
                               </button>
                             </div>
                             <div className="flex-1">
-                              <p className="text-sm text-[#94786b] mb-2">
+                              <p className="text-sm text-[#6b6b6b] mb-2">
                                 Logo actuel
                               </p>
                             </div>
@@ -334,10 +326,10 @@ export function SettingsClient({
                 {activeTab === 'contact' && (
                   <div className="space-y-6">
                     <div>
-                      <h2 className="text-lg font-semibold text-[#2a181d] mb-1">
+                      <h2 className="text-lg font-semibold text-[#000000] mb-1">
                         Contact & Réseaux sociaux
                       </h2>
-                      <p className="text-sm text-[#94786b]">
+                      <p className="text-sm text-[#6b6b6b]">
                         Comment vos clients peuvent vous contacter
                       </p>
                     </div>
@@ -392,7 +384,7 @@ export function SettingsClient({
                         <div>
                           <label className={labelClass}>Instagram</label>
                           <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94786b]">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6b6b6b]">
                               @
                             </span>
                             <input
@@ -413,7 +405,7 @@ export function SettingsClient({
                         <div>
                           <label className={labelClass}>TikTok</label>
                           <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94786b]">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6b6b6b]">
                               @
                             </span>
                             <input
@@ -450,10 +442,10 @@ export function SettingsClient({
                 {activeTab === 'livraison' && (
                   <div className="space-y-6">
                     <div>
-                      <h2 className="text-lg font-semibold text-[#2a181d] mb-1">
+                      <h2 className="text-lg font-semibold text-[#000000] mb-1">
                         Livraison
                       </h2>
-                      <p className="text-sm text-[#94786b]">
+                      <p className="text-sm text-[#6b6b6b]">
                         Frais et informations de livraison
                       </p>
                     </div>
@@ -507,10 +499,10 @@ export function SettingsClient({
                 {activeTab === 'apparence' && (
                   <div className="space-y-6">
                     <div>
-                      <h2 className="text-lg font-semibold text-[#2a181d] mb-1">
+                      <h2 className="text-lg font-semibold text-[#000000] mb-1">
                         Couleurs du thème
                       </h2>
-                      <p className="text-sm text-[#94786b]">
+                      <p className="text-sm text-[#6b6b6b]">
                         Personnalisez l&apos;apparence de votre boutique
                       </p>
                     </div>
@@ -527,7 +519,7 @@ export function SettingsClient({
                               onChange={(e) =>
                                 updateField('primary_color', e.target.value)
                               }
-                              className="w-12 h-12 border border-[#511F29]/20 cursor-pointer"
+                              className="w-12 h-12 border border-black cursor-pointer"
                             />
                             <input
                               type="text"
@@ -553,7 +545,7 @@ export function SettingsClient({
                               onChange={(e) =>
                                 updateField('secondary_color', e.target.value)
                               }
-                              className="w-12 h-12 border border-[#511F29]/20 cursor-pointer"
+                              className="w-12 h-12 border border-black cursor-pointer"
                             />
                             <input
                               type="text"
@@ -571,15 +563,15 @@ export function SettingsClient({
                       </div>
 
                       {/* Preview */}
-                      <div className="pt-6 border-t border-[#511F29]/10">
-                        <h3 className="text-sm font-semibold text-[#2a181d] mb-4">
+                      <div className="pt-6 border-t border-[#511f29]/10">
+                        <h3 className="text-sm font-semibold text-[#000000] mb-4">
                           Aperçu
                         </h3>
 
                         <div
                           className="p-6"
                           style={{
-                            background: '#faf6f1',
+                            background: '#fafafa',
                             border: '1px solid rgba(81, 31, 41, 0.1)',
                           }}
                         >
@@ -634,22 +626,15 @@ export function SettingsClient({
 
             {/* Hero Banner Tab */}
             {activeTab === 'hero' && heroBanner && (
-              <div className="bg-white border border-[#511F29]/10 rounded-lg overflow-hidden">
+              <div className="bg-white border border-[#511f29]/10 rounded-lg overflow-hidden">
                 <HeroBannerForm data={heroBanner} embedded />
               </div>
             )}
 
             {/* Testimonials Tab */}
             {activeTab === 'temoignages' && (
-              <div className="bg-white border border-[#511F29]/10 rounded-lg overflow-hidden">
+              <div className="bg-white border border-[#511f29]/10 rounded-lg overflow-hidden">
                 <TestimonialsManager initialData={testimonials} embedded />
-              </div>
-            )}
-
-            {/* Instagram Tab */}
-            {activeTab === 'instagram' && (
-              <div className="bg-white border border-[#511F29]/10 rounded-lg overflow-hidden">
-                <InstagramManager initialData={instagramPosts} settings={instagramSettings} embedded />
               </div>
             )}
           </div>

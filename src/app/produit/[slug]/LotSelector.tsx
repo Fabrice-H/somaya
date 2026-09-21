@@ -88,7 +88,7 @@ export const LotSelector = memo(function LotSelector({
     <div
       style={{
         marginBottom: "28px",
-        background: "#faf6f1",
+        background: "#fafafa",
         borderRadius: "12px",
         padding: "20px",
       }}
@@ -111,7 +111,7 @@ export const LotSelector = memo(function LotSelector({
               width: "28px",
               height: "28px",
               borderRadius: "50%",
-              background: selectedItem ? "#22c55e" : "#511F29",
+              background: selectedItem ? "#22c55e" : "#000000",
               color: "#fff",
               fontSize: "13px",
               fontWeight: 700,
@@ -124,7 +124,7 @@ export const LotSelector = memo(function LotSelector({
               style={{
                 fontSize: "15px",
                 fontWeight: 600,
-                color: "#2a181d",
+                color: "#000000",
                 display: "block",
               }}
             >
@@ -134,7 +134,7 @@ export const LotSelector = memo(function LotSelector({
               <span
                 style={{
                   fontSize: "12px",
-                  color: "#94786b",
+                  color: "#6b6b6b",
                 }}
               >
                 De {formatPrice(minPrice)} à {formatPrice(maxPrice)}
@@ -177,7 +177,7 @@ export const LotSelector = memo(function LotSelector({
                   justifyContent: "space-between",
                   marginBottom: "12px",
                   paddingBottom: "8px",
-                  borderBottom: "1px solid rgba(81,31,41,0.1)",
+                  borderBottom: "1px solid rgba(0,0,0,0.1)",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -185,17 +185,17 @@ export const LotSelector = memo(function LotSelector({
                     style={{
                       fontWeight: 600,
                       fontSize: "15px",
-                      color: isLotDisabled ? "#999" : "#2a181d",
+                      color: isLotDisabled ? "#999" : "#000000",
                     }}
                   >
                     {lot.name}
                   </span>
                   <span
                     style={{
-                      fontFamily: "var(--font-serif), serif",
+                      fontFamily: "var(--font-stack)",
                       fontSize: "18px",
                       fontWeight: 600,
-                      color: isLotDisabled ? "#999" : "#511F29",
+                      color: isLotDisabled ? "#999" : "#000000",
                     }}
                   >
                     {formatPrice(lot.price)}
@@ -204,7 +204,7 @@ export const LotSelector = memo(function LotSelector({
                 <span
                   style={{
                     fontSize: "12px",
-                    color: isLotDisabled ? "#dc2626" : "#94786b",
+                    color: isLotDisabled ? "#dc2626" : "#6b6b6b",
                     fontWeight: 500,
                   }}
                 >
@@ -253,7 +253,7 @@ export const LotSelector = memo(function LotSelector({
                         borderRadius: "8px",
                         overflow: "hidden",
                         border: isSelected
-                          ? "3px solid #511F29"
+                          ? "3px solid #000000"
                           : isDisabled
                             ? "2px solid #e5e5e5"
                             : "2px solid transparent",
@@ -262,7 +262,7 @@ export const LotSelector = memo(function LotSelector({
                         padding: 0,
                         transition: "all 0.2s ease",
                         boxShadow: isSelected
-                          ? "0 4px 12px rgba(81,31,41,0.2)"
+                          ? "0 4px 12px rgba(0,0,0,0.2)"
                           : "0 2px 4px rgba(0,0,0,0.05)",
                       }}
                       title={item.label || `Article ${item.id}`}
@@ -334,14 +334,14 @@ export const LotSelector = memo(function LotSelector({
                             width: "22px",
                             height: "22px",
                             borderRadius: "50%",
-                            background: "#511F29",
+                            background: "#511f29",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
                           }}
                         >
-                          <Check size={14} color="#fcd3b4" />
+                          <Check size={14} color="#ffffff" />
                         </div>
                       )}
 
@@ -426,7 +426,7 @@ export const LotSelector = memo(function LotSelector({
             <p
               style={{
                 fontSize: "14px",
-                color: "#2a181d",
+                color: "#000000",
                 margin: "2px 0 0",
               }}
             >
@@ -441,7 +441,7 @@ export const LotSelector = memo(function LotSelector({
         <p
           style={{
             fontSize: "13px",
-            color: "#94786b",
+            color: "#6b6b6b",
             margin: "14px 0 0",
             textAlign: "center",
           }}

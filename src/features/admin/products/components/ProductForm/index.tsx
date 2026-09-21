@@ -148,23 +148,23 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     <form onSubmit={handleSubmit}>
       {/* Header */}
       <div
-        className="flex items-center justify-between gap-4 flex-wrap bg-[#faf6f1] border-b border-[#511F29]/10"
+        className="flex items-center justify-between gap-4 flex-wrap bg-[#fafafa] border-b border-[#511f29]/10"
         style={{ padding: "24px 40px" }}
       >
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="w-10 h-10 flex items-center justify-center border border-[#511F29]/20 hover:bg-white transition-colors"
+            className="w-10 h-10 flex items-center justify-center border border-[#511f29]/20 hover:bg-white transition-colors"
           >
-            <ArrowLeft size={18} className="text-[#2a181d]" />
+            <ArrowLeft size={18} className="text-[#000000]" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-[#2a181d]">
+            <h1 className="text-xl font-semibold text-[#000000]">
               {isEditMode ? "Modifier le produit" : "Nouveau produit"}
             </h1>
             {form.name && (
-              <p className="text-sm text-[#94786b] mt-0.5">{form.name}</p>
+              <p className="text-sm text-[#6b6b6b] mt-0.5">{form.name}</p>
             )}
           </div>
         </div>
@@ -188,7 +188,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
           <button
             type="submit"
             disabled={isSubmitting || !form.name || !form.slug}
-            className="inline-flex items-center gap-2 h-11 px-6 bg-[#511F29] text-[#fcd3b4] text-sm font-semibold transition-colors hover:bg-[#3d171f] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 h-11 px-6 bg-[#511f29] text-white text-sm font-semibold transition-colors hover:bg-[#3d171f] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <Loader2 size={16} className="animate-spin" />
@@ -202,7 +202,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
 
       {/* Tabs */}
       <div
-        className="flex gap-1 overflow-x-auto bg-[#faf6f1] border-b border-[#511F29]/10"
+        className="flex gap-1 overflow-x-auto bg-[#fafafa] border-b border-[#511f29]/10"
         style={{ padding: "0 40px" }}
       >
         {tabs.map((tab) => (
@@ -215,10 +215,10 @@ export function ProductForm({ product, categories }: ProductFormProps) {
               padding: "14px 20px",
               fontSize: 13,
               fontWeight: 500,
-              color: activeTab === tab.key ? "#511F29" : "#94786b",
+              color: activeTab === tab.key ? "#511f29" : "#6b6b6b",
               borderBottom:
                 activeTab === tab.key
-                  ? "2px solid #511F29"
+                  ? "2px solid #511f29"
                   : "2px solid transparent",
               marginBottom: -1,
             }}
@@ -274,15 +274,15 @@ export function ProductForm({ product, categories }: ProductFormProps) {
               <div className="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-full">
                 <AlertTriangle size={20} />
               </div>
-              <h3 className="text-lg font-semibold text-[#2a181d]">
+              <h3 className="text-lg font-semibold text-[#000000]">
                 Supprimer le produit
               </h3>
             </div>
-            <p className="text-sm text-[#94786b] mb-2">
+            <p className="text-sm text-[#6b6b6b] mb-2">
               Vous êtes sur le point de supprimer{" "}
-              <strong className="text-[#2a181d]">{product?.name}</strong>.
+              <strong className="text-[#000000]">{product?.name}</strong>.
             </p>
-            <p className="text-sm text-[#94786b] mb-6">
+            <p className="text-sm text-[#6b6b6b] mb-6">
               Cette action est irréversible et supprimera également toutes les
               images et lots associés.
             </p>
@@ -291,7 +291,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
                 type="button"
                 onClick={() => setShowDeleteDialog(false)}
                 disabled={isDeleting}
-                className="h-10 px-4 text-sm text-[#2a181d] hover:bg-[#faf6f1] transition-colors"
+                className="h-10 px-4 text-sm text-[#000000] hover:bg-[#fafafa] transition-colors"
               >
                 Annuler
               </button>

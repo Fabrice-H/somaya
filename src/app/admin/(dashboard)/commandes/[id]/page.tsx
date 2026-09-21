@@ -103,7 +103,7 @@ export default async function OrderDetailPage(props: { params: Params }) {
         <div className="flex items-center gap-4">
           <Link
             href="/admin/commandes"
-            className="transition-colors hover:bg-[#faf6f1]"
+            className="transition-colors hover:bg-[#fafafa]"
             style={{
               width: 40,
               height: 40,
@@ -116,10 +116,10 @@ export default async function OrderDetailPage(props: { params: Params }) {
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 600, color: '#2a181d' }}>
+            <h1 style={{ fontSize: 22, fontWeight: 600, color: '#000000' }}>
               Commande {order.order_number}
             </h1>
-            <p style={{ fontSize: 13, color: '#94786b', marginTop: 2 }}>
+            <p style={{ fontSize: 13, color: '#6b6b6b', marginTop: 2 }}>
               <Clock size={12} className="inline mr-1" style={{ verticalAlign: 'middle' }} />
               {formatDate(order.created_at)}
             </p>
@@ -162,7 +162,7 @@ export default async function OrderDetailPage(props: { params: Params }) {
                   borderBottom: '1px solid rgba(81,31,41,0.1)',
                 }}
               >
-                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#2a181d' }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#000000' }}>
                   <Package size={16} className="inline mr-2" style={{ verticalAlign: 'middle' }} />
                   Articles commandés ({order.order_items?.length || 0})
                 </h2>
@@ -180,7 +180,7 @@ export default async function OrderDetailPage(props: { params: Params }) {
                   >
                     <div
                       className="relative flex-shrink-0 overflow-hidden"
-                      style={{ width: 56, height: 56, background: '#faf6f1' }}
+                      style={{ width: 56, height: 56, background: '#fafafa' }}
                     >
                       {item.product_image ? (
                         <Image
@@ -192,24 +192,24 @@ export default async function OrderDetailPage(props: { params: Params }) {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Package size={20} style={{ color: '#94786b' }} />
+                          <Package size={20} style={{ color: '#6b6b6b' }} />
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p style={{ fontSize: 14, fontWeight: 500, color: '#2a181d' }}>
+                      <p style={{ fontSize: 14, fontWeight: 500, color: '#000000' }}>
                         {item.product_name}
                       </p>
                       {item.lot_name && (
-                        <p style={{ fontSize: 12, color: '#511F29', fontWeight: 500 }}>
+                        <p style={{ fontSize: 12, color: '#3c161e', fontWeight: 500 }}>
                           {item.lot_name}
                         </p>
                       )}
-                      <p style={{ fontSize: 13, color: '#94786b' }}>
+                      <p style={{ fontSize: 13, color: '#6b6b6b' }}>
                         {formatPrice(item.product_price)} × {item.quantity}
                       </p>
                     </div>
-                    <p style={{ fontSize: 15, fontWeight: 600, color: '#2a181d', fontVariantNumeric: 'tabular-nums' }}>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: '#000000', fontVariantNumeric: 'tabular-nums' }}>
                       {formatPrice(item.line_total)}
                     </p>
                   </div>
@@ -217,13 +217,13 @@ export default async function OrderDetailPage(props: { params: Params }) {
               </div>
 
               {/* Totals */}
-              <div style={{ padding: '16px 24px', background: '#faf6f1' }}>
+              <div style={{ padding: '16px 24px', background: '#fafafa' }}>
                 <div className="space-y-2">
-                  <div className="flex justify-between" style={{ fontSize: 13, color: '#94786b' }}>
+                  <div className="flex justify-between" style={{ fontSize: 13, color: '#6b6b6b' }}>
                     <span>Sous-total</span>
                     <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatPrice(order.subtotal)}</span>
                   </div>
-                  <div className="flex justify-between" style={{ fontSize: 13, color: '#94786b' }}>
+                  <div className="flex justify-between" style={{ fontSize: 13, color: '#6b6b6b' }}>
                     <span>Livraison</span>
                     <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatPrice(order.delivery_fee)}</span>
                   </div>
@@ -232,7 +232,7 @@ export default async function OrderDetailPage(props: { params: Params }) {
                     style={{
                       fontSize: 16,
                       fontWeight: 600,
-                      color: '#2a181d',
+                      color: '#000000',
                       borderTop: '1px solid rgba(81,31,41,0.1)',
                     }}
                   >
@@ -256,7 +256,7 @@ export default async function OrderDetailPage(props: { params: Params }) {
                   borderBottom: '1px solid rgba(81,31,41,0.1)',
                 }}
               >
-                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#2a181d' }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#000000' }}>
                   Actions
                 </h2>
               </div>
@@ -264,7 +264,7 @@ export default async function OrderDetailPage(props: { params: Params }) {
               <div style={{ padding: '24px' }}>
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
-                    <p style={{ fontSize: 13, fontWeight: 500, color: '#2a181d', marginBottom: 12 }}>
+                    <p style={{ fontSize: 13, fontWeight: 500, color: '#000000', marginBottom: 12 }}>
                       Mettre à jour le statut
                     </p>
                     <OrderStatusUpdate
@@ -273,7 +273,7 @@ export default async function OrderDetailPage(props: { params: Params }) {
                     />
                   </div>
                   <div>
-                    <p style={{ fontSize: 13, fontWeight: 500, color: '#2a181d', marginBottom: 12 }}>
+                    <p style={{ fontSize: 13, fontWeight: 500, color: '#000000', marginBottom: 12 }}>
                       Prévenir le client
                     </p>
                     <NotifyCustomerButton order={order} />
@@ -298,7 +298,7 @@ export default async function OrderDetailPage(props: { params: Params }) {
                   borderBottom: '1px solid rgba(81,31,41,0.1)',
                 }}
               >
-                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#2a181d' }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#000000' }}>
                   <User size={16} className="inline mr-2" style={{ verticalAlign: 'middle' }} />
                   Client
                 </h2>
@@ -307,20 +307,20 @@ export default async function OrderDetailPage(props: { params: Params }) {
               <div style={{ padding: '20px 24px' }}>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <User size={16} style={{ color: '#94786b', marginTop: 2 }} />
+                    <User size={16} style={{ color: '#6b6b6b', marginTop: 2 }} />
                     <div>
-                      <p style={{ fontSize: 14, fontWeight: 500, color: '#2a181d' }}>
+                      <p style={{ fontSize: 14, fontWeight: 500, color: '#000000' }}>
                         {order.customer_name}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <Phone size={16} style={{ color: '#94786b', marginTop: 2 }} />
+                    <Phone size={16} style={{ color: '#6b6b6b', marginTop: 2 }} />
                     <div>
                       <a
                         href={`tel:${order.customer_phone}`}
-                        style={{ fontSize: 14, color: '#511F29' }}
+                        style={{ fontSize: 14, color: '#3c161e' }}
                       >
                         {order.customer_phone}
                       </a>
@@ -329,11 +329,11 @@ export default async function OrderDetailPage(props: { params: Params }) {
 
                   {order.customer_email && (
                     <div className="flex items-start gap-3">
-                      <Mail size={16} style={{ color: '#94786b', marginTop: 2 }} />
+                      <Mail size={16} style={{ color: '#6b6b6b', marginTop: 2 }} />
                       <div>
                         <a
                           href={`mailto:${order.customer_email}`}
-                          style={{ fontSize: 14, color: '#511F29' }}
+                          style={{ fontSize: 14, color: '#3c161e' }}
                         >
                           {order.customer_email}
                         </a>
@@ -350,14 +350,14 @@ export default async function OrderDetailPage(props: { params: Params }) {
                   />
 
                   <div className="flex items-start gap-3">
-                    <MapPin size={16} style={{ color: '#94786b', marginTop: 2 }} />
+                    <MapPin size={16} style={{ color: '#6b6b6b', marginTop: 2 }} />
                     <div>
                       {order.customer_address && (
-                        <p style={{ fontSize: 14, color: '#2a181d' }}>
+                        <p style={{ fontSize: 14, color: '#000000' }}>
                           {order.customer_address}
                         </p>
                       )}
-                      <p style={{ fontSize: 13, color: '#94786b' }}>
+                      <p style={{ fontSize: 13, color: '#6b6b6b' }}>
                         {order.customer_commune}
                       </p>
                     </div>
@@ -373,12 +373,12 @@ export default async function OrderDetailPage(props: { params: Params }) {
                         }}
                       />
                       <div className="flex items-start gap-3">
-                        <MessageSquare size={16} style={{ color: '#94786b', marginTop: 2 }} />
+                        <MessageSquare size={16} style={{ color: '#6b6b6b', marginTop: 2 }} />
                         <div>
-                          <p style={{ fontSize: 12, color: '#94786b', marginBottom: 4 }}>
+                          <p style={{ fontSize: 12, color: '#6b6b6b', marginBottom: 4 }}>
                             Notes du client
                           </p>
-                          <p style={{ fontSize: 14, color: '#2a181d', fontStyle: 'italic' }}>
+                          <p style={{ fontSize: 14, color: '#000000', fontStyle: 'italic' }}>
                             &ldquo;{order.customer_notes}&rdquo;
                           </p>
                         </div>
@@ -402,7 +402,7 @@ export default async function OrderDetailPage(props: { params: Params }) {
                   borderBottom: '1px solid rgba(81,31,41,0.1)',
                 }}
               >
-                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#2a181d' }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#000000' }}>
                   <CreditCard size={16} className="inline mr-2" style={{ verticalAlign: 'middle' }} />
                   Paiement
                 </h2>
@@ -413,13 +413,13 @@ export default async function OrderDetailPage(props: { params: Params }) {
                   className="inline-flex items-center gap-2"
                   style={{
                     padding: '10px 16px',
-                    background: '#faf6f1',
+                    background: '#fafafa',
                     fontSize: 14,
                     fontWeight: 500,
-                    color: '#2a181d',
+                    color: '#000000',
                   }}
                 >
-                  <PaymentIcon size={16} style={{ color: '#94786b' }} />
+                  <PaymentIcon size={16} style={{ color: '#6b6b6b' }} />
                   {paymentMethod?.label || order.payment_method}
                 </div>
               </div>
@@ -438,7 +438,7 @@ export default async function OrderDetailPage(props: { params: Params }) {
                   borderBottom: '1px solid rgba(81,31,41,0.1)',
                 }}
               >
-                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#2a181d' }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#000000' }}>
                   <Clock size={16} className="inline mr-2" style={{ verticalAlign: 'middle' }} />
                   Historique
                 </h2>
@@ -452,14 +452,14 @@ export default async function OrderDetailPage(props: { params: Params }) {
                         width: 8,
                         height: 8,
                         borderRadius: '50%',
-                        background: '#511F29',
+                        background: '#511f29',
                       }}
                     />
                     <div>
-                      <p style={{ fontSize: 13, color: '#2a181d' }}>
+                      <p style={{ fontSize: 13, color: '#000000' }}>
                         Commande créée
                       </p>
-                      <p style={{ fontSize: 11, color: '#94786b' }}>
+                      <p style={{ fontSize: 11, color: '#6b6b6b' }}>
                         {formatShortDate(order.created_at)}
                       </p>
                     </div>
@@ -475,10 +475,10 @@ export default async function OrderDetailPage(props: { params: Params }) {
                         }}
                       />
                       <div>
-                        <p style={{ fontSize: 13, color: '#2a181d' }}>
+                        <p style={{ fontSize: 13, color: '#000000' }}>
                           Dernière mise à jour
                         </p>
-                        <p style={{ fontSize: 11, color: '#94786b' }}>
+                        <p style={{ fontSize: 11, color: '#6b6b6b' }}>
                           {formatShortDate(order.updated_at)}
                         </p>
                       </div>
@@ -495,10 +495,10 @@ export default async function OrderDetailPage(props: { params: Params }) {
                         }}
                       />
                       <div>
-                        <p style={{ fontSize: 13, color: '#2a181d' }}>
+                        <p style={{ fontSize: 13, color: '#000000' }}>
                           Livrée
                         </p>
-                        <p style={{ fontSize: 11, color: '#94786b' }}>
+                        <p style={{ fontSize: 11, color: '#6b6b6b' }}>
                           {formatShortDate(order.delivered_at)}
                         </p>
                       </div>

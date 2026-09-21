@@ -18,17 +18,17 @@ function ManagerSkeleton() {
     <div>
       {/* Header skeleton */}
       <div
-        className="flex items-center justify-between gap-4 bg-[#faf6f1] border-b border-[#511F29]/10"
+        className="flex items-center justify-between gap-4 bg-[#fafafa] border-b border-[#511f29]/10"
         style={{ padding: "24px 40px" }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#e8e0d8] rounded-lg animate-pulse" />
+          <div className="w-10 h-10 bg-[#eeeeec] rounded-lg animate-pulse" />
           <div>
-            <div className="h-6 w-32 bg-[#e8e0d8] rounded animate-pulse mb-2" />
-            <div className="h-4 w-64 bg-[#e8e0d8] rounded animate-pulse" />
+            <div className="h-6 w-32 bg-[#eeeeec] rounded animate-pulse mb-2" />
+            <div className="h-4 w-64 bg-[#eeeeec] rounded animate-pulse" />
           </div>
         </div>
-        <div className="h-10 w-28 bg-[#e8e0d8] rounded-lg animate-pulse" />
+        <div className="h-10 w-28 bg-[#eeeeec] rounded-lg animate-pulse" />
       </div>
 
       {/* Content skeleton */}

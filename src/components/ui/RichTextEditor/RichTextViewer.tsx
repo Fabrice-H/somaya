@@ -19,7 +19,7 @@ export function RichTextViewer({ content, className = '' }: RichTextViewerProps)
         style={{
           fontSize: 14,
           lineHeight: 1.7,
-          color: '#2a181d',
+          color: '#000000',
         }}
       />
       <style jsx global>{`
@@ -54,15 +54,15 @@ export function RichTextViewer({ content, className = '' }: RichTextViewerProps)
         }
 
         .rich-text-content blockquote {
-          border-left: 3px solid #511F29;
+          border-left: 3px solid #da5771;
           padding-left: 1em;
           margin: 1em 0;
-          color: #94786b;
+          color: #6b6b6b;
           font-style: italic;
         }
 
         .rich-text-content a {
-          color: #511F29;
+          color: #511f29;
           text-decoration: underline;
         }
 

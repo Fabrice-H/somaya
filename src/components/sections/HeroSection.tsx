@@ -29,7 +29,7 @@ const DEFAULTS = {
 
 // ============================================================
 // Client Component - HeroSection
-// Design: Split layout with burgundy left panel and image right
+// Design: Split layout with light neutral panel and image right
 // ============================================================
 
 export default function HeroSection({ data }: HeroSectionProps) {
@@ -96,7 +96,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
         {/* Left Side - Content */}
         <div
           style={{
-            background: "#511F29",
+            background: "var(--som-primary-50)",
             display: "flex",
             alignItems: "center",
             padding: "60px clamp(40px, 6vw, 96px)",
@@ -110,9 +110,9 @@ export default function HeroSection({ data }: HeroSectionProps) {
                 fontSize: "11.5px",
                 letterSpacing: "0.3em",
                 textTransform: "uppercase",
-                color: "#fcd3b4",
+                color: "var(--som-primary)",
                 marginBottom: "26px",
-                borderBottom: "1px solid rgba(252,211,180,0.4)",
+                borderBottom: "1px solid var(--som-primary-200)",
                 paddingBottom: "7px",
               }}
             >
@@ -122,9 +122,9 @@ export default function HeroSection({ data }: HeroSectionProps) {
             {/* Title */}
             <h1
               style={{
-                fontFamily: "var(--font-playfair-display), 'Playfair Display', serif",
+                fontFamily: "var(--font-stack)",
                 fontWeight: 500,
-                color: "#fbf3ec",
+                color: "#000000",
                 fontSize: "clamp(40px, 4.6vw, 76px)",
                 lineHeight: 1.04,
                 margin: 0,
@@ -133,13 +133,13 @@ export default function HeroSection({ data }: HeroSectionProps) {
             >
               {title}
               <br />
-              <em style={{ fontStyle: "italic", color: "#fcd3b4" }}>{titleHighlight}</em> {titleSuffix}
+              <em style={{ fontStyle: "italic", fontWeight: 300, color: "var(--som-accent)" }}>{titleHighlight}</em> {titleSuffix}
             </h1>
 
             {/* Description */}
             <p
               style={{
-                color: "rgba(251,243,236,0.8)",
+                color: "#4a4a4a",
                 fontSize: "17px",
                 lineHeight: 1.65,
                 margin: "28px 0 38px",
@@ -149,30 +149,14 @@ export default function HeroSection({ data }: HeroSectionProps) {
               {description}
             </p>
 
-            {/* Button - Peach style */}
-            <Link
-              href={buttonLink}
-              style={{
-                display: "inline-block",
-                background: "#fcd3b4",
-                color: "#511F29",
-                fontSize: "12.5px",
-                fontWeight: 600,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                padding: "17px 34px",
-                textDecoration: "none",
-                borderRadius: "2px",
-                transition: "all 0.3s",
-              }}
-            >
+            <Link href={buttonLink} className="btn-primary">
               {buttonText}
             </Link>
           </div>
         </div>
 
         {/* Right Side - Media */}
-        <div style={{ position: "relative", overflow: "hidden", background: "#ece0d3" }}>
+        <div style={{ position: "relative", overflow: "hidden", background: "var(--som-primary-100)" }}>
           {mediaType === "video" ? (
             <video
               ref={desktopVideoRef}
@@ -250,7 +234,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
           style={{
             position: "absolute",
             inset: 0,
-            background: "linear-gradient(180deg, rgba(42,24,29,0.3) 0%, rgba(42,24,29,0.1) 40%, rgba(42,24,29,0.6) 100%)",
+            background: "linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.6) 100%)",
           }}
         />
 
@@ -273,7 +257,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
               fontSize: "11px",
               letterSpacing: "0.35em",
               textTransform: "uppercase",
-              color: "rgba(251,243,236,0.85)",
+              color: "rgba(255,255,255,0.85)",
               marginBottom: "20px",
             }}
           >
@@ -283,9 +267,9 @@ export default function HeroSection({ data }: HeroSectionProps) {
           {/* Title */}
           <h1
             style={{
-              fontFamily: "var(--font-playfair-display), 'Playfair Display', serif",
+              fontFamily: "var(--font-stack)",
               fontWeight: 400,
-              color: "#fbf3ec",
+              color: "#ffffff",
               fontSize: "clamp(42px, 12vw, 72px)",
               lineHeight: 1,
               margin: 0,
@@ -298,10 +282,10 @@ export default function HeroSection({ data }: HeroSectionProps) {
           {/* Subtitle */}
           <p
             style={{
-              fontFamily: "var(--font-playfair-display), 'Playfair Display', serif",
+              fontFamily: "var(--font-stack)",
               fontStyle: "italic",
               fontSize: "clamp(20px, 5vw, 28px)",
-              color: "rgba(251,243,236,0.9)",
+              color: "rgba(255,255,255,0.9)",
               margin: "8px 0 0",
               fontWeight: 300,
             }}
@@ -315,14 +299,14 @@ export default function HeroSection({ data }: HeroSectionProps) {
             style={{
               marginTop: "40px",
               background: "transparent",
-              color: "#fbf3ec",
+              color: "#ffffff",
               fontSize: "11px",
               fontWeight: 600,
               letterSpacing: "0.18em",
               textTransform: "uppercase",
               padding: "18px 40px",
               textDecoration: "none",
-              border: "1px solid rgba(251,243,236,0.5)",
+              border: "1px solid rgba(255,255,255,0.5)",
               transition: "all 0.3s",
             }}
           >

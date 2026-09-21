@@ -17,7 +17,7 @@ export const ImagesSection = memo(function ImagesSection() {
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm">
-      <h3 className="text-lg font-medium text-[#511F29] mb-4">Images</h3>
+      <h3 className="text-lg font-medium text-[#3c161e] mb-4">Images</h3>
       <ImageUploader
         images={images}
         onChange={handleImagesChange}

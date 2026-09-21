@@ -51,13 +51,13 @@ export function NotifyCustomerButton({ order }: NotifyCustomerButtonProps) {
           padding: '10px 14px',
           fontSize: 14,
           fontWeight: 500,
-          color: '#2a181d',
+          color: '#000000',
           background: 'white',
           border: '1px solid rgba(81,31,41,0.2)',
           cursor: 'pointer',
           transition: 'all 0.2s',
         }}
-        onMouseOver={(e) => (e.currentTarget.style.background = '#faf6f1')}
+        onMouseOver={(e) => (e.currentTarget.style.background = '#fafafa')}
         onMouseOut={(e) => (e.currentTarget.style.background = 'white')}
       >
         <MessageCircle size={16} />
@@ -75,9 +75,9 @@ export function NotifyCustomerButton({ order }: NotifyCustomerButtonProps) {
             padding: '10px 14px',
             fontSize: 14,
             fontWeight: 500,
-            color: '#511F29',
+            color: '#3c161e',
             background: 'white',
-            border: '1px solid #511F29',
+            border: '1px solid #511f29',
             cursor: 'pointer',
             transition: 'all 0.2s',
           }}

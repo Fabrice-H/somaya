@@ -79,23 +79,23 @@ export function CategoryForm({ category }: CategoryFormProps) {
     <form onSubmit={handleSubmit}>
       {/* Header */}
       <div
-        className="flex items-center justify-between gap-4 flex-wrap bg-[#faf6f1] border-b border-[#511F29]/10"
+        className="flex items-center justify-between gap-4 flex-wrap bg-[#fafafa] border-b border-[#511f29]/10"
         style={{ padding: '24px 40px' }}
       >
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="w-10 h-10 flex items-center justify-center border border-[#511F29]/20 hover:bg-white transition-colors"
+            className="w-10 h-10 flex items-center justify-center border border-[#511f29]/20 hover:bg-white transition-colors"
           >
-            <ArrowLeft size={18} className="text-[#2a181d]" />
+            <ArrowLeft size={18} className="text-[#000000]" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-[#2a181d]">
+            <h1 className="text-xl font-semibold text-[#000000]">
               {category ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
             </h1>
             {form.name && (
-              <p className="text-sm text-[#94786b] mt-0.5">{form.name}</p>
+              <p className="text-sm text-[#6b6b6b] mt-0.5">{form.name}</p>
             )}
           </div>
         </div>
@@ -109,7 +109,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
           <button
             type="submit"
             disabled={loading || !form.name || !form.slug}
-            className="inline-flex items-center gap-2 h-11 px-6 bg-[#511F29] text-[#fcd3b4] text-sm font-semibold transition-colors hover:bg-[#3d171f] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 h-11 px-6 bg-[#511f29] text-white text-sm font-semibold transition-colors hover:bg-[#3d171f] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <Loader2 size={16} className="animate-spin" />
@@ -130,7 +130,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-[#2a181d] mb-2"
+                className="block text-sm font-medium text-[#000000] mb-2"
               >
                 Nom de la catégorie *
               </label>
@@ -140,7 +140,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
                 value={form.name}
                 onChange={(e) => handleNameChange(e.target.value)}
                 placeholder="Ex: Sacs à main"
-                className="w-full h-12 px-4 bg-[#faf6f1] border border-[#511F29]/15 text-[#2a181d] text-sm outline-none transition-colors focus:border-[#511F29]/40"
+                className="w-full h-12 px-4 bg-[#fafafa] border border-black text-[#000000] text-sm outline-none transition-colors focus:border-black"
               />
             </div>
 
@@ -148,7 +148,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
             <div>
               <label
                 htmlFor="slug"
-                className="block text-sm font-medium text-[#2a181d] mb-2"
+                className="block text-sm font-medium text-[#000000] mb-2"
               >
                 Slug (URL) *
               </label>
@@ -158,9 +158,9 @@ export function CategoryForm({ category }: CategoryFormProps) {
                 value={form.slug}
                 onChange={(e) => handleChange({ slug: e.target.value })}
                 placeholder="sacs-a-main"
-                className="w-full h-12 px-4 bg-[#faf6f1] border border-[#511F29]/15 text-[#2a181d] text-sm font-mono outline-none transition-colors focus:border-[#511F29]/40"
+                className="w-full h-12 px-4 bg-[#fafafa] border border-black text-[#000000] text-sm font-mono outline-none transition-colors focus:border-black"
               />
-              <p className="text-xs text-[#94786b] mt-1">
+              <p className="text-xs text-[#6b6b6b] mt-1">
                 URL: /catalogue/{form.slug || 'nom-categorie'}
               </p>
             </div>
@@ -169,7 +169,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
             <div>
               <label
                 htmlFor="position"
-                className="block text-sm font-medium text-[#2a181d] mb-2"
+                className="block text-sm font-medium text-[#000000] mb-2"
               >
                 Position d&apos;affichage
               </label>
@@ -183,9 +183,9 @@ export function CategoryForm({ category }: CategoryFormProps) {
                 }}
                 min={0}
                 placeholder="0"
-                className="w-32 h-12 px-4 bg-[#faf6f1] border border-[#511F29]/15 text-[#2a181d] text-sm outline-none transition-colors focus:border-[#511F29]/40"
+                className="w-32 h-12 px-4 bg-[#fafafa] border border-black text-[#000000] text-sm outline-none transition-colors focus:border-black"
               />
-              <p className="text-xs text-[#94786b] mt-1">
+              <p className="text-xs text-[#6b6b6b] mt-1">
                 Les catégories avec un numéro plus petit s&apos;affichent en premier
               </p>
             </div>
@@ -206,7 +206,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
                 type="button"
                 onClick={() => handleChange({ is_active: !form.is_active })}
                 className={`relative w-12 h-6 rounded-full transition-colors ${
-                  form.is_active ? 'bg-green-500' : 'bg-[#94786b]'
+                  form.is_active ? 'bg-green-500' : 'bg-[#6b6b6b]'
                 }`}
               >
                 <span
@@ -215,7 +215,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
                   }`}
                 />
               </button>
-              <span className="text-sm text-[#2a181d]">
+              <span className="text-sm text-[#000000]">
                 {form.is_active ? 'Catégorie active' : 'Catégorie inactive'}
               </span>
             </div>
@@ -223,7 +223,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
 
           {/* Right column - Image */}
           <div>
-            <label className="block text-sm font-medium text-[#2a181d] mb-2">
+            <label className="block text-sm font-medium text-[#000000] mb-2">
               Image de la catégorie
             </label>
             <ImageUpload
@@ -234,7 +234,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
               bucket="categories"
               maxImages={1}
             />
-            <p className="text-xs text-[#94786b] mt-2">
+            <p className="text-xs text-[#6b6b6b] mt-2">
               Format recommandé: carré, min 800x800px
             </p>
           </div>

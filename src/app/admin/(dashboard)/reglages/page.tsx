@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { getSettings } from '@/features/admin/settings/actions';
 import { getTestimonials } from '@/features/admin/testimonials/actions';
-import { getInstagramPosts, getInstagramSettings } from '@/features/admin/instagram/actions';
 import { getHeroBanner } from '@/features/admin/hero-banner/actions';
 import { SettingsClient } from '@/features/admin/settings/SettingsClient';
 
@@ -12,11 +11,9 @@ export const metadata = {
 };
 
 async function SettingsData() {
-  const [settings, testimonials, instagramPosts, instagramSettings, heroBanner] = await Promise.all([
+  const [settings, testimonials, heroBanner] = await Promise.all([
     getSettings(),
     getTestimonials(),
-    getInstagramPosts(),
-    getInstagramSettings(),
     getHeroBanner(),
   ]);
 
@@ -38,8 +35,6 @@ async function SettingsData() {
     <SettingsClient
       settings={settings}
       testimonials={testimonials}
-      instagramPosts={instagramPosts}
-      instagramSettings={instagramSettings}
       heroBanner={heroBanner}
     />
   );
@@ -50,14 +45,14 @@ function SettingsSkeleton() {
     <div>
       {/* Header skeleton */}
       <div
-        className="flex items-center justify-between gap-4 bg-[#faf6f1] border-b border-[#511F29]/10"
+        className="flex items-center justify-between gap-4 bg-[#fafafa] border-b border-[#511f29]/10"
         style={{ padding: '24px 40px' }}
       >
         <div>
-          <div className="h-6 w-24 bg-[#e8e0d8] animate-pulse mb-2" />
-          <div className="h-4 w-48 bg-[#e8e0d8] animate-pulse" />
+          <div className="h-6 w-24 bg-[#eeeeec] animate-pulse mb-2" />
+          <div className="h-4 w-48 bg-[#eeeeec] animate-pulse" />
         </div>
-        <div className="h-11 w-32 bg-[#e8e0d8] animate-pulse" />
+        <div className="h-11 w-32 bg-[#eeeeec] animate-pulse" />
       </div>
 
       {/* Content skeleton */}
@@ -68,7 +63,7 @@ function SettingsSkeleton() {
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="h-12 bg-[#faf6f1] animate-pulse"
+                className="h-12 bg-[#fafafa] animate-pulse"
               />
             ))}
           </div>
@@ -82,14 +77,14 @@ function SettingsSkeleton() {
                 padding: 32,
               }}
             >
-              <div className="h-6 w-48 bg-[#e8e0d8] animate-pulse mb-2" />
-              <div className="h-4 w-64 bg-[#e8e0d8] animate-pulse mb-8" />
+              <div className="h-6 w-48 bg-[#eeeeec] animate-pulse mb-2" />
+              <div className="h-4 w-64 bg-[#eeeeec] animate-pulse mb-8" />
 
               <div className="space-y-6">
                 {[1, 2, 3].map((i) => (
                   <div key={i}>
-                    <div className="h-4 w-32 bg-[#e8e0d8] animate-pulse mb-2" />
-                    <div className="h-12 bg-[#faf6f1] animate-pulse" />
+                    <div className="h-4 w-32 bg-[#eeeeec] animate-pulse mb-2" />
+                    <div className="h-12 bg-[#fafafa] animate-pulse" />
                   </div>
                 ))}
               </div>

@@ -133,14 +133,14 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap mb-8">
         <div>
-          <h1 className="text-2xl font-semibold text-[#2a181d] mb-1">Produits</h1>
-          <p className="text-sm text-[#94786b]">
+          <h1 className="text-2xl font-semibold text-[#000000] mb-1">Produits</h1>
+          <p className="text-sm text-[#6b6b6b]">
             Gérez votre catalogue de produits
           </p>
         </div>
         <Link
           href="/admin/produits/nouveau"
-          className="inline-flex items-center gap-2 h-11 px-6 bg-[#511F29] text-[#fcd3b4] text-sm font-semibold transition-colors hover:bg-[#3d171f]"
+          className="inline-flex items-center gap-2 h-11 px-6 bg-[#511f29] text-white text-sm font-semibold transition-colors hover:bg-[#3d171f]"
         >
           <Plus size={18} />
           Nouveau produit
@@ -149,21 +149,21 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8" style={{ maxWidth: 800 }}>
-        <div className="bg-[#faf6f1] border border-[#511F29]/10 p-4">
-          <div className="text-2xl font-bold text-[#2a181d]">{stats.total}</div>
-          <div className="text-xs text-[#94786b] mt-1">Total produits</div>
+        <div className="bg-[#fafafa] border border-black p-4">
+          <div className="text-2xl font-bold text-[#000000]">{stats.total}</div>
+          <div className="text-xs text-[#6b6b6b] mt-1">Total produits</div>
         </div>
-        <div className="bg-[#faf6f1] border border-[#511F29]/10 p-4">
+        <div className="bg-[#fafafa] border border-black p-4">
           <div className="text-2xl font-bold text-green-600">{stats.active}</div>
-          <div className="text-xs text-[#94786b] mt-1">Actifs</div>
+          <div className="text-xs text-[#6b6b6b] mt-1">Actifs</div>
         </div>
-        <div className="bg-[#faf6f1] border border-[#511F29]/10 p-4">
+        <div className="bg-[#fafafa] border border-black p-4">
           <div className="text-2xl font-bold text-amber-600">{stats.lowStock}</div>
-          <div className="text-xs text-[#94786b] mt-1">Stock faible</div>
+          <div className="text-xs text-[#6b6b6b] mt-1">Stock faible</div>
         </div>
-        <div className="bg-[#faf6f1] border border-[#511F29]/10 p-4">
+        <div className="bg-[#fafafa] border border-black p-4">
           <div className="text-2xl font-bold text-red-600">{stats.outOfStock}</div>
-          <div className="text-xs text-[#94786b] mt-1">Épuisés</div>
+          <div className="text-xs text-[#6b6b6b] mt-1">Épuisés</div>
         </div>
       </div>
 
@@ -172,13 +172,13 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
         {/* Search */}
         <form onSubmit={handleSearch} className="flex-1 min-w-[200px] max-w-md">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94786b]" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6b6b6b]" size={18} />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher un produit..."
-              className="w-full h-11 pl-10 pr-4 bg-[#faf6f1] border border-[#511F29]/15 text-[#2a181d] text-sm outline-none transition-colors focus:border-[#511F29]/40"
+              className="w-full h-11 pl-10 pr-4 bg-[#fafafa] border border-black text-[#000000] text-sm outline-none transition-colors focus:border-black"
             />
           </div>
         </form>
@@ -187,7 +187,7 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
         <select
           value={categoryFilter}
           onChange={(e) => updateURL({ category: e.target.value || null })}
-          className="h-11 px-4 bg-[#faf6f1] border border-[#511F29]/15 text-[#2a181d] text-sm outline-none cursor-pointer"
+          className="h-11 px-4 bg-[#fafafa] border border-black text-[#000000] text-sm outline-none cursor-pointer"
         >
           <option value="">Toutes les catégories</option>
           {categories.map((cat) => (
@@ -201,7 +201,7 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
         <select
           value={stockFilter}
           onChange={(e) => updateURL({ stock: e.target.value || null })}
-          className="h-11 px-4 bg-[#faf6f1] border border-[#511F29]/15 text-[#2a181d] text-sm outline-none cursor-pointer"
+          className="h-11 px-4 bg-[#fafafa] border border-black text-[#000000] text-sm outline-none cursor-pointer"
         >
           <option value="">Tous les stocks</option>
           <option value="in_stock">En stock</option>
@@ -212,13 +212,13 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
 
       {/* Results info */}
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-[#94786b]">
+        <p className="text-sm text-[#6b6b6b]">
           {filteredProducts.length === products.length
             ? `${products.length} produit${products.length > 1 ? 's' : ''}`
             : `${filteredProducts.length} sur ${products.length} produit${products.length > 1 ? 's' : ''}`}
         </p>
         {totalPages > 1 && (
-          <p className="text-sm text-[#94786b]">
+          <p className="text-sm text-[#6b6b6b]">
             Page {currentPage} sur {totalPages}
           </p>
         )}
@@ -226,7 +226,7 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
 
       {/* Products grid */}
       {paginatedProducts.length === 0 ? (
-        <div className="text-center py-16 text-[#94786b]">
+        <div className="text-center py-16 text-[#6b6b6b]">
           <Package size={48} className="mx-auto mb-4 opacity-50" />
           <p className="text-lg mb-2">Aucun produit trouvé</p>
           <p className="text-sm">
@@ -240,10 +240,10 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
           {paginatedProducts.map((product) => (
             <div
               key={product.id}
-              className="group relative bg-[#faf6f1] border border-[#511F29]/10 overflow-hidden"
+              className="group relative bg-[#fafafa] border border-[#511f29]/10 overflow-hidden"
             >
               {/* Image */}
-              <div className="relative aspect-square bg-[#e8e0d8]">
+              <div className="relative aspect-square bg-[#eeeeec]">
                 {product.images?.[0] ? (
                   <Image
                     src={product.images[0]}
@@ -254,7 +254,7 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Package size={32} className="text-[#94786b] opacity-50" />
+                    <Package size={32} className="text-[#6b6b6b] opacity-50" />
                   </div>
                 )}
 
@@ -276,7 +276,7 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
                     </span>
                   )}
                   {product.is_featured && (
-                    <span className="px-2 py-1 bg-[#511F29] text-[#fcd3b4] text-[10px] font-bold uppercase">
+                    <span className="px-2 py-1 bg-[#511f29] text-white text-[10px] font-bold uppercase">
                       Vedette
                     </span>
                   )}
@@ -302,14 +302,14 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <Link
                     href={`/admin/produits/${product.id}`}
-                    className="w-10 h-10 flex items-center justify-center bg-white text-[#2a181d] hover:bg-[#fcd3b4] transition-colors"
+                    className="w-10 h-10 flex items-center justify-center bg-white text-[#000000] hover:bg-[#f1e1e5] transition-colors"
                   >
                     <Edit size={16} />
                   </Link>
                   <Link
                     href={`/produit/${product.slug}`}
                     target="_blank"
-                    className="w-10 h-10 flex items-center justify-center bg-white text-[#2a181d] hover:bg-[#fcd3b4] transition-colors"
+                    className="w-10 h-10 flex items-center justify-center bg-white text-[#000000] hover:bg-[#f1e1e5] transition-colors"
                   >
                     <Eye size={16} />
                   </Link>
@@ -325,7 +325,7 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
               {/* Info */}
               <div className="p-3">
                 <div className="flex items-start justify-between gap-2 mb-1">
-                  <h3 className="text-sm font-medium text-[#2a181d] line-clamp-1">
+                  <h3 className="text-sm font-medium text-[#000000] line-clamp-1">
                     {product.name}
                   </h3>
                   <div className="flex items-center gap-1 flex-shrink-0">
@@ -333,26 +333,26 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
                       <Star size={12} className="text-amber-500 fill-amber-500" />
                     )}
                     {product.is_bestseller && (
-                      <Sparkles size={12} className="text-[#511F29]" />
+                      <Sparkles size={12} className="text-[#3c161e]" />
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-[#94786b] mb-2 line-clamp-1">
+                <p className="text-xs text-[#6b6b6b] mb-2 line-clamp-1">
                   {product.category?.name || 'Sans catégorie'}
                 </p>
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-sm font-semibold text-[#2a181d]">
+                    <span className="text-sm font-semibold text-[#000000]">
                       {formatPrice(product.price)}
                     </span>
                     {product.old_price && (
-                      <span className="text-xs text-[#94786b] line-through ml-2">
+                      <span className="text-xs text-[#6b6b6b] line-through ml-2">
                         {formatPrice(product.old_price)}
                       </span>
                     )}
                   </div>
                   {product.sku && (
-                    <span className="text-[10px] text-[#94786b] font-mono">
+                    <span className="text-[10px] text-[#6b6b6b] font-mono">
                       {product.sku}
                     </span>
                   )}
@@ -369,7 +369,7 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
           <button
             onClick={() => updateURL({ page: String(currentPage - 1) })}
             disabled={currentPage <= 1 || isPending}
-            className="w-10 h-10 flex items-center justify-center border border-[#511F29]/20 hover:bg-[#faf6f1] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-10 h-10 flex items-center justify-center border border-[#511f29]/20 hover:bg-[#fafafa] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
@@ -385,14 +385,14 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
               const showEllipsis = idx > 0 && page - arr[idx - 1] > 1;
               return (
                 <span key={page} className="flex items-center gap-2">
-                  {showEllipsis && <span className="text-[#94786b]">...</span>}
+                  {showEllipsis && <span className="text-[#6b6b6b]">...</span>}
                   <button
                     onClick={() => updateURL({ page: String(page) })}
                     disabled={isPending}
                     className={`w-10 h-10 flex items-center justify-center border transition-colors ${
                       page === currentPage
-                        ? 'bg-[#511F29] text-[#fcd3b4] border-[#511F29]'
-                        : 'border-[#511F29]/20 hover:bg-[#faf6f1]'
+                        ? 'bg-[#511f29] text-white border-[#511f29]'
+                        : 'border-[#511f29]/20 hover:bg-[#fafafa]'
                     }`}
                   >
                     {page}
@@ -404,7 +404,7 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
           <button
             onClick={() => updateURL({ page: String(currentPage + 1) })}
             disabled={currentPage >= totalPages || isPending}
-            className="w-10 h-10 flex items-center justify-center border border-[#511F29]/20 hover:bg-[#faf6f1] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-10 h-10 flex items-center justify-center border border-[#511f29]/20 hover:bg-[#fafafa] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronRight size={18} />
           </button>
@@ -419,18 +419,18 @@ export function ProductsClient({ products, categories }: ProductsClientProps) {
               <div className="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-full">
                 <AlertTriangle size={20} />
               </div>
-              <h3 className="text-lg font-semibold text-[#2a181d]">
+              <h3 className="text-lg font-semibold text-[#000000]">
                 Supprimer le produit
               </h3>
             </div>
-            <p className="text-sm text-[#94786b] mb-6">
+            <p className="text-sm text-[#6b6b6b] mb-6">
               Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible et supprimera également toutes les images associées.
             </p>
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setDeleteId(null)}
                 disabled={isDeleting}
-                className="h-10 px-4 text-sm text-[#2a181d] hover:bg-[#faf6f1] transition-colors"
+                className="h-10 px-4 text-sm text-[#000000] hover:bg-[#fafafa] transition-colors"
               >
                 Annuler
               </button>

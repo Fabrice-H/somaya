@@ -34,7 +34,7 @@ export function CategoryContent({ category, products }: CategoryContentProps) {
             fontSize: "11.5px",
             letterSpacing: "0.3em",
             textTransform: "uppercase",
-            color: "#94786b",
+            color: "#6b6b6b",
             marginBottom: "14px",
           }}
         >
@@ -42,11 +42,11 @@ export function CategoryContent({ category, products }: CategoryContentProps) {
         </div>
         <h1
           style={{
-            fontFamily: "var(--font-serif), serif",
+            fontFamily: "var(--font-stack)",
             fontWeight: 500,
             fontSize: "clamp(34px, 4vw, 56px)",
             lineHeight: 1,
-            color: "#2a181d",
+            color: "#000000",
             margin: "0 0 16px",
           }}
         >
@@ -57,7 +57,7 @@ export function CategoryContent({ category, products }: CategoryContentProps) {
             style={{
               fontSize: "16px",
               lineHeight: 1.6,
-              color: "#6e5a50",
+              color: "#4a4a4a",
               maxWidth: "600px",
               margin: "0 auto",
             }}
@@ -77,13 +77,13 @@ export function CategoryContent({ category, products }: CategoryContentProps) {
       {/* Empty State */}
       {products.length === 0 && (
         <div style={{ textAlign: "center", padding: "80px 0" }}>
-          <p style={{ color: "#94786b", fontSize: "16px", marginBottom: "24px" }}>
+          <p style={{ color: "#6b6b6b", fontSize: "16px", marginBottom: "24px" }}>
             Aucun produit dans cette catégorie pour le moment.
           </p>
           <Link
             href="/catalogue"
             style={{
-              color: "#511F29",
+              color: "#000000",
               fontSize: "14px",
               fontWeight: 500,
               textDecoration: "underline",

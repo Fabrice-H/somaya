@@ -60,7 +60,7 @@ export function OrderStatusUpdate({
           fontSize: 14,
           border: '1px solid rgba(81,31,41,0.2)',
           background: 'white',
-          color: '#2a181d',
+          color: '#000000',
           cursor: loading ? 'wait' : 'pointer',
           opacity: loading ? 0.7 : 1,
         }}

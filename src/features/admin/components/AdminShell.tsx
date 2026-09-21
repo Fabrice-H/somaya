@@ -6,7 +6,7 @@ interface AdminShellProps {
 
 export function AdminShell({ children }: AdminShellProps) {
   return (
-    <div className="min-h-screen bg-[#faf6f1]">
+    <div className="min-h-screen bg-[#fafafa]">
       <Sidebar />
       <div className="lg:pl-64">
         <main className="pt-16 lg:pt-0 min-h-screen">{children}</main>

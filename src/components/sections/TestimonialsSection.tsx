@@ -28,7 +28,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
             fontSize: "11.5px",
             letterSpacing: "0.3em",
             textTransform: "uppercase",
-            color: "#94786b",
+            color: "#6b6b6b",
             marginBottom: "14px",
           }}
         >
@@ -36,12 +36,12 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
         </div>
         <h2
           style={{
-            fontFamily: "var(--font-playfair-display), 'Playfair Display', serif",
+            fontFamily: "var(--font-stack)",
             fontWeight: 500,
             fontSize: "clamp(32px, 3.8vw, 52px)",
             lineHeight: 1,
             margin: 0,
-            color: "#2a181d",
+            color: "#000000",
           }}
         >
           Témoignages
@@ -54,8 +54,8 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
           <div
             key={testimonial.id}
             style={{
-              background: "#faf6f1",
-              border: "1px solid rgba(81,31,41,0.1)",
+              background: "#fafafa",
+              border: "1px solid rgba(0,0,0,0.1)",
               borderRadius: "4px",
               padding: "38px 34px",
             }}
@@ -63,7 +63,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
             {/* Stars - Text */}
             <div
               style={{
-                color: "#511F29",
+                color: "#000000",
                 letterSpacing: "0.18em",
                 fontSize: "14px",
                 marginBottom: "20px",
@@ -75,11 +75,11 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
             {/* Quote */}
             <p
               style={{
-                fontFamily: "var(--font-playfair-display), 'Playfair Display', serif",
+                fontFamily: "var(--font-stack)",
                 fontStyle: "italic",
                 fontSize: "19px",
                 lineHeight: 1.6,
-                color: "#2a181d",
+                color: "#000000",
                 margin: "0 0 28px",
               }}
             >
@@ -98,7 +98,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
                     borderRadius: "999px",
                     objectFit: "cover",
                     objectPosition: "center 20%",
-                    border: "1px solid rgba(81,31,41,0.12)",
+                    border: "1px solid rgba(0,0,0,0.12)",
                   }}
                 />
               ) : (
@@ -107,24 +107,24 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
                     width: 46,
                     height: 46,
                     borderRadius: "999px",
-                    background: "#511F29",
+                    background: "#511f29",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: "18px",
                     fontWeight: 500,
-                    color: "#fbf3ec",
+                    color: "#ffffff",
                   }}
                 >
                   {testimonial.name.charAt(0).toUpperCase()}
                 </div>
               )}
               <div>
-                <div style={{ fontWeight: 600, fontSize: "14px", color: "#2a181d" }}>
+                <div style={{ fontWeight: 600, fontSize: "14px", color: "#000000" }}>
                   {testimonial.name}
                 </div>
                 {testimonial.location && (
-                  <div style={{ fontSize: "12px", color: "#94786b", marginTop: "3px" }}>
+                  <div style={{ fontSize: "12px", color: "#6b6b6b", marginTop: "3px" }}>
                     {testimonial.location}
                   </div>
                 )}

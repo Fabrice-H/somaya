@@ -36,7 +36,7 @@ export function BestSellersSection({ products }: BestSellersSectionProps) {
             fontSize: "11.5px",
             letterSpacing: "0.3em",
             textTransform: "uppercase",
-            color: "#94786b",
+            color: "#6b6b6b",
             marginBottom: "14px",
           }}
         >
@@ -44,12 +44,12 @@ export function BestSellersSection({ products }: BestSellersSectionProps) {
         </div>
         <h2
           style={{
-            fontFamily: "var(--font-playfair-display), 'Playfair Display', serif",
+            fontFamily: "var(--font-stack)",
             fontWeight: 500,
             fontSize: "clamp(34px, 4vw, 56px)",
             lineHeight: 1,
             margin: 0,
-            color: "#2a181d",
+            color: "#000000",
           }}
         >
           Meilleures ventes
@@ -72,9 +72,9 @@ export function BestSellersSection({ products }: BestSellersSectionProps) {
             fontSize: "12.5px",
             letterSpacing: "0.14em",
             textTransform: "uppercase",
-            color: "#511F29",
+            color: "#000000",
             textDecoration: "none",
-            borderBottom: "1px solid rgba(81,31,41,0.35)",
+            borderBottom: "1px solid rgba(0,0,0,0.35)",
             paddingBottom: "5px",
             transition: "opacity 0.25s",
           }}

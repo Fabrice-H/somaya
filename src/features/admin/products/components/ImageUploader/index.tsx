@@ -79,7 +79,7 @@ export const ImageUploader = memo(function ImageUploader({
       />
 
       {/* Help text */}
-      <p className="text-xs text-[#511F29]/40 text-center">
+      <p className="text-xs text-[#3c161e]/40 text-center">
         Les images sont automatiquement optimisées et converties en WebP pour
         de meilleures performances.
       </p>

@@ -73,10 +73,10 @@ export const DropZone = memo(function DropZone({
       className={clsx(
         "flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-all",
         uploading
-          ? "border-[#511F29]/30 bg-[#511F29]/5 cursor-wait"
+          ? "border-[#511f29]/30 bg-[#511f29]/5 cursor-wait"
           : isDragOver
-            ? "border-[#511F29] bg-[#511F29]/10"
-            : "border-[#511F29]/20 hover:border-[#511F29]/40 hover:bg-[#511F29]/5"
+            ? "border-[#511f29] bg-[#511f29]/10"
+            : "border-[#511f29]/20 hover:border-[#511f29]/40 hover:bg-[#511f29]/5"
       )}
     >
       <input
@@ -90,28 +90,28 @@ export const DropZone = memo(function DropZone({
 
       {uploading ? (
         <div className="flex flex-col items-center">
-          <Loader2 size={32} className="text-[#511F29]/50 animate-spin mb-2" />
-          <span className="text-sm text-[#511F29]/60">
+          <Loader2 size={32} className="text-[#3c161e]/50 animate-spin mb-2" />
+          <span className="text-sm text-[#3c161e]/60">
             {progress < 50 ? "Optimisation..." : "Upload..."} {progress}%
           </span>
-          <div className="w-48 h-2 bg-[#511F29]/10 rounded-full mt-2 overflow-hidden">
+          <div className="w-48 h-2 bg-[#511f29]/10 rounded-full mt-2 overflow-hidden">
             <div
-              className="h-full bg-[#511F29] transition-all duration-300"
+              className="h-full bg-[#511f29] transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
       ) : (
         <>
-          <Upload size={32} className="text-[#511F29]/40 mb-2" />
-          <span className="text-sm text-[#511F29]/60">
+          <Upload size={32} className="text-[#3c161e]/40 mb-2" />
+          <span className="text-sm text-[#3c161e]/60">
             Cliquez ou glissez vos images ici
           </span>
-          <span className="text-xs text-[#511F29]/40 mt-1">
+          <span className="text-xs text-[#3c161e]/40 mt-1">
             {remaining} image{remaining > 1 ? "s" : ""} restante
             {remaining > 1 ? "s" : ""}
           </span>
-          <span className="text-xs text-[#511F29]/30 mt-0.5">
+          <span className="text-xs text-[#3c161e]/30 mt-0.5">
             Formats: {acceptedFormats}
           </span>
         </>

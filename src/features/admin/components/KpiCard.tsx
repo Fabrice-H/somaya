@@ -14,8 +14,8 @@ interface KpiCardProps {
 }
 
 const colorClasses = {
-  burgundy: "bg-[#511F29]/10 text-[#511F29]",
-  peach: "bg-[#fcd3b4]/30 text-[#c27a4a]",
+  burgundy: "bg-[#511f29]/10 text-[#3c161e]",
+  peach: "bg-[#f1e1e5]/30 text-[#c27a4a]",
   green: "bg-emerald-50 text-emerald-600",
   blue: "bg-blue-50 text-blue-600",
 };
@@ -32,10 +32,10 @@ export function KpiCard({
     <div className="bg-white rounded-xl p-6 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-[#511F29]/60">{title}</p>
-          <p className="text-2xl font-semibold text-[#511F29] mt-1">{value}</p>
+          <p className="text-sm text-[#3c161e]/60">{title}</p>
+          <p className="text-2xl font-semibold text-[#3c161e] mt-1">{value}</p>
           {subtitle && (
-            <p className="text-xs text-[#511F29]/50 mt-1">{subtitle}</p>
+            <p className="text-xs text-[#3c161e]/50 mt-1">{subtitle}</p>
           )}
           {trend && (
             <p

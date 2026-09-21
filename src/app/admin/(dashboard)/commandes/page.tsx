@@ -54,8 +54,8 @@ function OrdersSkeleton() {
     <div style={{ padding: '32px 40px' }}>
       {/* Header skeleton */}
       <div className="mb-8">
-        <div className="h-8 w-32 bg-[#faf6f1] animate-pulse mb-2" />
-        <div className="h-4 w-48 bg-[#faf6f1] animate-pulse" />
+        <div className="h-8 w-32 bg-[#fafafa] animate-pulse mb-2" />
+        <div className="h-4 w-48 bg-[#fafafa] animate-pulse" />
       </div>
 
       {/* Status tabs skeleton */}
@@ -63,7 +63,7 @@ function OrdersSkeleton() {
         {[1, 2, 3, 4, 5, 6, 7].map((i) => (
           <div
             key={i}
-            className="h-8 bg-[#faf6f1] animate-pulse"
+            className="h-8 bg-[#fafafa] animate-pulse"
             style={{ width: 80 + i * 10 }}
           />
         ))}
@@ -74,7 +74,7 @@ function OrdersSkeleton() {
         className="flex flex-wrap items-center gap-3 mb-6"
         style={{
           padding: '16px 20px',
-          background: '#faf6f1',
+          background: '#fafafa',
           border: '1px solid rgba(81,31,41,0.1)',
         }}
       >
@@ -92,7 +92,7 @@ function OrdersSkeleton() {
       >
         {/* Header */}
         <div
-          className="h-12 bg-[#faf6f1]"
+          className="h-12 bg-[#fafafa]"
           style={{ borderBottom: '1px solid rgba(81,31,41,0.1)' }}
         />
 
@@ -104,7 +104,7 @@ function OrdersSkeleton() {
             style={{
               borderBottom:
                 i < 5 ? '1px solid rgba(81,31,41,0.1)' : 'none',
-              background: i % 2 === 0 ? '#faf6f1' : 'white',
+              background: i % 2 === 0 ? '#fafafa' : 'white',
               opacity: 1 - i * 0.1,
             }}
           />

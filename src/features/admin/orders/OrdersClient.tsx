@@ -171,10 +171,10 @@ export function OrdersClient({
     <div style={{ padding: '32px 40px' }}>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-[#2a181d] mb-1">
+        <h1 className="text-2xl font-semibold text-[#000000] mb-1">
           Commandes
         </h1>
-        <p className="text-sm text-[#94786b]">
+        <p className="text-sm text-[#6b6b6b]">
           Gérez les commandes de votre boutique
         </p>
       </div>
@@ -209,13 +209,13 @@ export function OrdersClient({
                   background: isActive
                     ? colors
                       ? colors.bg
-                      : '#511F29'
-                    : '#faf6f1',
+                      : '#511f29'
+                    : '#fafafa',
                   color: isActive
                     ? colors
                       ? colors.text
-                      : '#fcd3b4'
-                    : '#94786b',
+                      : '#f1e1e5'
+                    : '#6b6b6b',
                   opacity: isPending ? 0.5 : 1,
                   cursor: isPending ? 'wait' : 'pointer',
                 }}
@@ -243,7 +243,7 @@ export function OrdersClient({
           className="flex flex-wrap items-center gap-3"
           style={{
             padding: '16px 20px',
-            background: '#faf6f1',
+            background: '#fafafa',
             border: '1px solid rgba(81,31,41,0.1)',
           }}
         >
@@ -256,7 +256,7 @@ export function OrdersClient({
                 left: 14,
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#94786b',
+                color: '#6b6b6b',
               }}
             />
             <input
@@ -272,10 +272,10 @@ export function OrdersClient({
                 border: '1px solid rgba(81,31,41,0.15)',
                 background: 'white',
                 fontSize: 14,
-                color: '#2a181d',
+                color: '#000000',
                 outline: 'none',
               }}
-              className="focus:border-[#511F29]/40"
+              className="focus:border-black"
             />
             {currentSearch && (
               <button
@@ -285,7 +285,7 @@ export function OrdersClient({
                   right: 14,
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  color: '#94786b',
+                  color: '#6b6b6b',
                 }}
               >
                 <X size={16} />
@@ -302,7 +302,7 @@ export function OrdersClient({
                 left: 14,
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#94786b',
+                color: '#6b6b6b',
                 pointerEvents: 'none',
               }}
             />
@@ -319,7 +319,7 @@ export function OrdersClient({
                 fontSize: 13,
                 width: 160,
                 cursor: 'pointer',
-                color: '#2a181d',
+                color: '#000000',
               }}
             />
           </div>
@@ -333,7 +333,7 @@ export function OrdersClient({
                 left: 14,
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#94786b',
+                color: '#6b6b6b',
                 pointerEvents: 'none',
               }}
             />
@@ -350,7 +350,7 @@ export function OrdersClient({
                 fontSize: 13,
                 width: 160,
                 cursor: 'pointer',
-                color: '#2a181d',
+                color: '#000000',
               }}
             />
           </div>
@@ -367,7 +367,7 @@ export function OrdersClient({
                 border: '1px solid rgba(81,31,41,0.15)',
                 background: 'transparent',
                 fontSize: 13,
-                color: '#94786b',
+                color: '#6b6b6b',
                 cursor: isPending ? 'wait' : 'pointer',
               }}
             >
@@ -381,13 +381,13 @@ export function OrdersClient({
         {isPending && (
           <div
             className="flex items-center gap-2"
-            style={{ fontSize: 13, color: '#94786b' }}
+            style={{ fontSize: 13, color: '#6b6b6b' }}
           >
             <div
               style={{
                 width: 16,
                 height: 16,
-                border: '2px solid #511F29',
+                border: '2px solid #511f29',
                 borderTopColor: 'transparent',
                 borderRadius: '50%',
                 animation: 'spin 1s linear infinite',
@@ -400,7 +400,7 @@ export function OrdersClient({
 
       {/* Results count */}
       {total > 0 && (
-        <p className="text-sm text-[#94786b] mb-4">
+        <p className="text-sm text-[#6b6b6b] mb-4">
           {total} commande{total > 1 ? 's' : ''} trouvée{total > 1 ? 's' : ''}
         </p>
       )}
@@ -411,25 +411,25 @@ export function OrdersClient({
           className="text-center"
           style={{
             padding: '64px 20px',
-            background: '#faf6f1',
+            background: '#fafafa',
             border: '1px solid rgba(81,31,41,0.1)',
           }}
         >
           <Package
             size={48}
-            style={{ color: '#94786b', margin: '0 auto 16px', opacity: 0.5 }}
+            style={{ color: '#6b6b6b', margin: '0 auto 16px', opacity: 0.5 }}
           />
           <p
             style={{
               fontSize: 16,
               fontWeight: 500,
-              color: '#2a181d',
+              color: '#000000',
               marginBottom: 4,
             }}
           >
             Aucune commande trouvée
           </p>
-          <p style={{ fontSize: 14, color: '#94786b' }}>
+          <p style={{ fontSize: 14, color: '#6b6b6b' }}>
             {hasActiveFilters
               ? 'Essayez de modifier vos filtres'
               : 'Les commandes apparaîtront ici'}
@@ -451,7 +451,7 @@ export function OrdersClient({
                 gridTemplateColumns: '120px 1fr 140px 120px 100px 90px 60px',
                 gap: 16,
                 padding: '14px 20px',
-                background: '#faf6f1',
+                background: '#fafafa',
                 borderBottom: '1px solid rgba(81,31,41,0.1)',
               }}
             >
@@ -459,7 +459,7 @@ export function OrdersClient({
                 style={{
                   fontSize: 11,
                   fontWeight: 600,
-                  color: '#94786b',
+                  color: '#6b6b6b',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                 }}
@@ -470,7 +470,7 @@ export function OrdersClient({
                 style={{
                   fontSize: 11,
                   fontWeight: 600,
-                  color: '#94786b',
+                  color: '#6b6b6b',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                 }}
@@ -481,7 +481,7 @@ export function OrdersClient({
                 style={{
                   fontSize: 11,
                   fontWeight: 600,
-                  color: '#94786b',
+                  color: '#6b6b6b',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                 }}
@@ -492,7 +492,7 @@ export function OrdersClient({
                 style={{
                   fontSize: 11,
                   fontWeight: 600,
-                  color: '#94786b',
+                  color: '#6b6b6b',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   textAlign: 'right',
@@ -504,7 +504,7 @@ export function OrdersClient({
                 style={{
                   fontSize: 11,
                   fontWeight: 600,
-                  color: '#94786b',
+                  color: '#6b6b6b',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                 }}
@@ -515,7 +515,7 @@ export function OrdersClient({
                 style={{
                   fontSize: 11,
                   fontWeight: 600,
-                  color: '#94786b',
+                  color: '#6b6b6b',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                 }}
@@ -534,7 +534,7 @@ export function OrdersClient({
                 <Link
                   key={order.id}
                   href={`/admin/commandes/${order.id}`}
-                  className="block md:grid transition-colors hover:bg-[#faf6f1]"
+                  className="block md:grid transition-colors hover:bg-[#fafafa]"
                   style={{
                     gridTemplateColumns:
                       '120px 1fr 140px 120px 100px 90px 60px',
@@ -550,7 +550,7 @@ export function OrdersClient({
                   <span
                     style={{
                       fontSize: 12,
-                      color: '#94786b',
+                      color: '#6b6b6b',
                       fontFamily: 'monospace',
                     }}
                   >
@@ -563,19 +563,19 @@ export function OrdersClient({
                       style={{
                         fontSize: 14,
                         fontWeight: 500,
-                        color: '#2a181d',
+                        color: '#000000',
                         marginBottom: 2,
                       }}
                     >
                       {order.customer_name}
                     </p>
-                    <p style={{ fontSize: 12, color: '#94786b' }}>
+                    <p style={{ fontSize: 12, color: '#6b6b6b' }}>
                       {order.customer_phone}
                     </p>
                   </div>
 
                   {/* Date */}
-                  <span style={{ fontSize: 13, color: '#94786b' }}>
+                  <span style={{ fontSize: 13, color: '#6b6b6b' }}>
                     {formatDate(order.created_at)}
                   </span>
 
@@ -584,7 +584,7 @@ export function OrdersClient({
                     style={{
                       fontSize: 14,
                       fontWeight: 600,
-                      color: '#2a181d',
+                      color: '#000000',
                       textAlign: 'right',
                       fontFamily: 'monospace',
                     }}
@@ -595,7 +595,7 @@ export function OrdersClient({
                   {/* Payment */}
                   <span
                     className="flex items-center gap-2"
-                    style={{ fontSize: 13, color: '#94786b' }}
+                    style={{ fontSize: 13, color: '#6b6b6b' }}
                   >
                     {PaymentIcon && <PaymentIcon size={14} />}
                     <span className="hidden lg:inline">
@@ -617,7 +617,7 @@ export function OrdersClient({
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#94786b',
+                        color: '#6b6b6b',
                       }}
                     >
                       <Eye size={16} />
@@ -634,7 +634,7 @@ export function OrdersClient({
               <button
                 onClick={() => updateFilters({ page: String(page - 1) })}
                 disabled={page <= 1 || isPending}
-                className="w-10 h-10 flex items-center justify-center border border-[#511F29]/20 hover:bg-[#faf6f1] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-10 h-10 flex items-center justify-center border border-[#511f29]/20 hover:bg-[#fafafa] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -651,7 +651,7 @@ export function OrdersClient({
                   return (
                     <span key={p} className="flex items-center gap-2">
                       {showEllipsis && (
-                        <span className="text-[#94786b]">...</span>
+                        <span className="text-[#6b6b6b]">...</span>
                       )}
                       <button
                         onClick={() => updateFilters({ page: String(p) })}
@@ -659,10 +659,10 @@ export function OrdersClient({
                         className="w-10 h-10 flex items-center justify-center border transition-colors"
                         style={{
                           background:
-                            p === page ? '#511F29' : 'transparent',
-                          color: p === page ? '#fcd3b4' : '#2a181d',
+                            p === page ? '#511f29' : 'transparent',
+                          color: p === page ? '#f1e1e5' : '#000000',
                           borderColor:
-                            p === page ? '#511F29' : 'rgba(81,31,41,0.2)',
+                            p === page ? '#511f29' : 'rgba(81,31,41,0.2)',
                         }}
                       >
                         {p}
@@ -674,7 +674,7 @@ export function OrdersClient({
               <button
                 onClick={() => updateFilters({ page: String(page + 1) })}
                 disabled={page >= totalPages || isPending}
-                className="w-10 h-10 flex items-center justify-center border border-[#511F29]/20 hover:bg-[#faf6f1] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-10 h-10 flex items-center justify-center border border-[#511f29]/20 hover:bg-[#fafafa] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight size={18} />
               </button>

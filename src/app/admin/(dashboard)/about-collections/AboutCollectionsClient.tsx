@@ -15,8 +15,8 @@ interface Props {
 }
 
 const DEFAULT_COLORS = [
-  { label: "Bordeaux", value: "#511F29" },
-  { label: "Bordeaux foncé", value: "#2a181d" },
+  { label: "Bordeaux", value: "#511f29" },
+  { label: "Bordeaux foncé", value: "#000000" },
   { label: "Brun", value: "#3c2a20" },
   { label: "Noir", value: "#1a1a1a" },
   { label: "Gris foncé", value: "#2d2d2d" },
@@ -31,13 +31,13 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
   const [newCollection, setNewCollection] = useState({
     name: "",
     year: new Date().getFullYear().toString(),
-    backgroundColor: "#511F29",
+    backgroundColor: "#511f29",
   });
 
   // Styles cohérents avec FeaturedCollectionForm
   const inputClass =
-    "w-full h-12 px-4 bg-[#faf6f1] border border-[#511F29]/15 text-[#2a181d] text-sm outline-none transition-colors focus:border-[#511F29]/40";
-  const labelClass = "block text-sm font-medium text-[#2a181d] mb-2";
+    "w-full h-12 px-4 bg-[#fafafa] border border-black text-[#000000] text-sm outline-none transition-colors focus:border-black";
+  const labelClass = "block text-sm font-medium text-[#000000] mb-2";
 
   const handleAdd = async () => {
     if (!newCollection.name.trim()) return;
@@ -69,7 +69,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
         setNewCollection({
           name: "",
           year: new Date().getFullYear().toString(),
-          backgroundColor: "#511F29",
+          backgroundColor: "#511f29",
         });
         setIsAdding(false);
         setMessage({ type: "success", text: "Collection ajoutée avec succès" });
@@ -133,18 +133,18 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
     <div>
       {/* Header */}
       <div
-        className="flex items-center justify-between gap-4 flex-wrap bg-[#faf6f1] border-b border-[#511F29]/10"
+        className="flex items-center justify-between gap-4 flex-wrap bg-[#fafafa] border-b border-[#511f29]/10"
         style={{ padding: "24px 40px", margin: "-24px -24px 0 -24px" }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 flex items-center justify-center bg-[#511F29] text-[#fcd3b4]">
+          <div className="w-10 h-10 flex items-center justify-center bg-[#511f29] text-white">
             <Users size={20} />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-[#2a181d]">
+            <h1 className="text-xl font-semibold text-[#000000]">
               Collections À propos
             </h1>
-            <p className="text-sm text-[#94786b] mt-0.5">
+            <p className="text-sm text-[#6b6b6b] mt-0.5">
               Section affichée sur la page "Notre Histoire"
             </p>
           </div>
@@ -153,7 +153,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
         {!isAdding && (
           <button
             onClick={() => setIsAdding(true)}
-            className="inline-flex items-center gap-2 h-11 px-6 bg-[#511F29] text-[#fcd3b4] text-sm font-semibold transition-colors hover:bg-[#3d171f]"
+            className="inline-flex items-center gap-2 h-11 px-6 bg-[#511f29] text-white text-sm font-semibold transition-colors hover:bg-[#3d171f]"
           >
             <Plus size={16} />
             Ajouter
@@ -200,7 +200,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                   padding: 24,
                 }}
               >
-                <h2 className="text-base font-semibold text-[#2a181d] mb-4">
+                <h2 className="text-base font-semibold text-[#000000] mb-4">
                   Nouvelle collection
                 </h2>
 
@@ -250,11 +250,11 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                   </div>
                 </div>
 
-                <div className="flex gap-3 mt-6 pt-4 border-t border-[#511F29]/10">
+                <div className="flex gap-3 mt-6 pt-4 border-t border-black">
                   <button
                     onClick={handleAdd}
                     disabled={saving === "new" || !newCollection.name.trim()}
-                    className="inline-flex items-center gap-2 h-11 px-6 bg-[#511F29] text-[#fcd3b4] text-sm font-semibold transition-colors hover:bg-[#3d171f] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 h-11 px-6 bg-[#511f29] text-white text-sm font-semibold transition-colors hover:bg-[#3d171f] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {saving === "new" ? (
                       <Loader2 size={16} className="animate-spin" />
@@ -265,7 +265,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                   </button>
                   <button
                     onClick={() => setIsAdding(false)}
-                    className="h-11 px-6 border border-[#511F29]/20 text-[#2a181d] text-sm font-medium hover:bg-[#faf6f1] transition-colors"
+                    className="h-11 px-6 border border-black text-[#000000] text-sm font-medium hover:bg-[#fafafa] transition-colors"
                   >
                     Annuler
                   </button>
@@ -281,22 +281,22 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                 padding: 24,
               }}
             >
-              <h2 className="text-base font-semibold text-[#2a181d] mb-4">
+              <h2 className="text-base font-semibold text-[#000000] mb-4">
                 Vos collections ({collections.length})
               </h2>
 
               {collections.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-[#faf6f1] flex items-center justify-center">
-                    <Users size={24} className="text-[#94786b]" />
+                  <div className="w-16 h-16 mx-auto mb-4 bg-[#fafafa] flex items-center justify-center">
+                    <Users size={24} className="text-[#6b6b6b]" />
                   </div>
-                  <p className="text-[#94786b] text-sm mb-4">
+                  <p className="text-[#6b6b6b] text-sm mb-4">
                     Aucune collection configurée
                   </p>
                   {!isAdding && (
                     <button
                       onClick={() => setIsAdding(true)}
-                      className="inline-flex items-center gap-2 h-10 px-5 bg-[#511F29] text-[#fcd3b4] text-sm font-semibold transition-colors hover:bg-[#3d171f]"
+                      className="inline-flex items-center gap-2 h-10 px-5 bg-[#511f29] text-white text-sm font-semibold transition-colors hover:bg-[#3d171f]"
                     >
                       <Plus size={14} />
                       Créer une collection
@@ -308,7 +308,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                   {collections.map((collection, index) => (
                     <div
                       key={collection.id}
-                      className="flex items-center gap-3 p-3 bg-[#faf6f1] border border-[#511F29]/10 transition-opacity"
+                      className="flex items-center gap-3 p-3 bg-[#fafafa] border border-black transition-opacity"
                       style={{ opacity: saving === collection.id ? 0.6 : 1 }}
                     >
                       {/* Move buttons */}
@@ -319,7 +319,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                           className="p-1 hover:bg-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                           title="Monter"
                         >
-                          <ChevronUp size={14} className="text-[#94786b]" />
+                          <ChevronUp size={14} className="text-[#6b6b6b]" />
                         </button>
                         <button
                           onClick={() => moveCollection(index, "down")}
@@ -327,7 +327,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                           className="p-1 hover:bg-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                           title="Descendre"
                         >
-                          <ChevronDown size={14} className="text-[#94786b]" />
+                          <ChevronDown size={14} className="text-[#6b6b6b]" />
                         </button>
                       </div>
 
@@ -343,7 +343,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                           type="text"
                           value={collection.name}
                           onChange={(e) => handleUpdate(collection.id, "name", e.target.value)}
-                          className="w-full h-9 px-3 bg-white border border-[#511F29]/10 text-[#2a181d] text-sm outline-none focus:border-[#511F29]/40"
+                          className="w-full h-9 px-3 bg-white border border-black text-[#000000] text-sm outline-none focus:border-black"
                           placeholder="Nom"
                         />
                         <div className="flex gap-2 mt-2">
@@ -351,7 +351,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                             type="text"
                             value={collection.year}
                             onChange={(e) => handleUpdate(collection.id, "year", e.target.value)}
-                            className="w-20 h-8 px-2 bg-white border border-[#511F29]/10 text-[#2a181d] text-xs outline-none focus:border-[#511F29]/40"
+                            className="w-20 h-8 px-2 bg-white border border-black text-[#000000] text-xs outline-none focus:border-black"
                             placeholder="Année"
                           />
                           <select
@@ -359,7 +359,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                             onChange={(e) =>
                               handleUpdate(collection.id, "backgroundColor", e.target.value)
                             }
-                            className="flex-1 h-8 px-2 bg-white border border-[#511F29]/10 text-[#2a181d] text-xs outline-none focus:border-[#511F29]/40"
+                            className="flex-1 h-8 px-2 bg-white border border-black text-[#000000] text-xs outline-none focus:border-black"
                           >
                             {DEFAULT_COLORS.map((color) => (
                               <option key={color.value} value={color.value}>
@@ -376,7 +376,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                         className={`p-2 transition-colors ${
                           collection.isActive
                             ? "text-green-600 hover:bg-green-50"
-                            : "text-[#94786b] hover:bg-white"
+                            : "text-[#6b6b6b] hover:bg-white"
                         }`}
                         title={collection.isActive ? "Visible" : "Masqué"}
                       >
@@ -407,16 +407,16 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                 padding: 24,
               }}
             >
-              <h2 className="text-base font-semibold text-[#2a181d] mb-2">
+              <h2 className="text-base font-semibold text-[#000000] mb-2">
                 Aperçu
               </h2>
-              <p className="text-sm text-[#94786b] mb-4">
+              <p className="text-sm text-[#6b6b6b] mb-4">
                 Rendu sur la page "Notre Histoire"
               </p>
 
               {activeCollections.length === 0 ? (
-                <div className="text-center py-12 bg-[#faf6f1]">
-                  <p className="text-[#94786b] text-sm">
+                <div className="text-center py-12 bg-[#fafafa]">
+                  <p className="text-[#6b6b6b] text-sm">
                     Aucune collection active à afficher
                   </p>
                 </div>
@@ -431,7 +431,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                       <span className="absolute top-2 right-2 text-white/40 text-[9px]">
                         {collection.year}
                       </span>
-                      <span className="text-[8px] text-[#fcd3b4] tracking-widest uppercase mb-0.5">
+                      <span className="text-[8px] text-white tracking-widest uppercase mb-0.5">
                         Collection {String(index + 1).padStart(2, "0")}
                       </span>
                       <span className="text-white text-sm font-serif leading-tight">
@@ -442,7 +442,7 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
                 </div>
               )}
 
-              <p className="text-xs text-[#94786b] mt-4">
+              <p className="text-xs text-[#6b6b6b] mt-4">
                 Les collections sont affichées dans l'ordre défini ci-contre.
                 Utilisez les flèches pour réorganiser.
               </p>
@@ -450,30 +450,30 @@ export function AboutCollectionsClient({ initialCollections }: Props) {
 
             {/* Infos */}
             <div
-              className="mt-6 bg-[#faf6f1]"
+              className="mt-6 bg-[#fafafa]"
               style={{
                 border: "1px solid rgba(81, 31, 41, 0.1)",
                 padding: 24,
               }}
             >
-              <h3 className="text-sm font-semibold text-[#2a181d] mb-3">
+              <h3 className="text-sm font-semibold text-[#000000] mb-3">
                 Comment ça marche ?
               </h3>
-              <ul className="space-y-2 text-sm text-[#94786b]">
+              <ul className="space-y-2 text-sm text-[#6b6b6b]">
                 <li className="flex gap-2">
-                  <span className="text-[#511F29] font-semibold">1.</span>
+                  <span className="text-[#3c161e] font-semibold">1.</span>
                   Ajoutez vos collections avec un nom et une année
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-[#511F29] font-semibold">2.</span>
+                  <span className="text-[#3c161e] font-semibold">2.</span>
                   Choisissez une couleur de fond pour chaque collection
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-[#511F29] font-semibold">3.</span>
+                  <span className="text-[#3c161e] font-semibold">3.</span>
                   Utilisez l'icône œil pour masquer/afficher une collection
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-[#511F29] font-semibold">4.</span>
+                  <span className="text-[#3c161e] font-semibold">4.</span>
                   Réordonnez avec les flèches haut/bas
                 </li>
               </ul>

@@ -45,8 +45,8 @@ function ToolbarButton({
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: isActive ? '#511F29' : 'transparent',
-        color: isActive ? '#fcd3b4' : '#2a181d',
+        background: isActive ? '#000000' : 'transparent',
+        color: isActive ? '#f4f4f2' : '#000000',
         opacity: disabled ? 0.4 : 1,
         cursor: disabled ? 'not-allowed' : 'pointer',
       }}
@@ -77,7 +77,7 @@ export function RichTextEditor({
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-[#511F29] underline',
+          class: 'text-black underline',
         },
       }),
       Placeholder.configure({
@@ -116,7 +116,7 @@ export function RichTextEditor({
             display: 'block',
             fontSize: 14,
             fontWeight: 500,
-            color: '#2a181d',
+            color: '#000000',
             marginBottom: 8,
           }}
         >
@@ -126,8 +126,8 @@ export function RichTextEditor({
 
       <div
         style={{
-          border: '1px solid rgba(81, 31, 41, 0.15)',
-          background: disabled ? '#e8e0d8' : '#faf6f1',
+          border: '1px solid rgba(0, 0, 0, 0.15)',
+          background: disabled ? '#eeeeec' : '#fafafa',
         }}
       >
         {/* Toolbar */}
@@ -135,8 +135,8 @@ export function RichTextEditor({
           className="flex flex-wrap items-center gap-1"
           style={{
             padding: '8px 12px',
-            borderBottom: '1px solid rgba(81, 31, 41, 0.15)',
-            background: '#faf6f1',
+            borderBottom: '1px solid rgba(0, 0, 0, 0.15)',
+            background: '#fafafa',
           }}
         >
           {/* History */}
@@ -155,7 +155,7 @@ export function RichTextEditor({
             <Redo size={16} />
           </ToolbarButton>
 
-          <span style={{ width: 1, height: 20, background: 'rgba(81, 31, 41, 0.15)', margin: '0 8px' }} />
+          <span style={{ width: 1, height: 20, background: 'rgba(0, 0, 0, 0.15)', margin: '0 8px' }} />
 
           {/* Headings */}
           <ToolbarButton
@@ -175,7 +175,7 @@ export function RichTextEditor({
             <Heading3 size={16} />
           </ToolbarButton>
 
-          <span style={{ width: 1, height: 20, background: 'rgba(81, 31, 41, 0.15)', margin: '0 8px' }} />
+          <span style={{ width: 1, height: 20, background: 'rgba(0, 0, 0, 0.15)', margin: '0 8px' }} />
 
           {/* Formatting */}
           <ToolbarButton
@@ -195,7 +195,7 @@ export function RichTextEditor({
             <Italic size={16} />
           </ToolbarButton>
 
-          <span style={{ width: 1, height: 20, background: 'rgba(81, 31, 41, 0.15)', margin: '0 8px' }} />
+          <span style={{ width: 1, height: 20, background: 'rgba(0, 0, 0, 0.15)', margin: '0 8px' }} />
 
           {/* Lists */}
           <ToolbarButton
@@ -215,7 +215,7 @@ export function RichTextEditor({
             <ListOrdered size={16} />
           </ToolbarButton>
 
-          <span style={{ width: 1, height: 20, background: 'rgba(81, 31, 41, 0.15)', margin: '0 8px' }} />
+          <span style={{ width: 1, height: 20, background: 'rgba(0, 0, 0, 0.15)', margin: '0 8px' }} />
 
           {/* Quote */}
           <ToolbarButton
@@ -252,14 +252,14 @@ export function RichTextEditor({
       </div>
 
       {hint && (
-        <p style={{ fontSize: 12, color: '#94786b', marginTop: 6 }}>
+        <p style={{ fontSize: 12, color: '#6b6b6b', marginTop: 6 }}>
           {hint}
         </p>
       )}
 
       <style jsx global>{`
         .ProseMirror p.is-editor-empty:first-child::before {
-          color: #94786b;
+          color: #6b6b6b;
           content: attr(data-placeholder);
           float: left;
           height: 0;
@@ -270,38 +270,38 @@ export function RichTextEditor({
           font-size: 1.25rem;
           font-weight: 600;
           margin: 1em 0 0.5em;
-          color: #2a181d;
+          color: #000000;
         }
 
         .ProseMirror h3 {
           font-size: 1.1rem;
           font-weight: 600;
           margin: 1em 0 0.5em;
-          color: #2a181d;
+          color: #000000;
         }
 
         .ProseMirror p {
           margin: 0.5em 0;
-          color: #2a181d;
+          color: #000000;
         }
 
         .ProseMirror ul,
         .ProseMirror ol {
           padding-left: 1.5em;
           margin: 0.5em 0;
-          color: #2a181d;
+          color: #000000;
         }
 
         .ProseMirror blockquote {
-          border-left: 3px solid #511F29;
+          border-left: 3px solid #da5771;
           padding-left: 1em;
           margin: 1em 0;
-          color: #94786b;
+          color: #6b6b6b;
           font-style: italic;
         }
 
         .ProseMirror a {
-          color: #511F29;
+          color: #511f29;
           text-decoration: underline;
         }
       `}</style>

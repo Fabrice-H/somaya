@@ -13,19 +13,19 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#faf6f1] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-serif text-[#511F29] tracking-wide">
+          <h1 className="text-3xl font-serif text-[#3c161e] tracking-wide">
             SO&apos;MAYA
           </h1>
-          <p className="text-sm text-[#511F29]/60 mt-2">Administration</p>
+          <p className="text-sm text-[#3c161e]/60 mt-2">Administration</p>
         </div>
 
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-xl font-medium text-[#511F29] mb-6 text-center">
+          <h2 className="text-xl font-medium text-[#3c161e] mb-6 text-center">
             Connexion
           </h2>
 
@@ -39,7 +39,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-[#511F29]/80 mb-1.5"
+                className="block text-sm font-medium text-[#3c161e]/80 mb-1.5"
               >
                 Email
               </label>
@@ -49,9 +49,9 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-[#511F29]/20
-                         focus:outline-none focus:ring-2 focus:ring-[#511F29]/30
-                         text-[#511F29] placeholder:text-[#511F29]/40"
+                className="w-full px-4 py-3 rounded-lg border border-black
+                         focus:outline-none focus:ring-2 focus:ring-black/10
+                         text-[#3c161e] placeholder:text-[#3c161e]/40"
                 placeholder="admin@somaya.ci"
               />
             </div>
@@ -59,7 +59,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-[#511F29]/80 mb-1.5"
+                className="block text-sm font-medium text-[#3c161e]/80 mb-1.5"
               >
                 Mot de passe
               </label>
@@ -70,16 +70,16 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-[#511F29]/20
-                           focus:outline-none focus:ring-2 focus:ring-[#511F29]/30
-                           text-[#511F29] placeholder:text-[#511F29]/40 pr-12"
+                  className="w-full px-4 py-3 rounded-lg border border-black
+                           focus:outline-none focus:ring-2 focus:ring-black/10
+                           text-[#3c161e] placeholder:text-[#3c161e]/40 pr-12"
                   placeholder="Votre mot de passe"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#511F29]/50
-                           hover:text-[#511F29] transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3c161e]/50
+                           hover:text-[#3c161e] transition-colors"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -89,8 +89,8 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full py-3 px-4 rounded-lg bg-[#511F29] text-white font-medium
-                       hover:bg-[#511F29]/90 transition-colors disabled:opacity-50
+              className="w-full py-3 px-4 rounded-lg bg-[#511f29] text-white font-medium
+                       hover:bg-[#511f29]/90 transition-colors disabled:opacity-50
                        disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"
             >
               {isPending ? (
@@ -106,7 +106,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-[#511F29]/50 mt-6">
+        <p className="text-center text-xs text-[#3c161e]/50 mt-6">
           &copy; {new Date().getFullYear()} SO&apos;MAYA. Tous droits réservés.
         </p>
       </div>

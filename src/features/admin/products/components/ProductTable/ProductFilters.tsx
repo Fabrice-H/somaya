@@ -17,7 +17,7 @@ export const ProductFilters = memo(function ProductFilters({
     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
       <div className="relative flex-1 max-w-md">
         <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#511F29]/40"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#3c161e]/40"
           size={20}
         />
         <input
@@ -25,15 +25,15 @@ export const ProductFilters = memo(function ProductFilters({
           placeholder="Rechercher un produit..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#511F29]/20
-                   focus:outline-none focus:ring-2 focus:ring-[#511F29]/30
-                   text-[#511F29] placeholder:text-[#511F29]/40"
+          className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-black
+                   focus:outline-none focus:ring-2 focus:ring-black/10
+                   text-[#3c161e] placeholder:text-[#3c161e]/40"
         />
       </div>
       <Link
         href="/admin/produits/nouveau"
-        className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#511F29] text-white
-                 hover:bg-[#511F29]/90 transition-colors text-sm font-medium"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#511f29] text-white
+                 hover:bg-[#511f29]/90 transition-colors text-sm font-medium"
       >
         <Plus size={18} />
         Nouveau produit

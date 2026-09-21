@@ -117,11 +117,11 @@ const settingsSchema = z.object({
   primary_color: z
     .string()
     .regex(HEX_COLOR_REGEX, "Couleur invalide")
-    .default("#511F29"),
+    .default("#511f29"),
   secondary_color: z
     .string()
     .regex(HEX_COLOR_REGEX, "Couleur invalide")
-    .default("#fcd3b4"),
+    .default("#f1e1e5"),
 });
 
 export type SettingsInput = z.infer<typeof settingsSchema>;
@@ -156,8 +156,8 @@ function toAdminSettings(settings: DbStoreSettings): StoreSettings {
     tiktok_handle: settings.tiktokHandle,
     delivery_fee: Number(settings.deliveryFee || 0),
     delivery_hours: settings.deliveryHours,
-    primary_color: settings.primaryColor || "#511F29",
-    secondary_color: settings.secondaryColor || "#fcd3b4",
+    primary_color: settings.primaryColor || "#511f29",
+    secondary_color: settings.secondaryColor || "#f1e1e5",
     created_at: settings.createdAt.toISOString(),
     updated_at: settings.updatedAt.toISOString(),
   };

@@ -71,7 +71,7 @@ export function CartSidebar() {
               bottom: 0,
               zIndex: 86,
               width: "min(424px,100%)",
-              background: "#faf6f1",
+              background: "#fafafa",
               display: "flex",
               flexDirection: "column",
               boxShadow: "-20px 0 60px rgba(31,17,22,0.28)",
@@ -84,18 +84,18 @@ export function CartSidebar() {
                 alignItems: "center",
                 justifyContent: "space-between",
                 padding: "24px 26px",
-                borderBottom: "1px solid rgba(81,31,41,0.12)",
+                borderBottom: "1px solid rgba(0,0,0,0.12)",
               }}
             >
               <div
                 style={{
-                  fontFamily: "var(--font-serif), serif",
+                  fontFamily: "var(--font-stack)",
                   fontSize: "23px",
-                  color: "#2a181d",
+                  color: "#000000",
                 }}
               >
                 Votre panier{" "}
-                <span style={{ fontSize: "14px", color: "#94786b" }}>
+                <span style={{ fontSize: "14px", color: "#6b6b6b" }}>
                   ({itemCount})
                 </span>
               </div>
@@ -106,7 +106,7 @@ export function CartSidebar() {
                   background: "none",
                   border: "none",
                   cursor: "pointer",
-                  color: "#2a181d",
+                  color: "#000000",
                   lineHeight: 0,
                   padding: "2px",
                 }}
@@ -133,7 +133,7 @@ export function CartSidebar() {
                 <div
                   style={{
                     fontSize: "14.5px",
-                    color: "#6e5a50",
+                    color: "#4a4a4a",
                     lineHeight: 1.6,
                   }}
                 >
@@ -145,11 +145,11 @@ export function CartSidebar() {
                   href="/catalogue"
                   onClick={closeCart}
                   style={{
-                    background: "#511F29",
-                    color: "#fcd3b4",
+                    background: "#511f29",
+                    color: "#ffffff",
                     border: "none",
                     cursor: "pointer",
-                    fontFamily: "var(--font-sans), sans-serif",
+                    fontFamily: "var(--font-stack)",
                     fontSize: "11.5px",
                     fontWeight: 600,
                     letterSpacing: "0.14em",
@@ -199,7 +199,7 @@ export function CartSidebar() {
                           display: "flex",
                           gap: "14px",
                           padding: "18px 0",
-                          borderBottom: "1px solid rgba(81,31,41,0.08)",
+                          borderBottom: "1px solid rgba(0,0,0,0.08)",
                         }}
                       >
                         {/* Image */}
@@ -212,7 +212,7 @@ export function CartSidebar() {
                             flexShrink: 0,
                             overflow: "hidden",
                             borderRadius: "2px",
-                            background: "#ece0d3",
+                            background: "#eeeeec",
                             position: "relative",
                           }}
                         >
@@ -235,7 +235,7 @@ export function CartSidebar() {
                               fontSize: "9.5px",
                               letterSpacing: "0.14em",
                               textTransform: "uppercase",
-                              color: "#94786b",
+                              color: "#6b6b6b",
                             }}
                           >
                             {item.categoryName}
@@ -244,9 +244,9 @@ export function CartSidebar() {
                             href={`/produit/${item.productSlug}`}
                             onClick={closeCart}
                             style={{
-                              fontFamily: "var(--font-serif), serif",
+                              fontFamily: "var(--font-stack)",
                               fontSize: "15.5px",
-                              color: "#2a181d",
+                              color: "#000000",
                               display: "block",
                               margin: "3px 0 10px",
                               lineHeight: 1.2,
@@ -268,7 +268,7 @@ export function CartSidebar() {
                               style={{
                                 display: "flex",
                                 alignItems: "center",
-                                border: "1px solid rgba(81,31,41,0.2)",
+                                border: "1px solid rgba(0,0,0,0.2)",
                                 borderRadius: "3px",
                               }}
                             >
@@ -281,7 +281,7 @@ export function CartSidebar() {
                                   background: "none",
                                   border: "none",
                                   cursor: "pointer",
-                                  color: "#511F29",
+                                  color: "#000000",
                                   fontSize: "16px",
                                   lineHeight: 1,
                                 }}
@@ -293,7 +293,7 @@ export function CartSidebar() {
                                   minWidth: "26px",
                                   textAlign: "center",
                                   fontSize: "13px",
-                                  color: "#2a181d",
+                                  color: "#000000",
                                 }}
                               >
                                 {item.quantity}
@@ -307,7 +307,7 @@ export function CartSidebar() {
                                   background: "none",
                                   border: "none",
                                   cursor: "pointer",
-                                  color: "#511F29",
+                                  color: "#000000",
                                   fontSize: "15px",
                                   lineHeight: 1,
                                 }}
@@ -319,7 +319,7 @@ export function CartSidebar() {
                               style={{
                                 fontSize: "13.5px",
                                 fontWeight: 600,
-                                color: "#511F29",
+                                color: "#000000",
                               }}
                             >
                               {formatPrice(displayPrice * item.quantity)}
@@ -335,7 +335,7 @@ export function CartSidebar() {
                             background: "none",
                             border: "none",
                             cursor: "pointer",
-                            color: "#b09a8d",
+                            color: "#8a8a8a",
                             lineHeight: 0,
                             padding: "2px",
                             alignSelf: "flex-start",
@@ -352,7 +352,7 @@ export function CartSidebar() {
                 <div
                   style={{
                     padding: "22px 26px",
-                    borderTop: "1px solid rgba(81,31,41,0.12)",
+                    borderTop: "1px solid rgba(0,0,0,0.12)",
                   }}
                 >
                   <div
@@ -363,14 +363,14 @@ export function CartSidebar() {
                       marginBottom: "5px",
                     }}
                   >
-                    <span style={{ fontSize: "13px", color: "#6e5a50" }}>
+                    <span style={{ fontSize: "13px", color: "#4a4a4a" }}>
                       Sous-total
                     </span>
                     <span
                       style={{
-                        fontFamily: "var(--font-serif), serif",
+                        fontFamily: "var(--font-stack)",
                         fontSize: "21px",
-                        color: "#2a181d",
+                        color: "#000000",
                       }}
                     >
                       {formatPrice(subtotal)}
@@ -379,7 +379,7 @@ export function CartSidebar() {
                   <div
                     style={{
                       fontSize: "11.5px",
-                      color: "#94786b",
+                      color: "#6b6b6b",
                       marginBottom: "18px",
                     }}
                   >
@@ -391,11 +391,11 @@ export function CartSidebar() {
                     style={{
                       display: "block",
                       width: "100%",
-                      background: "#511F29",
-                      color: "#fcd3b4",
+                      background: "#511f29",
+                      color: "#ffffff",
                       border: "none",
                       cursor: "pointer",
-                      fontFamily: "var(--font-sans), sans-serif",
+                      fontFamily: "var(--font-stack)",
                       fontSize: "12px",
                       fontWeight: 600,
                       letterSpacing: "0.14em",
@@ -415,10 +415,10 @@ export function CartSidebar() {
                       display: "block",
                       width: "100%",
                       background: "transparent",
-                      color: "#511F29",
-                      border: "1px solid rgba(81,31,41,0.3)",
+                      color: "#000000",
+                      border: "1px solid rgba(0,0,0,0.3)",
                       cursor: "pointer",
-                      fontFamily: "var(--font-sans), sans-serif",
+                      fontFamily: "var(--font-stack)",
                       fontSize: "11.5px",
                       fontWeight: 600,
                       letterSpacing: "0.13em",

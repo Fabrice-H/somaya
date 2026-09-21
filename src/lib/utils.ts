@@ -19,3 +19,10 @@ export function formatPriceXOF(price: number): string {
     minimumFractionDigits: 0,
   }).format(price) + " FCFA";
 }
+
+/**
+ * WhatsApp link to the shop with a pre-filled message
+ */
+export function createWhatsAppLink(message: string): string {
+  return `https://wa.me/2250508905666?text=${encodeURIComponent(message)}`;
+}

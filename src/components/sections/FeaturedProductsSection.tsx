@@ -12,82 +12,33 @@ export function FeaturedProductsSection({ products }: FeaturedProductsSectionPro
   }
 
   return (
-    <section
-      id="vedettes"
-      className="section-padding"
-      style={{
-        background: "#faf6f1",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "1400px",
-          margin: "0 auto",
-        }}
-      >
-        {/* Header - Centered */}
-        <div style={{ textAlign: "center", marginBottom: "52px" }}>
-          <div
-            style={{
-              fontSize: "11.5px",
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              color: "#94786b",
-              marginBottom: "14px",
-            }}
+    <section id="nouveautes" className="bg-white px-4 py-14 md:px-8 md:py-20">
+      <div className="mx-auto max-w-[1240px]">
+        {/* Header - same treatment as the categories section */}
+        <div className="mb-10 text-center md:mb-12">
+          <h2
+            className="m-0 text-[26px] font-semibold uppercase tracking-[0.06em] text-[var(--som-ink)] md:text-[36px]"
+            style={{ lineHeight: 1.2 }}
           >
             Nos coups de cœur
-          </div>
-          <h2
-            style={{
-              fontFamily: "var(--font-playfair-display), 'Playfair Display', serif",
-              fontWeight: 500,
-              fontSize: "clamp(34px, 4vw, 56px)",
-              lineHeight: 1,
-              margin: 0,
-              color: "#2a181d",
-            }}
-          >
-            Sélection du moment
           </h2>
-          <p
-            style={{
-              fontSize: "15px",
-              color: "#94786b",
-              marginTop: "16px",
-              maxWidth: "500px",
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-          >
-            Des pièces soigneusement sélectionnées pour vous
+          <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.3em] text-[var(--som-gray)] md:text-[15px]">
+            Sélection du moment
           </p>
         </div>
 
-        {/* Grid - 4 columns responsive */}
-        <div className="grid-cols-4-responsive">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4 lg:gap-y-16">
           {products.slice(0, 8).map((product, index) => (
             <ProductCard key={product.id} product={product} priority={index < 4} />
           ))}
         </div>
 
-        {/* Voir tout button - centered */}
-        <div style={{ textAlign: "center", marginTop: "48px" }}>
+        <div className="mt-10 text-center md:mt-12">
           <Link
             href="/catalogue"
-            style={{
-              display: "inline-block",
-              fontSize: "12.5px",
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "#511F29",
-              textDecoration: "none",
-              borderBottom: "1px solid rgba(81,31,41,0.35)",
-              paddingBottom: "5px",
-              transition: "opacity 0.25s",
-            }}
+            className="inline-flex min-h-11 items-center justify-center border border-[var(--som-primary)] px-10 py-3 text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--som-primary)] transition-colors duration-200 hover:bg-[var(--som-primary)] hover:text-white"
           >
-            Découvrir tout le catalogue
+            Voir la sélection
           </Link>
         </div>
       </div>

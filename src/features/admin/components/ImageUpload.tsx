@@ -184,7 +184,7 @@ export function ImageUpload({
               className={clsx(
                 "relative group aspect-square rounded-lg overflow-hidden border-2",
                 draggedIndex === index
-                  ? "border-[#511F29] opacity-50"
+                  ? "border-[#511f29] opacity-50"
                   : "border-transparent"
               )}
             >
@@ -195,7 +195,7 @@ export function ImageUpload({
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <div className="cursor-move p-2 bg-white/90 rounded-lg text-[#511F29]">
+                <div className="cursor-move p-2 bg-white/90 rounded-lg text-[#3c161e]">
                   <GripVertical size={18} />
                 </div>
                 <button
@@ -207,7 +207,7 @@ export function ImageUpload({
                 </button>
               </div>
               {index === 0 && (
-                <span className="absolute top-2 left-2 px-2 py-0.5 bg-[#511F29] text-white text-xs rounded">
+                <span className="absolute top-2 left-2 px-2 py-0.5 bg-[#511f29] text-white text-xs rounded">
                   Principale
                 </span>
               )}
@@ -222,8 +222,8 @@ export function ImageUpload({
           className={clsx(
             "flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-colors",
             uploading
-              ? "border-[#511F29]/30 bg-[#511F29]/5"
-              : "border-[#511F29]/20 hover:border-[#511F29]/40 hover:bg-[#511F29]/5"
+              ? "border-[#511f29]/30 bg-[#511f29]/5"
+              : "border-[#511f29]/20 hover:border-[#511f29]/40 hover:bg-[#511f29]/5"
           )}
         >
           <input
@@ -236,18 +236,18 @@ export function ImageUpload({
           />
           {uploading ? (
             <>
-              <Loader2 size={32} className="text-[#511F29]/50 animate-spin mb-2" />
-              <span className="text-sm text-[#511F29]/60">
+              <Loader2 size={32} className="text-[#3c161e]/50 animate-spin mb-2" />
+              <span className="text-sm text-[#3c161e]/60">
                 Upload en cours... {progress}%
               </span>
             </>
           ) : (
             <>
-              <Upload size={32} className="text-[#511F29]/40 mb-2" />
-              <span className="text-sm text-[#511F29]/60">
+              <Upload size={32} className="text-[#3c161e]/40 mb-2" />
+              <span className="text-sm text-[#3c161e]/60">
                 Cliquez ou glissez vos images ici
               </span>
-              <span className="text-xs text-[#511F29]/40 mt-1">
+              <span className="text-xs text-[#3c161e]/40 mt-1">
                 Max {maxImages} image{maxImages > 1 ? "s" : ""}, 15 MB chacune
               </span>
             </>

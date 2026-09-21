@@ -1,6 +1,8 @@
 import { db, products, categories, productLots } from "@/lib/db";
 import { eq, desc, asc, and, ilike, sql, inArray } from "drizzle-orm";
 import type { Product, ProductWithCategory, ProductWithCategoryAndLots, ProductLot } from "@/lib/db/schema";
+import { unstable_cache } from "next/cache";
+import { toHomePageProduct, type HomePageProduct } from "@/lib/queries/home";
 
 // ============================================================
 // Server-side data fetching functions
@@ -301,3 +303,32 @@ export async function getLotsByIds(
 
   return result;
 }
+
+// ============================================================
+// Shop (/catalogue) - all active products in the shared card format
+// ============================================================
+
+export type ShopProduct = HomePageProduct & { description: string | null };
+
+export const getShopProducts = unstable_cache(
+  async (): Promise<ShopProduct[]> => {
+    const result = await db.query.products.findMany({
+      where: eq(products.isActive, true),
+      with: {
+        category: true,
+        lots: {
+          where: eq(productLots.isAvailable, true),
+          orderBy: [asc(productLots.sortOrder)],
+        },
+      },
+      orderBy: [desc(products.createdAt)],
+    });
+
+    return result.map((product) => ({
+      ...toHomePageProduct(product),
+      description: product.description,
+    }));
+  },
+  ["shop-products"],
+  { revalidate: 120, tags: ["products"] }
+);

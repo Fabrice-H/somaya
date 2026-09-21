@@ -46,8 +46,8 @@ export const ImagePreview = memo(function ImagePreview({
       className={clsx(
         "relative group aspect-square rounded-lg overflow-hidden border-2 transition-all",
         isDragging
-          ? "border-[#511F29] opacity-50 scale-95"
-          : "border-transparent hover:border-[#511F29]/30",
+          ? "border-[#511f29] opacity-50 scale-95"
+          : "border-transparent hover:border-[#511f29]/30",
         isDeleting && "pointer-events-none opacity-50"
       )}
     >
@@ -70,7 +70,7 @@ export const ImagePreview = memo(function ImagePreview({
           <Loader2 size={24} className="text-white animate-spin" />
         ) : (
           <>
-            <div className="cursor-move p-2 bg-white/90 rounded-lg text-[#511F29] hover:bg-white transition-colors">
+            <div className="cursor-move p-2 bg-white/90 rounded-lg text-[#3c161e] hover:bg-white transition-colors">
               <GripVertical size={18} />
             </div>
             <button
@@ -86,7 +86,7 @@ export const ImagePreview = memo(function ImagePreview({
 
       {/* Primary badge */}
       {isPrimary && (
-        <span className="absolute top-2 left-2 px-2 py-0.5 bg-[#511F29] text-white text-xs rounded font-medium">
+        <span className="absolute top-2 left-2 px-2 py-0.5 bg-[#511f29] text-white text-xs rounded font-medium">
           Principale
         </span>
       )}

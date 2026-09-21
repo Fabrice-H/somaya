@@ -41,16 +41,16 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4" style={{ maxWidth: 600 }}>
         {[
-          { label: 'Total', value: totalCategories, color: '#511F29' },
+          { label: 'Total', value: totalCategories, color: '#3c161e' },
           { label: 'Avec image', value: withImages, color: '#A08050' },
           { label: 'Actives', value: activeCategories, color: '#16a34a' },
         ].map((stat) => (
           <div
             key={stat.label}
-            className="bg-[#faf6f1] border border-[#511F29]/10"
+            className="bg-[#fafafa] border border-[#511f29]/10"
             style={{ padding: '16px 20px' }}
           >
-            <p className="text-xs text-[#94786b] mb-1 uppercase tracking-wide">
+            <p className="text-xs text-[#6b6b6b] mb-1 uppercase tracking-wide">
               {stat.label}
             </p>
             <p
@@ -66,17 +66,17 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
       {/* Categories Grid */}
       {categories.length === 0 ? (
         <div
-          className="text-center bg-[#faf6f1] border border-[#511F29]/10"
+          className="text-center bg-[#fafafa] border border-[#511f29]/10"
           style={{ padding: '64px 24px' }}
         >
           <FolderOpen
             size={48}
-            className="text-[#94786b] mx-auto mb-4"
+            className="text-[#6b6b6b] mx-auto mb-4"
           />
-          <p className="text-base font-medium text-[#2a181d] mb-1">
+          <p className="text-base font-medium text-[#000000] mb-1">
             Aucune catégorie
           </p>
-          <p className="text-sm text-[#94786b]">
+          <p className="text-sm text-[#6b6b6b]">
             Créez votre première catégorie pour organiser vos produits
           </p>
         </div>
@@ -88,7 +88,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
           {categories.map((category) => (
             <div
               key={category.id}
-              className="group relative bg-[#faf6f1]"
+              className="group relative bg-[#fafafa]"
             >
               {/* Image */}
               <Link
@@ -104,8 +104,8 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
                     sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-[#f1e8df]">
-                    <FolderOpen size={32} className="text-[#94786b]" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-[#f4f4f2]">
+                    <FolderOpen size={32} className="text-[#6b6b6b]" />
                   </div>
                 )}
 
@@ -143,7 +143,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
                   style={{ background: 'rgba(81,31,41,0.5)' }}
                 >
                   <span
-                    className="px-4 py-2.5 bg-white text-[#2a181d] text-xs font-semibold tracking-wide"
+                    className="px-4 py-2.5 bg-white text-[#000000] text-xs font-semibold tracking-wide"
                   >
                     <Pencil size={14} className="inline mr-2" style={{ verticalAlign: 'middle' }} />
                     Modifier
@@ -155,16 +155,16 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
               <div style={{ padding: '12px 14px 14px' }}>
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-[#2a181d] mb-0.5 truncate">
+                    <h3 className="text-sm font-medium text-[#000000] mb-0.5 truncate">
                       {category.name}
                     </h3>
-                    <p className="text-xs text-[#94786b] truncate">
+                    <p className="text-xs text-[#6b6b6b] truncate">
                       /{category.slug}
                     </p>
                   </div>
                   <button
                     onClick={() => setDeleteTarget(category)}
-                    className="w-7 h-7 inline-flex items-center justify-center text-[#94786b] hover:text-red-600 transition-colors"
+                    className="w-7 h-7 inline-flex items-center justify-center text-[#6b6b6b] hover:text-red-600 transition-colors"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -186,10 +186,10 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
 
           {/* Dialog */}
           <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-            <h3 className="text-lg font-semibold text-[#2a181d] mb-2">
+            <h3 className="text-lg font-semibold text-[#000000] mb-2">
               Supprimer la catégorie ?
             </h3>
-            <p className="text-sm text-[#6e5a50] mb-6 leading-relaxed">
+            <p className="text-sm text-[#4a4a4a] mb-6 leading-relaxed">
               Êtes-vous sûr de vouloir supprimer &quot;{deleteTarget.name}&quot; ?
               Les produits associés ne seront pas supprimés mais perdront leur catégorie.
             </p>
@@ -198,7 +198,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
               <button
                 onClick={() => setDeleteTarget(null)}
                 disabled={loading}
-                className="px-4 py-2 text-sm font-medium border border-[#511F29]/20 text-[#2a181d] hover:bg-[#faf6f1] transition-colors rounded"
+                className="px-4 py-2 text-sm font-medium border border-[#511f29]/20 text-[#000000] hover:bg-[#fafafa] transition-colors rounded"
               >
                 Annuler
               </button>

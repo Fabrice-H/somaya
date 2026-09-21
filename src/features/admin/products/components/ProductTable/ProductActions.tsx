@@ -51,7 +51,7 @@ export const ProductActions = memo(function ProductActions({
       <button
         onClick={handleToggle}
         disabled={isDisabled}
-        className="p-1.5 text-[#511F29]/50 hover:text-[#511F29] hover:bg-[#511F29]/5 rounded
+        className="p-1.5 text-[#3c161e]/50 hover:text-[#3c161e] hover:bg-[#511f29]/5 rounded
                  disabled:opacity-50 disabled:cursor-not-allowed"
         title={isActive ? "Désactiver" : "Activer"}
       >
@@ -65,7 +65,7 @@ export const ProductActions = memo(function ProductActions({
       </button>
       <Link
         href={`/admin/produits/${productId}`}
-        className="p-1.5 text-[#511F29]/50 hover:text-[#511F29] hover:bg-[#511F29]/5 rounded"
+        className="p-1.5 text-[#3c161e]/50 hover:text-[#3c161e] hover:bg-[#511f29]/5 rounded"
       >
         <Edit size={18} />
       </Link>

@@ -47,11 +47,11 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
         className="mb-6 overflow-x-auto scrollbar-hide"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
-        <ol className="flex items-center gap-2 text-[13px] text-[#94786b] whitespace-nowrap py-1">
+        <ol className="flex items-center gap-2 text-[13px] text-[#6b6b6b] whitespace-nowrap py-1">
           <li>
             <Link
               href="/"
-              className="inline-flex items-center text-[#94786b] hover:text-[#511F29] transition-colors"
+              className="inline-flex items-center text-[#6b6b6b] hover:text-[#511f29] transition-colors"
               aria-label="Accueil"
             >
               <Home size={14} />
@@ -63,12 +63,12 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
               {item.href ? (
                 <Link
                   href={item.href}
-                  className="text-[#94786b] hover:text-[#511F29] transition-colors"
+                  className="text-[#6b6b6b] hover:text-[#511f29] transition-colors"
                 >
                   {item.label}
                 </Link>
               ) : (
-                <span className="text-[#2a181d]">{item.label}</span>
+                <span className="text-[#000000]">{item.label}</span>
               )}
             </li>
           ))}

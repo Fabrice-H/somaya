@@ -23,7 +23,7 @@ function CategoriesSkeleton() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="bg-[#faf6f1] border border-[#511F29]/10 animate-pulse"
+            className="bg-[#fafafa] border border-[#511f29]/10 animate-pulse"
             style={{ padding: '16px 20px', height: 80 }}
           />
         ))}
@@ -32,7 +32,7 @@ function CategoriesSkeleton() {
       {/* Grid skeleton */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="aspect-square bg-[#faf6f1] animate-pulse" />
+          <div key={i} className="aspect-square bg-[#fafafa] animate-pulse" />
         ))}
       </div>
     </div>
@@ -45,16 +45,16 @@ export default function AdminCategoriesPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap mb-8">
         <div>
-          <h1 className="text-2xl font-semibold text-[#2a181d] mb-1">
+          <h1 className="text-2xl font-semibold text-[#000000] mb-1">
             Catégories
           </h1>
-          <p className="text-sm text-[#94786b]">
+          <p className="text-sm text-[#6b6b6b]">
             Gérez les catégories de votre catalogue
           </p>
         </div>
         <Link
           href="/admin/categories/nouveau"
-          className="inline-flex items-center gap-2 h-11 px-6 bg-[#511F29] text-[#fcd3b4] text-sm font-semibold transition-colors hover:bg-[#3d171f]"
+          className="inline-flex items-center gap-2 h-11 px-6 bg-[#511f29] text-white text-sm font-semibold transition-colors hover:bg-[#3d171f]"
         >
           <Plus size={18} />
           Nouvelle catégorie

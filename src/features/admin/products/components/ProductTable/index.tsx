@@ -61,28 +61,28 @@ export function ProductTable({ initialProducts }: ProductTableProps) {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#faf6f1]">
-                <th className="px-4 py-3 text-left text-xs font-medium text-[#511F29]/70 uppercase tracking-wider">
+              <tr className="bg-[#fafafa]">
+                <th className="px-4 py-3 text-left text-xs font-medium text-[#3c161e]/70 uppercase tracking-wider">
                   Produit
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-[#511F29]/70 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-[#3c161e]/70 uppercase tracking-wider">
                   Catégorie
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-[#511F29]/70 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-[#3c161e]/70 uppercase tracking-wider">
                   Prix
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-[#511F29]/70 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-[#3c161e]/70 uppercase tracking-wider">
                   Stock
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-[#511F29]/70 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium text-[#3c161e]/70 uppercase tracking-wider">
                   Statut
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-[#511F29]/70 uppercase tracking-wider">
+                <th className="px-4 py-3 text-right text-xs font-medium text-[#3c161e]/70 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#511F29]/10">
+            <tbody className="divide-y divide-[#511f29]/10">
               {filteredProducts.map((product) => (
                 <ProductRow
                   key={product.id}
@@ -97,7 +97,7 @@ export function ProductTable({ initialProducts }: ProductTableProps) {
         </div>
 
         {filteredProducts.length === 0 && (
-          <div className="p-8 text-center text-[#511F29]/50">
+          <div className="p-8 text-center text-[#3c161e]/50">
             <p>Aucun produit trouvé</p>
           </div>
         )}
