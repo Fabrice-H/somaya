@@ -1,99 +1,107 @@
 "use client";
 
-import { useActionState } from "react";
-import { loginAction } from "@/features/auth/server/actions";
-import type { LoginState } from "@/features/auth/types";
+import { useActionState, useState } from "react";
+import Image from "next/image";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { loginAction } from "../server/actions";
+import type { LoginState } from "../types";
 
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState<LoginState, FormData>(loginAction, {});
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-serif text-[#3c161e] tracking-wide">SO&apos;MAYA</h1>
-          <p className="text-sm text-[#3c161e]/60 mt-2">Administration</p>
-        </div>
+    <div className="grid min-h-screen bg-white lg:grid-cols-[1.1fr_1fr]">
+      <div className="relative hidden bg-[var(--som-primary-50)] lg:block">
+        <Image
+          src="/images/so_maya_ci_1763665764_3770224151622122471_13316418128.jpg"
+          alt=""
+          fill
+          priority
+          sizes="55vw"
+          className="object-cover"
+          style={{ objectPosition: "center 25%" }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_50%,rgba(0,0,0,0.55)_100%)]"
+        />
+        <p className="absolute bottom-10 left-10 m-0 text-[11px] uppercase tracking-[0.3em] text-white/85">
+          La qualité, notre référence
+        </p>
+      </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-xl font-medium text-[#3c161e] mb-6 text-center">Connexion</h2>
+      <div className="flex items-center justify-center px-6 py-16">
+        <div className="w-full max-w-[380px]">
+          <Image
+            src="/images/logo_header.png"
+            alt="SO'MAYA"
+            width={1072}
+            height={291}
+            priority
+            className="h-9 w-auto"
+          />
+          <p className="m-0 mt-10 text-[11px] uppercase tracking-[0.28em] text-[var(--som-primary)]">
+            Espace administration
+          </p>
+          <h1 className="m-0 mt-2 text-[28px] font-semibold text-[var(--som-ink)]">Connexion</h1>
+          <p className="m-0 mt-1.5 text-[14px] font-light text-[var(--som-gray)]">
+            Accédez à la gestion de votre boutique.
+          </p>
 
           {state.error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+            <p
+              role="alert"
+              className="m-0 mt-8 bg-[var(--som-error-tint)] px-4 py-3 text-[13px] text-[var(--som-error)]"
+            >
               {state.error}
-            </div>
+            </p>
           )}
 
-          <form action={formAction} className="space-y-4">
+          <form action={formAction} className="mt-8 flex flex-col gap-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
+              <label htmlFor="email" className="label-som">
                 Email
               </label>
               <input
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)]
-                         focus:outline-none focus:ring-2 focus:ring-black/10
-                         text-[#3c161e] placeholder:text-[#3c161e]/40"
+                autoComplete="email"
                 placeholder="admin@somaya.ci"
+                className="input-som"
               />
             </div>
-
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#3c161e]/80 mb-1.5">
+              <label htmlFor="password" className="label-som">
                 Mot de passe
               </label>
-              <div className="relative">
+              <div className="input-group-som">
                 <input
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)]
-                           focus:outline-none focus:ring-2 focus:ring-black/10
-                           text-[#3c161e] placeholder:text-[#3c161e]/40 pr-12"
-                  placeholder="Votre mot de passe"
+                  autoComplete="current-password"
+                  className="input-som !pl-4"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3c161e]/50
-                           hover:text-[#3c161e] transition-colors"
+                  onClick={() => setShowPassword((visible) => !visible)}
+                  aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  className="flex w-12 shrink-0 cursor-pointer items-center justify-center text-[var(--som-gray)] hover:text-[var(--som-ink)]"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword ? <EyeOff size={17} strokeWidth={1.5} /> : <Eye size={17} strokeWidth={1.5} />}
                 </button>
               </div>
             </div>
-
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full py-3 px-4 rounded-lg bg-[#511f29] text-white font-medium
-                       hover:bg-[#511f29]/90 transition-colors disabled:opacity-50
-                       disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"
-            >
-              {isPending ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  Connexion...
-                </>
-              ) : (
-                "Se connecter"
-              )}
+            <button type="submit" disabled={isPending} className="btn-primary mt-3 w-full">
+              {isPending && <Loader2 size={16} className="animate-spin" aria-hidden />}
+              {isPending ? "Connexion…" : "Se connecter"}
             </button>
           </form>
         </div>
-
-        <p className="text-center text-xs text-[#3c161e]/50 mt-6">
-          &copy; {new Date().getFullYear()} SO&apos;MAYA. Tous droits réservés.
-        </p>
       </div>
     </div>
   );

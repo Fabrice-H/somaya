@@ -15,5 +15,3 @@ export interface DashboardStats {
   totalProducts: number;
   recentOrders: RecentOrder[];
 }
-
-export type KpiColor = "burgundy" | "peach" | "green" | "blue";

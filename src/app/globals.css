@@ -729,3 +729,10 @@ textarea.input-som {
 .legal-content a:hover {
   color: var(--som-primary-hover);
 }
+
+.btn-sm {
+  min-height: 40px;
+  padding: 0 18px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}

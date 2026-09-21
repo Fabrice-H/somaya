@@ -1,21 +1,20 @@
-import { Clock, DollarSign, Package, ShoppingCart } from "lucide-react";
+import { Clock, Package, ShoppingBag, Wallet } from "lucide-react";
+import { StatCard } from "@/shared/components/admin/ui/StatCard";
 import { formatPrice } from "@/shared/lib/format";
 import type { DashboardStats } from "../types";
-import { KpiCard } from "./KpiCard";
 
 export function DashboardKpis({ stats }: { stats: DashboardStats }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <KpiCard title="Commandes totales" value={stats.totalOrders} icon={ShoppingCart} color="burgundy" />
-      <KpiCard title="En attente" value={stats.pendingOrders} subtitle="A traiter" icon={Clock} color="peach" />
-      <KpiCard
-        title="Chiffre d'affaires"
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <StatCard label="Commandes" value={stats.totalOrders} hint="Depuis l'ouverture" icon={ShoppingBag} />
+      <StatCard label="À traiter" value={stats.pendingOrders} hint="Commandes en attente" icon={Clock} tone="primary" />
+      <StatCard
+        label="Chiffre d'affaires"
         value={formatPrice(stats.totalRevenue)}
-        subtitle="Commandes livrees"
-        icon={DollarSign}
-        color="green"
+        hint="Commandes livrées"
+        icon={Wallet}
       />
-      <KpiCard title="Produits actifs" value={stats.totalProducts} icon={Package} color="blue" />
+      <StatCard label="Produits en ligne" value={stats.totalProducts} hint="Visibles en boutique" icon={Package} />
     </div>
   );
 }
