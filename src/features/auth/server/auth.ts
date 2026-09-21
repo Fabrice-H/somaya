@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
 import { adminUsers, db } from "@/shared/lib/db";
-import { ADMIN_LOGIN_PATH } from "../constants";
 import { loginSchema } from "../schemas";
 import { verifyPassword } from "./password";
 
@@ -38,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  pages: { signIn: ADMIN_LOGIN_PATH },
+  pages: { signIn: "/" },
   session: { strategy: "jwt", maxAge: SESSION_MAX_AGE_SECONDS },
   callbacks: {
     jwt({ token, user }) {

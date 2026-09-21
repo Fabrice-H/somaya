@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { forbidden } from "next/navigation";
+import { notFound } from "next/navigation";
 import { and, eq } from "drizzle-orm";
 import { adminUsers, db } from "@/shared/lib/db";
 import type { AdminUser } from "../types";
@@ -20,6 +20,6 @@ export const requireAdmin = cache(async (): Promise<AdminUser | null> => {
 
 export async function assertAdmin(): Promise<AdminUser> {
   const admin = await requireAdmin();
-  if (!admin) forbidden();
+  if (!admin) notFound();
   return admin;
 }

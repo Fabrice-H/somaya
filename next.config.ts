@@ -35,9 +35,6 @@ const privateHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  experimental: {
-    authInterrupts: true,
-  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

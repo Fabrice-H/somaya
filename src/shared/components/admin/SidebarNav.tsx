@@ -80,7 +80,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           </div>
           <button
             type="button"
-            onClick={() => signOut({ callbackUrl: "/admin/login" })}
+            onClick={() => signOut({ callbackUrl: "/" })}
             aria-label="Déconnexion"
             title="Déconnexion"
             className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center text-white/60 transition-colors hover:bg-white/10 hover:text-white"
