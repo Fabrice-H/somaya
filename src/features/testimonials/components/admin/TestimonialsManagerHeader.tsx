@@ -1,49 +1,43 @@
-import clsx from "clsx";
-import { Plus, Star } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { TestimonialsFeedback } from "@/features/testimonials/types";
 
-type TestimonialsManagerHeaderProps = {
-  embedded: boolean;
+type TestimonialsActionsProps = {
   feedback: TestimonialsFeedback | null;
   onAdd: () => void;
 };
 
-export function TestimonialsManagerHeader({ embedded, feedback, onAdd }: TestimonialsManagerHeaderProps) {
+export function TestimonialsActions({ feedback, onAdd }: TestimonialsActionsProps) {
   return (
-    <div
-      className={clsx(
-        "flex items-center justify-between gap-4",
-        embedded ? "p-4 border-b border-[#511f29]/10" : "bg-[#fafafa] border-b border-[#511f29]/10"
-      )}
-      style={embedded ? undefined : { padding: "24px 40px" }}
-    >
-      <div className="flex items-center gap-3">
-        {!embedded && (
-          <div className="w-10 h-10 bg-[#511f29] text-white flex items-center justify-center rounded-lg">
-            <Star size={20} />
-          </div>
-        )}
-        <div>
-          <h2 className={clsx(embedded ? "text-lg" : "text-xl", "font-semibold text-[#000000]")}>
-            {embedded ? "Gérer les témoignages" : "Témoignages"}
-          </h2>
-          <p className="text-sm text-[#4a4a4a]">Gérez les avis clients affichés sur la page d&apos;accueil</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-3">
-        {feedback && (
-          <span className={clsx("text-sm", feedback.type === "success" ? "text-green-600" : "text-red-600")}>
-            {feedback.text}
-          </span>
-        )}
-        <button
-          type="button"
-          onClick={onAdd}
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#511f29] text-white text-sm font-medium rounded-lg hover:bg-[#3d161f] transition-colors"
+    <>
+      {feedback && (
+        <span
+          role="status"
+          className={`text-[12px] ${feedback.type === "success" ? "text-[var(--som-success)]" : "text-[var(--som-error)]"}`}
         >
-          <Plus size={18} />
-          Ajouter
-        </button>
+          {feedback.text}
+        </span>
+      )}
+      <button type="button" onClick={onAdd} className="btn-primary btn-sm">
+        <Plus size={16} strokeWidth={1.5} aria-hidden />
+        Ajouter
+      </button>
+    </>
+  );
+}
+
+export function TestimonialsManagerHeader(props: TestimonialsActionsProps) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--som-border)] p-4">
+      <div className="min-w-0">
+        <h2 className="m-0 text-[13px] font-medium uppercase tracking-[0.14em] text-[var(--som-ink)]">
+          Gérer les témoignages
+        </h2>
+        <p className="m-0 mt-1 text-[13px] font-light text-[var(--som-gray)]">
+          Avis clients affichés sur la page d&apos;accueil.
+        </p>
+      </div>
+      <div className="flex flex-wrap items-center gap-3">
+        <TestimonialsActions {...props} />
       </div>
     </div>
   );

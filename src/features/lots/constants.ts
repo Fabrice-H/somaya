@@ -11,10 +11,6 @@ export const LOT_FORM_TABS = [
   { key: "settings", label: "Options" },
 ] as const;
 
-export const LOTS_TABLE_COLUMNS = ["LOT", "PRIX", "ARTICLES", "STOCK", "VISIBILITÉ", ""] as const;
-
-export const LOTS_TABLE_GRID = "md:grid-cols-[1fr_120px_100px_100px_100px_50px]";
-
 export const LOT_SORT_OPTIONS: { value: LotSortOption; label: string }[] = [
   { value: "price-asc", label: "Prix croissant" },
   { value: "price-desc", label: "Prix décroissant" },

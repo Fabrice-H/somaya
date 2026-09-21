@@ -5,19 +5,33 @@ type CategoryActiveToggleProps = {
 
 export function CategoryActiveToggle({ active, onToggle }: CategoryActiveToggleProps) {
   return (
-    <div className="flex items-center gap-3">
-      <button
-        type="button"
-        role="switch"
-        aria-checked={active}
-        onClick={onToggle}
-        className={`relative w-12 h-6 rounded-full transition-colors ${active ? "bg-green-500" : "bg-[#6b6b6b]"}`}
+    <button
+      type="button"
+      role="switch"
+      aria-checked={active}
+      onClick={onToggle}
+      className="flex min-h-12 w-full cursor-pointer items-center justify-between gap-4 text-left"
+    >
+      <span>
+        <span className="block text-[14px] text-[var(--som-ink)]">
+          {active ? "Catégorie active" : "Catégorie inactive"}
+        </span>
+        <span className="mt-0.5 block text-[12px] font-light text-[var(--som-gray)]">
+          {active ? "Visible dans la boutique" : "Masquée de la boutique"}
+        </span>
+      </span>
+      <span
+        aria-hidden
+        className={`relative h-6 w-11 shrink-0 border transition-colors ${
+          active ? "border-[var(--som-primary)] bg-[var(--som-primary)]" : "border-[var(--som-border-strong)] bg-white"
+        }`}
       >
         <span
-          className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${active ? "left-7" : "left-1"}`}
+          className={`absolute top-[3px] h-4 w-4 transition-all ${
+            active ? "left-[22px] bg-white" : "left-[3px] bg-[var(--som-border-strong)]"
+          }`}
         />
-      </button>
-      <span className="text-sm text-[#000000]">{active ? "Catégorie active" : "Catégorie inactive"}</span>
-    </div>
+      </span>
+    </button>
   );
 }

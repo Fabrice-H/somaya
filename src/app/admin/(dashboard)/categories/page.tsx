@@ -1,8 +1,9 @@
 import { Suspense } from "react";
+import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
 import { getCategories } from "@/features/categories/server/queries";
 import { CategoriesClient } from "@/features/categories/components/admin/list/CategoriesClient";
-import { CategoriesPageHeader } from "@/features/categories/components/admin/list/CategoriesPageHeader";
 import { CategoriesSkeleton } from "@/features/categories/components/admin/list/CategoriesSkeleton";
+import { NewCategoryLink } from "@/features/categories/components/admin/list/NewCategoryLink";
 
 export const dynamic = "force-dynamic";
 
@@ -17,11 +18,15 @@ async function CategoriesData() {
 
 export default function AdminCategoriesPage() {
   return (
-    <div style={{ padding: "32px 40px" }}>
-      <CategoriesPageHeader />
+    <AdminPage
+      eyebrow="Catalogue"
+      title="Catégories"
+      description="Organisez les univers de votre boutique."
+      actions={<NewCategoryLink />}
+    >
       <Suspense fallback={<CategoriesSkeleton />}>
         <CategoriesData />
       </Suspense>
-    </div>
+    </AdminPage>
   );
 }

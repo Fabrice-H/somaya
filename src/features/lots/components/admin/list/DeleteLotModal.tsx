@@ -1,4 +1,4 @@
-import { AlertTriangle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 type DeleteLotModalProps = {
   name: string;
@@ -9,50 +9,33 @@ type DeleteLotModalProps = {
 
 export function DeleteLotModal({ name, isLoading, onConfirm, onCancel }: DeleteLotModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onCancel} />
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/30" onClick={onCancel} />
       <div
         role="dialog"
         aria-modal="true"
-        className="relative bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        aria-labelledby="delete-lot-title"
+        className="relative w-full max-w-md border border-[var(--som-border)] bg-white p-6 lg:p-8"
       >
-        <div className="flex items-start gap-4 p-6 pb-4">
-          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-            <AlertTriangle className="w-6 h-6 text-red-600" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-[#000000]">Supprimer ce lot ?</h3>
-            <p className="mt-2 text-[15px] text-[#6b6b6b] leading-relaxed">
-              Êtes-vous sûr de vouloir supprimer le lot &quot;{name}&quot; ? Cette action est irréversible et supprimera
-              également toutes les images associées.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex gap-3 p-6 pt-4 bg-[#fafafa]">
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={isLoading}
-            className="flex-1 px-5 py-2.5 text-[14px] font-medium text-[#000000] bg-white border border-[#e8ddd4] rounded-lg hover:bg-[#fafafa] transition-colors disabled:opacity-50"
-          >
+        <p className="m-0 text-[11px] uppercase tracking-[0.2em] text-[var(--som-error)]">Suppression</p>
+        <h3 id="delete-lot-title" className="m-0 mt-2 text-[18px] font-medium text-[var(--som-ink)]">
+          Supprimer ce lot ?
+        </h3>
+        <p className="m-0 mt-3 text-[14px] font-light leading-relaxed text-[var(--som-gray)]">
+          Le lot « {name} » et toutes ses images seront supprimés. Cette action est irréversible.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-end gap-3">
+          <button type="button" onClick={onCancel} disabled={isLoading} className="btn-secondary btn-sm">
             Annuler
           </button>
           <button
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 px-5 py-2.5 text-[14px] font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="btn-primary btn-sm bg-[var(--som-error)]! hover:opacity-90"
           >
-            {isLoading ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Suppression...
-              </>
-            ) : (
-              "Supprimer"
-            )}
+            {isLoading && <Loader2 size={15} strokeWidth={1.5} className="animate-spin" aria-hidden />}
+            {isLoading ? "Suppression…" : "Supprimer"}
           </button>
         </div>
       </div>

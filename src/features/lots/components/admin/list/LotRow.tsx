@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
-import { Layers, X } from "lucide-react";
-import { ADMIN_LOTS_PATH, LOTS_TABLE_GRID } from "@/features/lots/constants";
+import { Layers, Trash2 } from "lucide-react";
+import { Badge } from "@/shared/components/admin/ui/Badge";
+import { Td } from "@/shared/components/admin/ui/Table";
+import { ADMIN_LOTS_PATH } from "@/features/lots/constants";
 import { formatLotPrice } from "@/features/lots/utils";
 import { LotVisibilityToggle } from "./LotVisibilityToggle";
 import type { PriceLot } from "@/features/lots/types";
@@ -23,68 +25,69 @@ export function LotRow({ lot, selected, loading, onSelect, onToggle, onDelete }:
   const inStock = lot.total_stock > 0;
 
   return (
-    <div
+    <tr
       onClick={onSelect}
       className={clsx(
-        "grid grid-cols-1 gap-4 px-5 py-4 border-b border-[#e8ddd4] items-center cursor-pointer transition-colors hover:bg-[#fafafa]",
-        LOTS_TABLE_GRID,
-        loading && "opacity-50 pointer-events-none",
-        selected && "border-l-4 border-l-[#511f29] bg-[#fafafa]"
+        "cursor-pointer border-b border-[var(--som-border)] transition-colors last:border-b-0 hover:bg-[var(--som-surface-alt)]",
+        loading && "pointer-events-none opacity-50",
+        selected && "bg-[var(--som-primary-50)] hover:bg-[var(--som-primary-50)]"
       )}
     >
-      <div className="flex items-center gap-4">
-        <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-[#fafafa] flex-shrink-0">
-          {cover ? (
-            <Image src={cover} alt={lot.name} fill className="object-cover" sizes="56px" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-[#d4c4b0]">
-              <Layers size={20} />
-            </div>
-          )}
+      <Td>
+        <div className="flex min-w-[220px] items-center gap-4">
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden bg-[var(--som-primary-50)]">
+            {cover ? (
+              <Image src={cover} alt={lot.name} fill className="object-cover" sizes="56px" />
+            ) : (
+              <span className="flex h-full w-full items-center justify-center text-[var(--som-primary)]">
+                <Layers size={18} strokeWidth={1.4} aria-hidden />
+              </span>
+            )}
+          </div>
+          <div className="min-w-0">
+            <Link
+              href={`${ADMIN_LOTS_PATH}/${lot.id}`}
+              onClick={stopPropagation}
+              className="font-medium text-[var(--som-ink)] transition-colors hover:text-[var(--som-primary)]"
+            >
+              {lot.name}
+            </Link>
+            {lot.category && (
+              <p className="m-0 mt-0.5 text-[12px] font-light text-[var(--som-gray)]">{lot.category.name}</p>
+            )}
+          </div>
         </div>
-        <div>
-          <Link
-            href={`${ADMIN_LOTS_PATH}/${lot.id}`}
-            onClick={stopPropagation}
-            className="font-semibold text-[#000000] hover:text-[#3c161e] transition-colors"
-          >
-            {lot.name}
-          </Link>
-          {lot.category && <p className="text-[13px] text-[#6b6b6b]">{lot.category.name}</p>}
+      </Td>
+      <Td align="right">
+        <span className="whitespace-nowrap tabular-nums">{formatLotPrice(lot.price)}</span>
+      </Td>
+      <Td align="right" muted>
+        <span className="tabular-nums">{lot.total_items}</span>
+      </Td>
+      <Td>
+        <Badge tone={inStock ? "success" : "danger"}>
+          <span className="tabular-nums">{lot.total_stock}</span> u.
+        </Badge>
+      </Td>
+      <Td>
+        <div onClick={stopPropagation}>
+          <LotVisibilityToggle active={lot.is_active} onToggle={onToggle} />
         </div>
-      </div>
-
-      <div className="text-[#000000] font-medium">
-        <span className="md:hidden text-[#6b6b6b] text-sm mr-2">Prix:</span>
-        {formatLotPrice(lot.price)}
-      </div>
-
-      <div className="text-[#6b6b6b]">
-        <span className="md:hidden text-[#6b6b6b] text-sm mr-2">Articles:</span>
-        {lot.total_items} art.
-      </div>
-
-      <div className="flex items-center gap-2">
-        <span className="md:hidden text-[#6b6b6b] text-sm mr-2">Stock:</span>
-        <span className={clsx("w-2 h-2 rounded-full", inStock ? "bg-emerald-500" : "bg-red-400")} />
-        <span className={inStock ? "text-emerald-600" : "text-red-500"}>{lot.total_stock} u.</span>
-      </div>
-
-      <div onClick={stopPropagation}>
-        <LotVisibilityToggle active={lot.is_active} onToggle={onToggle} />
-      </div>
-
-      <div onClick={stopPropagation}>
+      </Td>
+      <Td align="right">
         <button
           type="button"
-          onClick={onDelete}
-          className="p-2 text-[#c4b0a5] hover:text-red-500 transition-colors"
+          onClick={(event) => {
+            event.stopPropagation();
+            onDelete();
+          }}
           title="Supprimer"
           aria-label={`Supprimer ${lot.name}`}
+          className="inline-flex h-10 w-10 cursor-pointer items-center justify-center text-[var(--som-gray)] transition-colors hover:bg-white hover:text-[var(--som-error)]"
         >
-          <X size={18} />
+          <Trash2 size={15} strokeWidth={1.5} aria-hidden />
         </button>
-      </div>
-    </div>
+      </Td>
+    </tr>
   );
 }

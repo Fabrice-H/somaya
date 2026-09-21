@@ -1,14 +1,15 @@
 "use client";
 
-import clsx from "clsx";
+import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
+import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
+import { Table, Th } from "@/shared/components/admin/ui/Table";
 import { useLotsManager } from "@/features/lots/hooks/useLotsManager";
-import { LOTS_TABLE_COLUMNS, LOTS_TABLE_GRID } from "@/features/lots/constants";
 import { DeleteLotModal } from "./DeleteLotModal";
 import { LotCategoryFilters } from "./LotCategoryFilters";
 import { LotRow } from "./LotRow";
 import { LotsEmptyState } from "./LotsEmptyState";
-import { LotsHeader } from "./LotsHeader";
 import { LotsStatsGrid } from "./LotsStatsGrid";
+import { NewLotLink } from "./NewLotLink";
 import type { PriceLot } from "@/features/lots/types";
 
 type LotsPageContentProps = {
@@ -17,34 +18,37 @@ type LotsPageContentProps = {
 
 export function LotsPageContent({ initialLots }: LotsPageContentProps) {
   const manager = useLotsManager(initialLots);
+  const { total, articles } = manager.stats;
 
   return (
-    <>
-      <div className="p-6 max-w-7xl mx-auto">
-        <LotsHeader totalLots={manager.stats.total} totalArticles={manager.stats.articles} />
-        <LotsStatsGrid stats={manager.stats} />
+    <AdminPage
+      eyebrow="Boutique · Par budget"
+      title="Lots de prix"
+      description={`${total} lot${total > 1 ? "s" : ""} · ${articles} article${articles > 1 ? "s" : ""}`}
+      actions={<NewLotLink />}
+    >
+      <LotsStatsGrid stats={manager.stats} />
 
-        <div className="bg-white rounded-xl border border-[#e8ddd4] overflow-hidden">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 border-b border-[#e8ddd4]">
-            <h2 className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#000000]">TOUS LES LOTS</h2>
-            <LotCategoryFilters categories={manager.categories} active={manager.filter} onChange={manager.setFilter} />
-          </div>
+      <AdminCard title="Tous les lots" padded={false}>
+        <LotCategoryFilters categories={manager.categories} active={manager.filter} onChange={manager.setFilter} />
 
-          {manager.lots.length === 0 ? (
-            <LotsEmptyState />
-          ) : (
-            <div className="overflow-x-auto">
-              <div
-                className={clsx(
-                  "hidden md:grid gap-4 px-5 py-3 bg-[#fafafa] border-b border-[#e8ddd4] text-[10px] font-semibold tracking-[0.12em] uppercase text-[#6b6b6b]",
-                  LOTS_TABLE_GRID
-                )}
-              >
-                {LOTS_TABLE_COLUMNS.map((column, index) => (
-                  <div key={index}>{column}</div>
-                ))}
-              </div>
-
+        {manager.lots.length === 0 ? (
+          <LotsEmptyState />
+        ) : (
+          <Table>
+            <thead>
+              <tr>
+                <Th>Lot</Th>
+                <Th align="right">Prix</Th>
+                <Th align="right">Articles</Th>
+                <Th>Stock</Th>
+                <Th>Visibilité</Th>
+                <Th align="right">
+                  <span className="sr-only">Actions</span>
+                </Th>
+              </tr>
+            </thead>
+            <tbody>
               {manager.lots.map((lot) => (
                 <LotRow
                   key={lot.id}
@@ -56,10 +60,10 @@ export function LotsPageContent({ initialLots }: LotsPageContentProps) {
                   onDelete={() => manager.openDelete(lot)}
                 />
               ))}
-            </div>
-          )}
-        </div>
-      </div>
+            </tbody>
+          </Table>
+        )}
+      </AdminCard>
 
       {manager.deleteTarget && (
         <DeleteLotModal
@@ -69,6 +73,6 @@ export function LotsPageContent({ initialLots }: LotsPageContentProps) {
           onCancel={manager.closeDelete}
         />
       )}
-    </>
+    </AdminPage>
   );
 }

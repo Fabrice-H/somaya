@@ -1,8 +1,10 @@
 "use client";
 
+import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
+import { ADMIN_LOTS_PATH } from "@/features/lots/constants";
 import { useLotForm } from "@/features/lots/hooks/useLotForm";
 import { DeleteLotDialog } from "./DeleteLotDialog";
-import { LotFormHeader } from "./LotFormHeader";
+import { LotFormActions } from "./LotFormActions";
 import { LotFormTabs } from "./LotFormTabs";
 import { LotInfoSection } from "./LotInfoSection";
 import { LotItemsSection } from "./LotItemsSection";
@@ -21,47 +23,57 @@ export function LotForm({ lot, categories }: LotFormProps) {
 
   return (
     <form onSubmit={form.submit}>
-      <LotFormHeader
-        isEdit={!!lot}
-        name={fields.name}
-        isPending={form.isPending}
-        onBack={form.back}
-        onDelete={() => form.setShowDeleteDialog(true)}
-      />
+      <AdminPage
+        eyebrow="Boutique · Par budget"
+        title={lot ? "Modifier le lot" : "Nouveau lot de prix"}
+        description={fields.name || "Définissez un prix unique et les articles du lot."}
+        back={{ href: ADMIN_LOTS_PATH, label: "Lots de prix" }}
+        actions={
+          <LotFormActions
+            isEdit={!!lot}
+            canSubmit={!!fields.name}
+            isPending={form.isPending}
+            onDelete={() => form.setShowDeleteDialog(true)}
+          />
+        }
+      >
+        <LotFormTabs active={form.activeTab} onChange={form.setActiveTab} />
 
-      <LotFormTabs active={form.activeTab} onChange={form.setActiveTab} />
-
-      {form.error && (
-        <div className="p-4 bg-red-50 border border-red-200 text-red-700" style={{ margin: "24px 40px 0" }}>
-          {form.error}
-        </div>
-      )}
-
-      <div style={{ padding: "32px 40px" }}>
-        {form.activeTab === "articles" ? (
-          <div style={{ maxWidth: 1000 }}>
-            <LotInfoSection
-              name={fields.name}
-              price={fields.price}
-              categoryId={fields.categoryId}
-              categories={categories}
-              onNameChange={form.setName}
-              onPriceChange={form.setPrice}
-              onCategoryChange={form.setCategoryId}
-            />
-            <LotItemsSection
-              items={items.items}
-              uploadingIds={items.uploadingIds}
-              onAdd={items.add}
-              onRemove={items.remove}
-              onUpdate={items.update}
-              onUpload={items.upload}
-            />
-          </div>
-        ) : (
-          <LotSettingsSection isActive={fields.isActive} onChange={form.setIsActive} />
+        {form.error && (
+          <p
+            role="alert"
+            className="m-0 mt-6 border border-[var(--som-error)] bg-[var(--som-error-tint)] px-4 py-3 text-[14px] text-[var(--som-error)]"
+          >
+            {form.error}
+          </p>
         )}
-      </div>
+
+        <div className="mt-6 space-y-6">
+          {form.activeTab === "articles" ? (
+            <>
+              <LotInfoSection
+                name={fields.name}
+                price={fields.price}
+                categoryId={fields.categoryId}
+                categories={categories}
+                onNameChange={form.setName}
+                onPriceChange={form.setPrice}
+                onCategoryChange={form.setCategoryId}
+              />
+              <LotItemsSection
+                items={items.items}
+                uploadingIds={items.uploadingIds}
+                onAdd={items.add}
+                onRemove={items.remove}
+                onUpdate={items.update}
+                onUpload={items.upload}
+              />
+            </>
+          ) : (
+            <LotSettingsSection isActive={fields.isActive} onChange={form.setIsActive} />
+          )}
+        </div>
+      </AdminPage>
 
       {lot && form.showDeleteDialog && (
         <DeleteLotDialog

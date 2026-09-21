@@ -1,10 +1,7 @@
 import Image from "next/image";
-import { Loader2, Trash2, Upload, X } from "lucide-react";
+import { ImagePlus, Loader2, Trash2, X } from "lucide-react";
 import { parseNumberInput } from "@/features/lots/utils";
 import type { PriceLotItem } from "@/features/lots/types";
-
-const FIELD_CLASS =
-  "w-full h-9 px-3 border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-sm focus:outline-none focus:ring-2 focus:ring-black/10 bg-white text-[#000000]";
 
 type LotItemCardProps = {
   item: PriceLotItem;
@@ -16,9 +13,12 @@ type LotItemCardProps = {
 };
 
 export function LotItemCard({ item, index, isUploading, onUpdate, onRemove, onUpload }: LotItemCardProps) {
+  const labelId = `lot-item-${item.id}-label`;
+  const stockId = `lot-item-${item.id}-stock`;
+
   return (
-    <div className="border border-[var(--som-border)] overflow-hidden bg-[#fafafa]">
-      <div className="relative aspect-square bg-white">
+    <div className="flex flex-col border border-[var(--som-border)] bg-white">
+      <div className="relative aspect-square bg-[var(--som-primary-50)]">
         {item.image ? (
           <>
             <Image
@@ -26,25 +26,25 @@ export function LotItemCard({ item, index, isUploading, onUpdate, onRemove, onUp
               alt={item.label || `Article ${index + 1}`}
               fill
               className="object-cover"
-              sizes="200px"
+              sizes="240px"
             />
             <button
               type="button"
               onClick={() => onUpdate({ image: "" })}
               aria-label="Retirer l'image"
-              className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-red-500 text-white hover:bg-red-600"
+              className="absolute right-2 top-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center bg-white text-[var(--som-ink)] transition-colors hover:text-[var(--som-error)]"
             >
-              <X size={16} />
+              <X size={16} strokeWidth={1.5} aria-hidden />
             </button>
           </>
         ) : (
-          <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-[#fafafa] transition-colors">
+          <label className="absolute inset-2 flex cursor-pointer flex-col items-center justify-center gap-2 border border-dashed border-[var(--som-border-strong)] bg-[var(--som-surface-alt)] text-[var(--som-gray)] transition-colors hover:border-[var(--som-primary)] hover:text-[var(--som-primary)]">
             {isUploading ? (
-              <Loader2 size={32} className="text-[#3c161e]/30 animate-spin" />
+              <Loader2 size={20} strokeWidth={1.4} className="animate-spin" aria-hidden />
             ) : (
               <>
-                <Upload size={32} className="text-[#3c161e]/30 mb-2" />
-                <span className="text-sm text-[#6b6b6b]">Ajouter image</span>
+                <ImagePlus size={20} strokeWidth={1.4} aria-hidden />
+                <span className="text-[11px] uppercase tracking-[0.16em]">Ajouter une image</span>
               </>
             )}
             <input
@@ -61,32 +61,42 @@ export function LotItemCard({ item, index, isUploading, onUpdate, onRemove, onUp
         )}
       </div>
 
-      <div className="p-3 space-y-2">
-        <input
-          type="text"
-          value={item.label || ""}
-          onChange={(e) => onUpdate({ label: e.target.value })}
-          placeholder="Label (optionnel)"
-          className={FIELD_CLASS}
-        />
-        <div className="flex items-center gap-2">
+      <div className="space-y-4 border-t border-[var(--som-border)] p-4">
+        <div>
+          <label htmlFor={labelId} className="label-som">
+            Libellé
+          </label>
+          <input
+            id={labelId}
+            type="text"
+            value={item.label || ""}
+            onChange={(e) => onUpdate({ label: e.target.value })}
+            placeholder="Optionnel"
+            className="input-som"
+          />
+        </div>
+        <div className="flex items-end gap-2">
           <div className="flex-1">
+            <label htmlFor={stockId} className="label-som">
+              Stock
+            </label>
             <input
+              id={stockId}
               type="number"
               value={item.stock || ""}
               onChange={(e) => onUpdate({ stock: parseNumberInput(e.target.value) })}
               min="0"
-              placeholder="Stock"
-              className={FIELD_CLASS}
+              placeholder="0"
+              className="input-som tabular-nums"
             />
           </div>
           <button
             type="button"
             onClick={onRemove}
             aria-label="Supprimer l'article"
-            className="w-9 h-9 flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors"
+            className="inline-flex h-[52px] w-11 shrink-0 cursor-pointer items-center justify-center text-[var(--som-gray)] transition-colors hover:bg-[var(--som-error-tint)] hover:text-[var(--som-error)]"
           >
-            <Trash2 size={16} />
+            <Trash2 size={15} strokeWidth={1.5} aria-hidden />
           </button>
         </div>
       </div>

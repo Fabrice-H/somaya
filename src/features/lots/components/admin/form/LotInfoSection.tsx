@@ -1,8 +1,7 @@
+import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
+import { Field } from "@/shared/components/admin/ui/Field";
 import { parseNumberInput } from "@/features/lots/utils";
 import type { CategoryOption } from "@/features/categories/types";
-
-const INPUT_CLASS =
-  "w-full h-11 px-4 border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] focus:outline-none focus:ring-2 focus:ring-black/10 text-[#000000]";
 
 type LotInfoSectionProps = {
   name: string;
@@ -24,26 +23,19 @@ export function LotInfoSection({
   onCategoryChange,
 }: LotInfoSectionProps) {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-      <h3 className="text-lg font-medium text-[#3c161e] mb-4">Informations du lot</h3>
-      <div className="grid md:grid-cols-3 gap-4">
-        <div>
-          <label htmlFor="lot-name" className="block text-sm text-[#6b6b6b] mb-1.5">
-            Nom du lot *
-          </label>
+    <AdminCard title="Informations du lot">
+      <div className="grid gap-6 md:grid-cols-3">
+        <Field id="lot-name" label="Nom du lot" required>
           <input
             id="lot-name"
             type="text"
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
-            placeholder="Ex: Chaînes 10k"
-            className={INPUT_CLASS}
+            placeholder="Ex : Chaînes 10k"
+            className="input-som"
           />
-        </div>
-        <div>
-          <label htmlFor="lot-price" className="block text-sm text-[#6b6b6b] mb-1.5">
-            Prix (FCFA) *
-          </label>
+        </Field>
+        <Field id="lot-price" label="Prix (FCFA)" required>
           <input
             id="lot-price"
             type="number"
@@ -51,18 +43,15 @@ export function LotInfoSection({
             onChange={(e) => onPriceChange(parseNumberInput(e.target.value))}
             placeholder="10000"
             min="0"
-            className={INPUT_CLASS}
+            className="input-som tabular-nums"
           />
-        </div>
-        <div>
-          <label htmlFor="lot-category" className="block text-sm text-[#6b6b6b] mb-1.5">
-            Catégorie
-          </label>
+        </Field>
+        <Field id="lot-category" label="Catégorie">
           <select
             id="lot-category"
             value={categoryId}
             onChange={(e) => onCategoryChange(e.target.value)}
-            className={`${INPUT_CLASS} bg-white`}
+            className="input-som cursor-pointer"
           >
             <option value="">Sans catégorie</option>
             {categories.map((category) => (
@@ -71,8 +60,8 @@ export function LotInfoSection({
               </option>
             ))}
           </select>
-        </div>
+        </Field>
       </div>
-    </div>
+    </AdminCard>
   );
 }

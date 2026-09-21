@@ -16,16 +16,13 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
   const deletion = useDeleteCategory();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <CategoryStats {...getCategoryStats(categories)} />
 
       {categories.length === 0 ? (
         <CategoriesEmptyState />
       ) : (
-        <div
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-px"
-          style={{ background: "rgba(81,31,41,0.1)" }}
-        >
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {categories.map((category) => (
             <CategoryCard key={category.id} category={category} onDelete={deletion.open} />
           ))}

@@ -1,6 +1,6 @@
 import Image from "next/image";
-import clsx from "clsx";
-import { Edit2, GripVertical, Trash2 } from "lucide-react";
+import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
+import { Badge } from "@/shared/components/admin/ui/Badge";
 import { MAX_RATING } from "@/features/testimonials/constants";
 import type { TestimonialData } from "@/features/testimonials/types";
 
@@ -11,77 +11,81 @@ type TestimonialListItemProps = {
   onDelete: () => void;
 };
 
+const ICON_BUTTON =
+  "inline-flex h-10 w-10 cursor-pointer items-center justify-center text-[var(--som-gray)] transition-colors hover:bg-[var(--som-surface-alt)]";
+
 export function TestimonialListItem({ item, onToggleActive, onEdit, onDelete }: TestimonialListItemProps) {
   return (
-    <div
-      className={clsx(
-        "bg-white p-4 rounded-lg border transition-all",
-        item.isActive ? "border-[#511f29]/10" : "border-gray-200 opacity-60"
-      )}
-    >
-      <div className="flex items-start gap-3">
-        <div className="cursor-move text-gray-300 hover:text-gray-500 mt-1">
-          <GripVertical size={16} />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-2">
+    <article className="flex flex-col border border-[var(--som-border)] bg-white">
+      <div className={`flex-1 p-5 ${item.isActive ? "" : "opacity-60"}`}>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             {item.image ? (
               <Image
                 src={item.image}
                 alt={item.name}
-                width={40}
-                height={40}
-                className="w-10 h-10 rounded-full object-cover"
+                width={44}
+                height={44}
+                className="h-11 w-11 shrink-0 rounded-full object-cover"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm font-medium">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--som-primary-50)] text-[14px] font-medium text-[var(--som-primary)]">
                 {item.name.charAt(0)}
-              </div>
+              </span>
             )}
-            <div>
-              <div className="font-medium text-[#000000] text-sm">{item.name}</div>
-              <div className="text-xs text-gray-500">{item.location}</div>
+            <div className="min-w-0">
+              <p className="m-0 truncate text-[14px] font-medium text-[var(--som-ink)]">{item.name}</p>
+              <p className="m-0 mt-0.5 truncate text-[12px] font-light text-[var(--som-gray)]">{item.location}</p>
             </div>
           </div>
-
-          <div className="text-[#3c161e] text-xs mb-2" aria-label={`${item.rating}/${MAX_RATING}`}>
-            {"★".repeat(item.rating)}
-            <span className="text-gray-300">{"★".repeat(Math.max(0, MAX_RATING - item.rating))}</span>
-          </div>
-
-          <p className="text-sm text-gray-600 line-clamp-3">{item.text}</p>
+          <Badge tone={item.isActive ? "success" : "neutral"}>{item.isActive ? "En ligne" : "Masqué"}</Badge>
         </div>
+
+        <p
+          className="m-0 mt-4 text-[13px] tracking-[0.2em] text-[var(--som-primary)]"
+          aria-label={`${item.rating}/${MAX_RATING}`}
+        >
+          {"★".repeat(item.rating)}
+          <span className="text-[var(--som-border-strong)]">{"★".repeat(Math.max(0, MAX_RATING - item.rating))}</span>
+        </p>
+        <p className="m-0 mt-3 line-clamp-4 text-[14px] font-light leading-relaxed text-[var(--som-ink)]">
+          « {item.text} »
+        </p>
       </div>
 
-      <div className="flex items-center justify-end gap-2 mt-3 pt-3 border-t border-gray-100">
+      <div className="flex items-center justify-between border-t border-[var(--som-border)] py-1 pl-3 pr-1">
         <button
           type="button"
           onClick={onToggleActive}
-          className={clsx(
-            "px-2 py-1 text-xs rounded",
-            item.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+          aria-pressed={item.isActive}
+          className="inline-flex min-h-10 cursor-pointer items-center gap-2 px-2 text-[11px] uppercase tracking-[0.14em] text-[var(--som-gray)] transition-colors hover:text-[var(--som-ink)]"
+        >
+          {item.isActive ? (
+            <EyeOff size={15} strokeWidth={1.5} aria-hidden />
+          ) : (
+            <Eye size={15} strokeWidth={1.5} aria-hidden />
           )}
-        >
-          {item.isActive ? "Actif" : "Inactif"}
+          {item.isActive ? "Masquer" : "Publier"}
         </button>
-        <button
-          type="button"
-          onClick={onEdit}
-          aria-label="Modifier"
-          className="p-1.5 text-gray-400 hover:text-[#3c161e] hover:bg-[#511f29]/5 rounded"
-        >
-          <Edit2 size={16} />
-        </button>
-        <button
-          type="button"
-          onClick={onDelete}
-          aria-label="Supprimer"
-          className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"
-        >
-          <Trash2 size={16} />
-        </button>
+        <div className="flex">
+          <button
+            type="button"
+            onClick={onEdit}
+            aria-label="Modifier"
+            className={`${ICON_BUTTON} hover:text-[var(--som-ink)]`}
+          >
+            <Pencil size={15} strokeWidth={1.5} aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            aria-label="Supprimer"
+            className={`${ICON_BUTTON} hover:text-[var(--som-error)]`}
+          >
+            <Trash2 size={15} strokeWidth={1.5} aria-hidden />
+          </button>
+        </div>
       </div>
-    </div>
+    </article>
   );
 }

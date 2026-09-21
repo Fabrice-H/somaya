@@ -1,11 +1,17 @@
 import { FolderOpen } from "lucide-react";
+import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
+import { EmptyState } from "@/shared/components/admin/ui/EmptyState";
+import { NewCategoryLink } from "./NewCategoryLink";
 
 export function CategoriesEmptyState() {
   return (
-    <div className="text-center bg-[#fafafa] border border-[#511f29]/10" style={{ padding: "64px 24px" }}>
-      <FolderOpen size={48} className="text-[#6b6b6b] mx-auto mb-4" />
-      <p className="text-base font-medium text-[#000000] mb-1">Aucune catégorie</p>
-      <p className="text-sm text-[#6b6b6b]">Créez votre première catégorie pour organiser vos produits</p>
-    </div>
+    <AdminCard padded={false}>
+      <EmptyState
+        icon={FolderOpen}
+        title="Aucune catégorie"
+        description="Créez votre première catégorie pour organiser vos produits."
+        action={<NewCategoryLink className="btn-secondary btn-sm" />}
+      />
+    </AdminCard>
   );
 }

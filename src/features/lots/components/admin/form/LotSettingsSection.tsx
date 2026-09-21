@@ -1,3 +1,5 @@
+import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
+
 type LotSettingsSectionProps = {
   isActive: boolean;
   onChange: (value: boolean) => void;
@@ -5,22 +7,23 @@ type LotSettingsSectionProps = {
 
 export function LotSettingsSection({ isActive, onChange }: LotSettingsSectionProps) {
   return (
-    <div style={{ maxWidth: 600 }}>
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-medium text-[#3c161e] mb-4">Options</h3>
-        <label className="flex items-center gap-3 cursor-pointer">
+    <div className="max-w-[640px]">
+      <AdminCard title="Visibilité">
+        <label className="flex min-h-12 cursor-pointer items-center gap-4">
           <input
             type="checkbox"
             checked={isActive}
             onChange={(e) => onChange(e.target.checked)}
-            className="w-5 h-5 rounded border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-[#3c161e] focus:ring-black/10"
+            className="h-5 w-5 shrink-0 cursor-pointer accent-[var(--som-primary)]"
           />
-          <div>
-            <span className="text-sm font-medium text-[#000000]">Lot actif</span>
-            <p className="text-xs text-[#6b6b6b]">Le lot sera visible sur le site</p>
-          </div>
+          <span>
+            <span className="block text-[14px] text-[var(--som-ink)]">Lot actif</span>
+            <span className="mt-0.5 block text-[12px] font-light text-[var(--som-gray)]">
+              Le lot sera visible sur le site.
+            </span>
+          </span>
         </label>
-      </div>
+      </AdminCard>
     </div>
   );
 }

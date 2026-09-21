@@ -9,14 +9,13 @@ type CategoryImageFieldProps = {
 export function CategoryImageField({ imageUrl, onChange }: CategoryImageFieldProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-[#000000] mb-2">Image de la catégorie</label>
       <ImageUpload
         images={imageUrl ? [imageUrl] : []}
         onChange={(urls) => onChange(urls[0] || null)}
         bucket={CATEGORY_IMAGE_BUCKET}
         maxImages={1}
       />
-      <p className="text-xs text-[#6b6b6b] mt-2">Format recommandé: carré, min 800x800px</p>
+      <p className="help-som m-0">Format carré recommandé, 800 × 800 px minimum.</p>
     </div>
   );
 }

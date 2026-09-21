@@ -1,12 +1,10 @@
-import { Save, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
+import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
+import { Field } from "@/shared/components/admin/ui/Field";
 import { ImageUpload } from "@/features/media/components/ImageUpload";
 import { TESTIMONIAL_IMAGE_BUCKET } from "@/features/testimonials/constants";
 import { TestimonialRatingInput } from "./TestimonialRatingInput";
 import type { TestimonialFormValues } from "@/features/testimonials/types";
-
-const INPUT_CLASS =
-  "w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/10";
-const LABEL_CLASS = "block text-sm font-medium text-[#000000] mb-1.5";
 
 type TestimonialFormProps = {
   values: TestimonialFormValues;
@@ -19,67 +17,61 @@ type TestimonialFormProps = {
 
 export function TestimonialForm({ values, isEditing, isPending, onChange, onSave, onClose }: TestimonialFormProps) {
   return (
-    <div className="bg-white p-6 rounded-lg border border-[#511f29]/10 h-fit">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-[#000000]">
-          {isEditing ? "Modifier le témoignage" : "Nouveau témoignage"}
-        </h2>
-        <button type="button" onClick={onClose} aria-label="Fermer" className="text-gray-400 hover:text-gray-600">
-          <X size={20} />
+    <AdminCard
+      title={isEditing ? "Modifier le témoignage" : "Nouveau témoignage"}
+      action={
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Fermer"
+          className="-mr-2 inline-flex h-10 w-10 cursor-pointer items-center justify-center text-[var(--som-gray)] transition-colors hover:text-[var(--som-ink)]"
+        >
+          <X size={18} strokeWidth={1.5} aria-hidden />
         </button>
-      </div>
-
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="testimonial-name" className={LABEL_CLASS}>
-              Nom
-            </label>
+      }
+    >
+      <div className="space-y-6">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <Field id="testimonial-name" label="Nom" required>
             <input
               id="testimonial-name"
               type="text"
               value={values.name}
               onChange={(e) => onChange({ name: e.target.value })}
-              className={INPUT_CLASS}
+              className="input-som"
               placeholder="Aminata K."
             />
-          </div>
-          <div>
-            <label htmlFor="testimonial-location" className={LABEL_CLASS}>
-              Lieu
-            </label>
+          </Field>
+          <Field id="testimonial-location" label="Lieu">
             <input
               id="testimonial-location"
               type="text"
               value={values.location}
               onChange={(e) => onChange({ location: e.target.value })}
-              className={INPUT_CLASS}
+              className="input-som"
               placeholder="Cocody, Abidjan"
             />
-          </div>
+          </Field>
         </div>
 
-        <div>
-          <label htmlFor="testimonial-text" className={LABEL_CLASS}>
-            Témoignage
-          </label>
+        <Field id="testimonial-text" label="Témoignage" required>
           <textarea
             id="testimonial-text"
             value={values.text}
             onChange={(e) => onChange({ text: e.target.value })}
             rows={4}
-            className={`${INPUT_CLASS} resize-none`}
-            placeholder="Le témoignage du client..."
+            className="input-som"
+            placeholder="Le témoignage du client…"
           />
-        </div>
+        </Field>
 
         <div>
-          <span className={LABEL_CLASS}>Note</span>
+          <span className="label-som">Note</span>
           <TestimonialRatingInput value={values.rating} onChange={(rating) => onChange({ rating })} />
         </div>
 
         <div>
-          <span className="block text-sm font-medium text-[#000000] mb-2">Photo</span>
+          <span className="label-som">Photo</span>
           <ImageUpload
             images={values.image ? [values.image] : []}
             onChange={(urls) => onChange({ image: urls[0] || "" })}
@@ -88,26 +80,26 @@ export function TestimonialForm({ values, isEditing, isPending, onChange, onSave
           />
         </div>
 
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label className="flex min-h-10 cursor-pointer items-center gap-3">
           <input
             type="checkbox"
             checked={values.isActive}
             onChange={(e) => onChange({ isActive: e.target.checked })}
-            className="w-4 h-4 rounded border-gray-300 text-[#3c161e] focus:ring-black/10"
+            className="h-5 w-5 shrink-0 cursor-pointer accent-[var(--som-primary)]"
           />
-          <span className="text-sm text-[#000000]">Actif</span>
+          <span className="text-[14px] text-[var(--som-ink)]">Afficher sur le site</span>
         </label>
 
         <button
           type="button"
           onClick={onSave}
           disabled={isPending || !values.name.trim() || !values.text.trim()}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#511f29] text-white rounded-lg hover:bg-[#3d161f] disabled:opacity-50 transition-colors"
+          className="btn-primary w-full"
         >
-          <Save size={18} />
-          {isPending ? "Enregistrement..." : "Enregistrer"}
+          {isPending && <Loader2 size={15} strokeWidth={1.5} className="animate-spin" aria-hidden />}
+          {isPending ? "Enregistrement…" : "Enregistrer"}
         </button>
       </div>
-    </div>
+    </AdminCard>
   );
 }

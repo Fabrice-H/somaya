@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { RATING_VALUES } from "@/features/testimonials/constants";
 
 type TestimonialRatingInputProps = {
@@ -8,14 +7,17 @@ type TestimonialRatingInputProps = {
 
 export function TestimonialRatingInput({ value, onChange }: TestimonialRatingInputProps) {
   return (
-    <div className="flex gap-1">
+    <div className="-ml-2 flex">
       {RATING_VALUES.map((star) => (
         <button
           key={star}
           type="button"
           onClick={() => onChange(star)}
           aria-label={`${star} étoile${star > 1 ? "s" : ""}`}
-          className={clsx("text-2xl transition-colors", star <= value ? "text-[#3c161e]" : "text-gray-300")}
+          aria-pressed={star <= value}
+          className={`inline-flex h-10 w-10 cursor-pointer items-center justify-center text-[22px] leading-none transition-colors ${
+            star <= value ? "text-[var(--som-primary)]" : "text-[var(--som-border-strong)] hover:text-[var(--som-gray)]"
+          }`}
         >
           ★
         </button>
