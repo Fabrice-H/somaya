@@ -38,7 +38,7 @@ export function Sidebar() {
       />
       <aside
         inert={!mobileOpen}
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white transition-transform duration-300 ease-out lg:hidden ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-[var(--som-primary)] transition-transform duration-300 ease-out lg:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -46,14 +46,14 @@ export function Sidebar() {
           type="button"
           onClick={close}
           aria-label="Fermer le menu"
-          className="absolute right-2 top-3 z-10 flex h-11 w-11 cursor-pointer items-center justify-center text-[var(--som-gray)] hover:text-[var(--som-ink)]"
+          className="absolute right-2 top-3 z-10 flex h-11 w-11 cursor-pointer items-center justify-center text-white/60 hover:text-white"
         >
           <X size={19} strokeWidth={1.4} />
         </button>
         <SidebarNav onNavigate={close} />
       </aside>
 
-      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-[var(--som-border)] bg-white lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 bg-[var(--som-primary)] lg:block">
         <SidebarNav />
       </aside>
     </>
