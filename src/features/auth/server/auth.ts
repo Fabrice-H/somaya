@@ -1,14 +1,23 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { z } from "zod";
-import { db, adminUsers } from "@/shared/lib/db";
 import { eq } from "drizzle-orm";
+import { adminUsers, db } from "@/shared/lib/db";
+import { loginSchema } from "../schemas";
 import { verifyPassword } from "./password";
 
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
-});
+const SESSION_MAX_AGE_SECONDS = 24 * 60 * 60;
+
+async function authorizeAdmin(credentials: unknown) {
+  const parsed = loginSchema.safeParse(credentials);
+  if (!parsed.success) return null;
+
+  const admin = await db.query.adminUsers.findFirst({ where: eq(adminUsers.email, parsed.data.email) });
+  if (!admin?.isActive) return null;
+  if (!(await verifyPassword(parsed.data.password, admin.passwordHash))) return null;
+
+  await db.update(adminUsers).set({ lastLoginAt: new Date() }).where(eq(adminUsers.id, admin.id));
+  return { id: admin.id, email: admin.email, name: admin.name ?? "" };
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -17,75 +26,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Mot de passe", type: "password" },
       },
-      async authorize(credentials) {
-        const parsed = loginSchema.safeParse(credentials);
-        if (!parsed.success) {
-          return null;
-        }
-
-        const { email, password } = parsed.data;
-
+      authorize: async (credentials) => {
         try {
-          console.log("[Auth] Attempting login for:", email.toLowerCase());
-
-          // Find admin user by email
-          const admin = await db.query.adminUsers.findFirst({
-            where: eq(adminUsers.email, email.toLowerCase()),
-          });
-
-          console.log("[Auth] User found:", !!admin);
-
-          if (!admin || !admin.isActive) {
-            console.log("[Auth] User not found or inactive");
-            return null;
-          }
-
-          console.log("[Auth] User is active, verifying password...");
-
-          // Verify password
-          const isValid = await verifyPassword(password, admin.passwordHash);
-          console.log("[Auth] Password valid:", isValid);
-
-          if (!isValid) {
-            return null;
-          }
-
-          // Update last login
-          await db
-            .update(adminUsers)
-            .set({ lastLoginAt: new Date() })
-            .where(eq(adminUsers.id, admin.id));
-
-          return {
-            id: admin.id,
-            email: admin.email,
-            name: admin.name || "",
-          };
+          return await authorizeAdmin(credentials);
         } catch (error) {
-          console.error("Auth error:", error);
+          console.error("Admin authorization failed", error);
           return null;
         }
       },
     }),
   ],
-  pages: {
-    signIn: "/admin/login",
-  },
-  session: {
-    strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
-  },
+  pages: { signIn: "/admin/login" },
+  session: { strategy: "jwt", maxAge: SESSION_MAX_AGE_SECONDS },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
+    jwt({ token, user }) {
+      if (user) token.id = user.id;
       return token;
     },
-    async session({ session, token }) {
-      if (session.user && token.id) {
-        session.user.id = token.id as string;
-      }
+    session({ session, token }) {
+      if (session.user && token.id) session.user.id = token.id as string;
       return session;
     },
   },

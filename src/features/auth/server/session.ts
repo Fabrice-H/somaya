@@ -1,34 +1,21 @@
-"use server";
-
+import "server-only";
 import { auth } from "./auth";
-import { redirect } from "next/navigation";
+import type { AdminUser } from "../types";
 
-export type AdminUser = {
-  id: string;
-  email: string;
-  name: string;
-};
+export class UnauthorizedError extends Error {
+  constructor() {
+    super("Non autorisé");
+  }
+}
 
 export async function requireAdmin(): Promise<AdminUser | null> {
   const session = await auth();
-
-  if (!session?.user?.id) {
-    return null;
-  }
-
-  return {
-    id: session.user.id,
-    email: session.user.email || "",
-    name: session.user.name || "",
-  };
+  if (!session?.user?.id) return null;
+  return { id: session.user.id, email: session.user.email ?? "", name: session.user.name ?? "" };
 }
 
-export async function requireAdminOrRedirect(): Promise<AdminUser> {
+export async function assertAdmin(): Promise<AdminUser> {
   const admin = await requireAdmin();
-
-  if (!admin) {
-    redirect("/admin/login");
-  }
-
+  if (!admin) throw new UnauthorizedError();
   return admin;
 }
