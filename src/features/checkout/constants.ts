@@ -28,3 +28,5 @@ export const CHECKOUT_STEPS = [
 ] as const;
 
 export const PICKUP_LABEL = "Retrait en boutique";
+
+export const ORDER_RATE_LIMIT = { limit: 5, windowMs: 10 * 60 * 1000 } as const;

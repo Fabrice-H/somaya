@@ -1,20 +1,16 @@
-import { auth } from "@/features/auth/server/auth";
 import { NextResponse } from "next/server";
+import { auth } from "@/features/auth/server/auth";
+import { ACCESS_DENIED_PATH, ADMIN_LOGIN_PATH } from "@/features/auth/constants";
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
-  if (pathname === "/admin/login") {
-    if (req.auth) {
-      return NextResponse.redirect(new URL("/admin", req.url));
-    }
-    return NextResponse.next();
+  if (pathname === ADMIN_LOGIN_PATH) {
+    return req.auth ? NextResponse.redirect(new URL("/admin", req.url)) : NextResponse.next();
   }
 
-  if (pathname.startsWith("/admin")) {
-    if (!req.auth) {
-      return NextResponse.redirect(new URL("/admin/login", req.url));
-    }
+  if (!req.auth) {
+    return NextResponse.rewrite(new URL(ACCESS_DENIED_PATH, req.url), { status: 403 });
   }
 
   return NextResponse.next();

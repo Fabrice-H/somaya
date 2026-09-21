@@ -1,21 +1,25 @@
 import "server-only";
-import { auth } from "./auth";
+import { cache } from "react";
+import { forbidden } from "next/navigation";
+import { and, eq } from "drizzle-orm";
+import { adminUsers, db } from "@/shared/lib/db";
 import type { AdminUser } from "../types";
+import { auth } from "./auth";
 
-export class UnauthorizedError extends Error {
-  constructor() {
-    super("Non autorisé");
-  }
-}
-
-export async function requireAdmin(): Promise<AdminUser | null> {
+export const requireAdmin = cache(async (): Promise<AdminUser | null> => {
   const session = await auth();
-  if (!session?.user?.id) return null;
-  return { id: session.user.id, email: session.user.email ?? "", name: session.user.name ?? "" };
-}
+  const id = session?.user?.id;
+  if (!id) return null;
+
+  const admin = await db.query.adminUsers.findFirst({
+    where: and(eq(adminUsers.id, id), eq(adminUsers.isActive, true)),
+    columns: { id: true, email: true, name: true },
+  });
+  return admin ? { id: admin.id, email: admin.email, name: admin.name ?? "" } : null;
+});
 
 export async function assertAdmin(): Promise<AdminUser> {
   const admin = await requireAdmin();
-  if (!admin) throw new UnauthorizedError();
+  if (!admin) forbidden();
   return admin;
 }

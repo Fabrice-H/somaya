@@ -36,7 +36,7 @@ export default async function ProductPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildProductJsonLd(product)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildProductJsonLd(product)).replace(/</g, "\\u003c") }}
       />
       <ProductDetail product={product} />
       <RelatedProducts products={relatedProducts} />

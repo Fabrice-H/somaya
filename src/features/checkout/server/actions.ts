@@ -6,7 +6,8 @@ import { db, orderItems, orders } from "@/shared/lib/db";
 import { getDeliveryFee } from "@/features/settings/server/queries";
 import { generateOrderNumber } from "@/features/orders/utils";
 import { ORDERS_CACHE_TAG } from "@/features/orders/constants";
-import { PICKUP_LABEL } from "../constants";
+import { consumeRateLimit, getClientIp } from "@/shared/lib/rate-limit";
+import { ORDER_RATE_LIMIT, PICKUP_LABEL } from "../constants";
 import { checkoutSchema } from "../schemas";
 import type { PlaceOrderResult } from "../types";
 import { PricingError, priceCheckoutLines } from "./pricing";
@@ -22,6 +23,10 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
         return acc;
       }, {});
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Informations invalides", fieldErrors };
+  }
+
+  if (!consumeRateLimit(`order:${await getClientIp()}`, ORDER_RATE_LIMIT)) {
+    return { ok: false, error: "Trop de commandes envoyées. Réessayez dans quelques minutes." };
   }
 
   const { customer, deliveryMethod, lines } = parsed.data;

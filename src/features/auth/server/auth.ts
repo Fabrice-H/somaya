@@ -2,18 +2,20 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
 import { adminUsers, db } from "@/shared/lib/db";
+import { ADMIN_LOGIN_PATH } from "../constants";
 import { loginSchema } from "../schemas";
 import { verifyPassword } from "./password";
 
-const SESSION_MAX_AGE_SECONDS = 24 * 60 * 60;
+const SESSION_MAX_AGE_SECONDS = 12 * 60 * 60;
+const TIMING_SAFE_HASH = "$2b$12$gx7Qd7bGsax/KB.1tqfNNuNTZFRXJmW/U8KoLMZl.SwmvOtjZWb3m";
 
 async function authorizeAdmin(credentials: unknown) {
   const parsed = loginSchema.safeParse(credentials);
   if (!parsed.success) return null;
 
   const admin = await db.query.adminUsers.findFirst({ where: eq(adminUsers.email, parsed.data.email) });
-  if (!admin?.isActive) return null;
-  if (!(await verifyPassword(parsed.data.password, admin.passwordHash))) return null;
+  const valid = await verifyPassword(parsed.data.password, admin?.passwordHash ?? TIMING_SAFE_HASH);
+  if (!admin?.isActive || !valid) return null;
 
   await db.update(adminUsers).set({ lastLoginAt: new Date() }).where(eq(adminUsers.id, admin.id));
   return { id: admin.id, email: admin.email, name: admin.name ?? "" };
@@ -36,7 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  pages: { signIn: "/admin/login" },
+  pages: { signIn: ADMIN_LOGIN_PATH },
   session: { strategy: "jwt", maxAge: SESSION_MAX_AGE_SECONDS },
   callbacks: {
     jwt({ token, user }) {
