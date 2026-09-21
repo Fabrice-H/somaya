@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProductsByIds, getLotsByIds } from "@/lib/queries/products";
+import { getProductsByIds, getLotsByIds } from "@/features/products/server/queries";
 
 export async function POST(request: NextRequest) {
   try {

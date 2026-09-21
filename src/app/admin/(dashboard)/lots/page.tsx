@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import { getPriceLots, getCategories } from "@/features/admin/lots/actions";
-import { LotsPageContent } from "./LotsPageContent";
+import { getPriceLots, getCategories } from "@/features/lots/server/actions";
+import { LotsPageContent } from "@/features/lots/components/admin/LotsPageContent";
 
 export const metadata: Metadata = {
   title: "Lots de Prix | Admin SO'MAYA",

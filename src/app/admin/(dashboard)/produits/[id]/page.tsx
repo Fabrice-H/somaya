@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { ProductForm } from "@/features/admin/products";
-import { getProduct } from "@/features/admin/products/actions";
-import { getCategories } from "@/features/admin/categories/actions";
+import { ProductForm } from "@/features/products/components/admin/form/ProductForm";
+import { getProduct } from "@/features/products/server/actions";
+import { getCategories } from "@/features/categories/server/actions";
 
 export const metadata = {
   title: "Modifier le produit | Admin SO'MAYA",

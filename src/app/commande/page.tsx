@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { CheckoutContent } from "./CheckoutContent";
+import { CheckoutContent } from "@/features/checkout/components/CheckoutContent";
 
 export const metadata: Metadata = {
   title: "Commande | SO'MAYA - Mode & Accessoires",

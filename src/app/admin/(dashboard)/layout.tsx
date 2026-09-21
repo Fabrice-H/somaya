@@ -1,4 +1,4 @@
-import { AdminShell } from "@/features/admin/components/AdminShell";
+import { AdminShell } from "@/shared/components/admin/AdminShell";
 import { SessionProvider } from "next-auth/react";
 
 export default function AdminDashboardLayout({

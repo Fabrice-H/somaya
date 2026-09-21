@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
-import { requireAdmin } from "@/lib/auth/actions";
+import { requireAdmin } from "@/features/auth/server/session";
 
 // Configure Cloudinary
 cloudinary.config({

@@ -20,9 +20,9 @@ import {
   Smartphone,
   Banknote,
 } from 'lucide-react';
-import { getOrder, type OrderStatus, type PaymentMethod } from '@/features/admin/orders/actions';
-import { OrderStatusUpdate } from './OrderStatusUpdate';
-import { NotifyCustomerButton } from './NotifyCustomerButton';
+import { getOrder, type OrderStatus, type PaymentMethod } from '@/features/orders/server/actions';
+import { OrderStatusUpdate } from '@/features/orders/components/admin/OrderStatusUpdate';
+import { NotifyCustomerButton } from '@/features/orders/components/admin/NotifyCustomerButton';
 
 type Params = Promise<{ id: string }>;
 

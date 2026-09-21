@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-import { CategoryForm } from '@/features/admin/categories/CategoryForm';
-import { getCategoryById } from '@/features/admin/categories/actions';
+import { CategoryForm } from '@/features/categories/components/admin/CategoryForm';
+import { getCategoryById } from '@/features/categories/server/actions';
 
 export const metadata = {
   title: 'Modifier la catégorie | Admin SO\'MAYA',

@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import { Package } from 'lucide-react';
-import { getProducts } from '@/features/admin/products/actions';
-import { getCategories } from '@/features/admin/categories/actions';
-import { ProductsClient } from '@/features/admin/products';
+import { getProducts } from '@/features/products/server/actions';
+import { getCategories } from '@/features/categories/server/actions';
+import { ProductsClient } from '@/features/products/components/admin/ProductsClient';
 
 export const dynamic = 'force-dynamic';
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { loginAction, type LoginState } from "@/features/admin/auth/actions";
+import { loginAction, type LoginState } from "@/features/auth/server/actions";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 

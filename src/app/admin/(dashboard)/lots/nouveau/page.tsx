@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import { getCategories } from "@/features/admin/lots/actions";
-import { LotForm } from "@/features/admin/lots/components/LotForm";
+import { getCategories } from "@/features/lots/server/actions";
+import { LotForm } from "@/features/lots/components/admin/LotForm";
 
 export const metadata: Metadata = {
   title: "Nouveau Lot | Admin SO'MAYA",

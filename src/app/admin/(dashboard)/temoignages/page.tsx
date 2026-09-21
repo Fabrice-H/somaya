@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { getTestimonials } from "@/features/admin/testimonials/actions";
-import { TestimonialsManager } from "@/features/admin/testimonials/TestimonialsManager";
+import { getTestimonials } from "@/features/testimonials/server/actions";
+import { TestimonialsManager } from "@/features/testimonials/components/admin/TestimonialsManager";
 
 export const dynamic = "force-dynamic";
 

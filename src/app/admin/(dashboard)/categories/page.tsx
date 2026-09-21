@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
-import { getCategories } from '@/features/admin/categories/actions';
-import { CategoriesClient } from '@/features/admin/categories/CategoriesClient';
+import { getCategories } from '@/features/categories/server/actions';
+import { CategoriesClient } from '@/features/categories/components/admin/CategoriesClient';
 
 export const dynamic = 'force-dynamic';
 

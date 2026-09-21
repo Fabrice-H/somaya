@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
-import { getSettings } from '@/features/admin/settings/actions';
-import { getTestimonials } from '@/features/admin/testimonials/actions';
-import { getHeroBanner } from '@/features/admin/hero-banner/actions';
-import { SettingsClient } from '@/features/admin/settings/SettingsClient';
+import { getSettings } from '@/features/settings/server/actions';
+import { getTestimonials } from '@/features/testimonials/server/actions';
+import { getHeroBanner } from '@/features/home/server/actions';
+import { SettingsClient } from '@/features/settings/components/admin/SettingsClient';
 
 export const dynamic = 'force-dynamic';
 

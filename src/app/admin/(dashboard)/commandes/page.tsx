@@ -4,8 +4,8 @@ import {
   getOrders,
   getOrdersStats,
   type OrderStatus,
-} from '@/features/admin/orders/actions';
-import { OrdersClient } from '@/features/admin/orders/OrdersClient';
+} from '@/features/orders/server/actions';
+import { OrdersClient } from '@/features/orders/components/admin/OrdersClient';
 
 export const dynamic = 'force-dynamic';
 

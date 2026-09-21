@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import { Providers } from "@/providers/Providers";
+import { Providers } from "@/shared/providers/Providers";
 import "./globals.css";
 
 // Poppins everywhere (client request) - Helvetica Neue / Arial fallback

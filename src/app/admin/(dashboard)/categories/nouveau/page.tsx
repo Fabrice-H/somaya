@@ -1,4 +1,4 @@
-import { CategoryForm } from '@/features/admin/categories/CategoryForm';
+import { CategoryForm } from '@/features/categories/components/admin/CategoryForm';
 
 export const metadata = {
   title: 'Nouvelle catégorie | Admin SO\'MAYA',

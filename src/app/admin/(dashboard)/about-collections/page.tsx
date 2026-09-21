@@ -1,5 +1,5 @@
-import { getAboutCollections } from "@/features/admin/about-collections/actions";
-import { AboutCollectionsClient } from "./AboutCollectionsClient";
+import { getAboutCollections } from "@/features/brand/server/actions";
+import { AboutCollectionsClient } from "@/features/brand/components/admin/AboutCollectionsClient";
 
 export const dynamic = "force-dynamic";
 

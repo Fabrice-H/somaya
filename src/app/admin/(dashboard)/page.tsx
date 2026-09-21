@@ -1,7 +1,8 @@
 import { ShoppingCart, Package, DollarSign, Clock } from "lucide-react";
-import { KpiCard, StatusBadge, type OrderStatus } from "@/features/admin/components";
-import { getDashboardStats } from "@/features/admin/dashboard/actions";
-import { formatPriceXOF as formatPrice } from "@/lib/utils";
+import { KpiCard } from "@/features/dashboard/components/KpiCard";
+import { StatusBadge, type OrderStatus } from "@/shared/components/admin/StatusBadge";
+import { getDashboardStats } from "@/features/dashboard/server/queries";
+import { formatPriceXOF as formatPrice } from "@/shared/lib/utils";
 import Link from "next/link";
 
 export default async function AdminDashboard() {

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { getHeroBanner } from "@/features/admin/hero-banner/actions";
-import { HeroBannerForm } from "@/features/admin/hero-banner/HeroBannerForm";
+import { getHeroBanner } from "@/features/home/server/actions";
+import { HeroBannerForm } from "@/features/home/components/admin/HeroBannerForm";
 
 export const dynamic = "force-dynamic";
 
