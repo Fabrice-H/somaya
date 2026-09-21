@@ -1,56 +1,71 @@
 import Link from "next/link";
-import { Eye } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { Td, Tr } from "@/shared/components/admin/ui/Table";
 import { formatPrice } from "@/shared/lib/format";
 import { ORDERS_PATH, PAYMENT_METHOD_SHORT_LABELS } from "../../../constants";
 import { formatOrderDate } from "../../../utils";
 import type { OrderSummary } from "../../../types";
 import { PAYMENT_METHOD_ICONS } from "../icons";
 import { OrderStatusBadge } from "../OrderStatusBadge";
-import { ORDERS_GRID_COLUMNS } from "./table-layout";
 
-export function OrderRow({ order, isLast }: { order: OrderSummary; isLast: boolean }) {
+const stop = (event: React.MouseEvent) => event.stopPropagation();
+
+export function OrderRow({ order, onOpen }: { order: OrderSummary; onOpen: (href: string) => void }) {
   const PaymentIcon = PAYMENT_METHOD_ICONS[order.payment_method];
+  const href = `${ORDERS_PATH}/${order.id}`;
 
+  return (
+    <Tr onClick={() => onOpen(href)}>
+      <Td>
+        <Link href={href} onClick={stop} className="font-medium tabular-nums hover:text-[var(--som-primary)]">
+          {order.order_number}
+        </Link>
+      </Td>
+      <Td>
+        <p className="m-0 font-medium">{order.customer_name}</p>
+        <p className="m-0 mt-0.5 text-[12px] font-light tabular-nums text-[var(--som-gray)]">{order.customer_phone}</p>
+      </Td>
+      <Td muted>{formatOrderDate(order.created_at)}</Td>
+      <Td muted>
+        <span className="inline-flex items-center gap-2 text-[13px]">
+          <PaymentIcon size={15} strokeWidth={1.5} aria-hidden />
+          {PAYMENT_METHOD_SHORT_LABELS[order.payment_method]}
+        </span>
+      </Td>
+      <Td>
+        <OrderStatusBadge status={order.status} />
+      </Td>
+      <Td align="right">
+        <span className="font-medium tabular-nums">{formatPrice(order.total)}</span>
+      </Td>
+      <Td align="right">
+        <Link
+          href={href}
+          onClick={stop}
+          aria-label={`Voir la commande ${order.order_number}`}
+          className="inline-flex h-10 w-10 items-center justify-center text-[var(--som-gray)] transition-colors hover:text-[var(--som-primary)]"
+        >
+          <ArrowUpRight size={16} strokeWidth={1.5} aria-hidden />
+        </Link>
+      </Td>
+    </Tr>
+  );
+}
+
+export function OrderMobileRow({ order }: { order: OrderSummary }) {
   return (
     <Link
       href={`${ORDERS_PATH}/${order.id}`}
-      className="block md:grid transition-colors hover:bg-[#fafafa]"
-      style={{
-        gridTemplateColumns: ORDERS_GRID_COLUMNS,
-        gap: 16,
-        padding: "16px 20px",
-        borderBottom: isLast ? "none" : "1px solid rgba(81,31,41,0.1)",
-      }}
+      className="block border-b border-[var(--som-border)] px-5 py-4 transition-colors last:border-b-0 hover:bg-[var(--som-surface-alt)]"
     >
-      <span style={{ fontSize: 12, color: "#6b6b6b", fontFamily: "monospace" }}>{order.order_number}</span>
-      <div>
-        <p style={{ fontSize: 14, fontWeight: 500, color: "#000000", marginBottom: 2 }}>{order.customer_name}</p>
-        <p style={{ fontSize: 12, color: "#6b6b6b" }}>{order.customer_phone}</p>
-      </div>
-      <span style={{ fontSize: 13, color: "#6b6b6b" }}>{formatOrderDate(order.created_at)}</span>
-      <span style={{ fontSize: 14, fontWeight: 600, color: "#000000", textAlign: "right", fontFamily: "monospace" }}>
-        {formatPrice(order.total)}
-      </span>
-      <span className="flex items-center gap-2" style={{ fontSize: 13, color: "#6b6b6b" }}>
-        <PaymentIcon size={14} />
-        <span className="hidden lg:inline">{PAYMENT_METHOD_SHORT_LABELS[order.payment_method]}</span>
-      </span>
-      <div>
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-[14px] font-medium tabular-nums text-[var(--som-ink)]">{order.order_number}</span>
         <OrderStatusBadge status={order.status} />
       </div>
-      <div className="flex justify-center">
-        <span
-          style={{
-            width: 32,
-            height: 32,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#6b6b6b",
-          }}
-        >
-          <Eye size={16} />
-        </span>
+      <p className="m-0 mt-2 text-[14px] text-[var(--som-ink)]">{order.customer_name}</p>
+      <div className="mt-1 flex items-center justify-between gap-3 text-[12px] font-light text-[var(--som-gray)]">
+        <span>{formatOrderDate(order.created_at)}</span>
+        <span className="text-[14px] font-medium tabular-nums text-[var(--som-ink)]">{formatPrice(order.total)}</span>
       </div>
     </Link>
   );

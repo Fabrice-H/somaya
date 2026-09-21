@@ -1,16 +1,14 @@
-import { Package } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
+import { EmptyState } from "@/shared/components/admin/ui/EmptyState";
 
 export function OrdersEmptyState({ filtered }: { filtered: boolean }) {
   return (
-    <div
-      className="text-center"
-      style={{ padding: "64px 20px", background: "#fafafa", border: "1px solid rgba(81,31,41,0.1)" }}
-    >
-      <Package size={48} style={{ color: "#6b6b6b", margin: "0 auto 16px", opacity: 0.5 }} />
-      <p style={{ fontSize: 16, fontWeight: 500, color: "#000000", marginBottom: 4 }}>Aucune commande trouvée</p>
-      <p style={{ fontSize: 14, color: "#6b6b6b" }}>
-        {filtered ? "Essayez de modifier vos filtres" : "Les commandes apparaîtront ici"}
-      </p>
-    </div>
+    <EmptyState
+      icon={ShoppingBag}
+      title="Aucune commande trouvée"
+      description={
+        filtered ? "Essayez de modifier ou de réinitialiser vos filtres." : "Les nouvelles commandes apparaîtront ici."
+      }
+    />
   );
 }

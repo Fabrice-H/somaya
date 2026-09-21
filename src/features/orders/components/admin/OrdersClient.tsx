@@ -1,5 +1,7 @@
 "use client";
 
+import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
+import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
 import { useOrderFilters } from "../../hooks/useOrderFilters";
 import type { OrderSummary, OrdersStats } from "../../types";
 import { OrderFiltersBar } from "./list/OrderFiltersBar";
@@ -7,6 +9,7 @@ import { OrderStatusTabs } from "./list/OrderStatusTabs";
 import { OrdersEmptyState } from "./list/OrdersEmptyState";
 import { OrdersLoadingIndicator } from "./list/OrdersLoadingIndicator";
 import { OrdersPagination } from "./list/OrdersPagination";
+import { OrdersStatsRow } from "./list/OrdersStatsRow";
 import { OrdersTable } from "./list/OrdersTable";
 
 interface OrdersClientProps {
@@ -21,19 +24,19 @@ export function OrdersClient({ orders, stats, total, page, totalPages }: OrdersC
   const filters = useOrderFilters();
 
   return (
-    <div style={{ padding: "32px 40px" }}>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-[#000000] mb-1">Commandes</h1>
-        <p className="text-sm text-[#6b6b6b]">Gérez les commandes de votre boutique</p>
-      </div>
+    <AdminPage eyebrow="Ventes" title="Commandes" description="Suivez et traitez les commandes de votre boutique.">
+      <OrdersStatsRow stats={stats} />
 
-      <div className="space-y-4 mb-6">
+      <div className="mt-10">
         <OrderStatusTabs
           current={filters.status}
           stats={stats}
           disabled={filters.isPending}
           onChange={filters.setStatus}
         />
+      </div>
+
+      <AdminCard padded={false} className="mt-6">
         <OrderFiltersBar
           search={filters.search}
           dateFrom={filters.dateFrom}
@@ -46,30 +49,29 @@ export function OrdersClient({ orders, stats, total, page, totalPages }: OrdersC
           onDateToChange={filters.setDateTo}
           onClearAll={filters.clearAll}
         />
-        {filters.isPending && <OrdersLoadingIndicator />}
-      </div>
 
-      {total > 0 && (
-        <p className="text-sm text-[#6b6b6b] mb-4">
-          {total} commande{total > 1 ? "s" : ""} trouvée{total > 1 ? "s" : ""}
-        </p>
-      )}
+        <div className="flex min-h-12 items-center justify-between gap-4 border-b border-[var(--som-border)] px-5 lg:px-6">
+          <p className="m-0 text-[11px] uppercase tracking-[0.16em] text-[var(--som-gray)]">
+            <span className="tabular-nums">{total}</span> commande{total > 1 ? "s" : ""} trouvée{total > 1 ? "s" : ""}
+          </p>
+          {filters.isPending && <OrdersLoadingIndicator />}
+        </div>
 
-      {orders.length === 0 ? (
-        <OrdersEmptyState filtered={filters.hasActiveFilters} />
-      ) : (
-        <>
+        {orders.length === 0 ? (
+          <OrdersEmptyState filtered={filters.hasActiveFilters} />
+        ) : (
           <OrdersTable orders={orders} />
-          {totalPages > 1 && (
-            <OrdersPagination
-              page={page}
-              totalPages={totalPages}
-              disabled={filters.isPending}
-              onPageChange={filters.setPage}
-            />
-          )}
-        </>
-      )}
-    </div>
+        )}
+
+        {orders.length > 0 && totalPages > 1 && (
+          <OrdersPagination
+            page={page}
+            totalPages={totalPages}
+            disabled={filters.isPending}
+            onPageChange={filters.setPage}
+          />
+        )}
+      </AdminCard>
+    </AdminPage>
   );
 }

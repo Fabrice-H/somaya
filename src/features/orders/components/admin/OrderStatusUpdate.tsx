@@ -46,22 +46,14 @@ export function OrderStatusUpdate({ orderId, currentStatus }: OrderStatusUpdateP
   };
 
   return (
-    <div>
+    <div className="relative w-full sm:w-[220px]">
       <select
         aria-label="Statut de la commande"
+        aria-invalid={feedback?.type === "error" ? "true" : undefined}
         value={status}
         onChange={(event) => handleChange(event.target.value as OrderStatus)}
         disabled={isPending}
-        style={{
-          width: "100%",
-          padding: "10px 14px",
-          fontSize: 14,
-          border: "1px solid rgba(81,31,41,0.2)",
-          background: "white",
-          color: "#000000",
-          cursor: isPending ? "wait" : "pointer",
-          opacity: isPending ? 0.7 : 1,
-        }}
+        className={`input-som min-h-10! py-0! text-[13px]! ${isPending ? "cursor-wait" : "cursor-pointer"}`}
       >
         {ORDER_STATUSES.map((value) => (
           <option key={value} value={value}>
@@ -69,11 +61,14 @@ export function OrderStatusUpdate({ orderId, currentStatus }: OrderStatusUpdateP
           </option>
         ))}
       </select>
-      {feedback && (
-        <p style={{ marginTop: 8, fontSize: 12, color: feedback.type === "success" ? "#065F46" : "#991B1B" }}>
-          {feedback.text}
-        </p>
-      )}
+      <p
+        role="status"
+        className={`m-0 mt-1.5 min-h-4 text-[12px] font-light sm:absolute sm:left-0 sm:top-full ${
+          feedback?.type === "error" ? "text-[var(--som-error)]" : "text-[var(--som-success)]"
+        }`}
+      >
+        {feedback?.text}
+      </p>
     </div>
   );
 }

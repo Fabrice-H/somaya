@@ -8,39 +8,28 @@ interface OrderSearchInputProps {
 
 export function OrderSearchInput({ value, onChange, onClear }: OrderSearchInputProps) {
   return (
-    <div className="relative flex-1 min-w-[280px]">
-      <Search
-        size={18}
-        style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "#6b6b6b" }}
-      />
+    <label className="input-group-som w-full md:max-w-[380px] md:flex-1">
+      <span>
+        <Search size={16} strokeWidth={1.5} aria-hidden />
+      </span>
+      <span className="sr-only">Rechercher une commande</span>
       <input
         type="text"
-        placeholder="Rechercher (nom, téléphone, n° commande...)"
+        placeholder="Nom, téléphone, n° de commande…"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="focus:border-black"
-        style={{
-          width: "100%",
-          height: 44,
-          paddingLeft: 44,
-          paddingRight: value ? 44 : 16,
-          border: "1px solid rgba(81,31,41,0.15)",
-          background: "white",
-          fontSize: 14,
-          color: "#000000",
-          outline: "none",
-        }}
+        className="input-som"
       />
       {value && (
         <button
           type="button"
           aria-label="Effacer la recherche"
           onClick={onClear}
-          style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", color: "#6b6b6b" }}
+          className="flex w-11 shrink-0 cursor-pointer items-center justify-center text-[var(--som-gray)] transition-colors hover:text-[var(--som-ink)]"
         >
-          <X size={16} />
+          <X size={15} strokeWidth={1.5} aria-hidden />
         </button>
       )}
-    </div>
+    </label>
   );
 }

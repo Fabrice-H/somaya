@@ -28,31 +28,21 @@ export function OrderFiltersBar({
   onClearAll,
 }: OrderFiltersBarProps) {
   return (
-    <div
-      className="flex flex-wrap items-center gap-3"
-      style={{ padding: "16px 20px", background: "#fafafa", border: "1px solid rgba(81,31,41,0.1)" }}
-    >
+    <div className="flex flex-col gap-3 border-b border-[var(--som-border)] p-5 md:flex-row md:flex-wrap md:items-center lg:px-6">
       <OrderSearchInput value={search} onChange={onSearchChange} onClear={onSearchClear} />
-      <DateFilterInput label="Date de début" value={dateFrom} onChange={onDateFromChange} />
-      <DateFilterInput label="Date de fin" value={dateTo} onChange={onDateToChange} />
+      <div className="grid grid-cols-2 gap-3 md:flex">
+        <DateFilterInput label="Date de début" value={dateFrom} onChange={onDateFromChange} />
+        <DateFilterInput label="Date de fin" value={dateTo} onChange={onDateToChange} />
+      </div>
       {hasActiveFilters && (
         <button
           type="button"
           onClick={onClearAll}
           disabled={isPending}
-          className="inline-flex items-center gap-2 transition-colors hover:bg-white"
-          style={{
-            height: 44,
-            padding: "0 16px",
-            border: "1px solid rgba(81,31,41,0.15)",
-            background: "transparent",
-            fontSize: 13,
-            color: "#6b6b6b",
-            cursor: isPending ? "wait" : "pointer",
-          }}
+          className={`btn-link self-start md:ml-auto md:self-center ${isPending ? "cursor-wait" : ""}`}
         >
-          <X size={14} />
-          Effacer
+          <X size={15} strokeWidth={1.5} aria-hidden />
+          Réinitialiser
         </button>
       )}
     </div>

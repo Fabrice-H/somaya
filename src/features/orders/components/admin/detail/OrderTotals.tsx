@@ -3,26 +3,21 @@ import type { OrderDetail } from "../../../types";
 
 type OrderTotalsProps = Pick<OrderDetail, "subtotal" | "delivery_fee" | "total">;
 
-const AMOUNT_STYLE = { fontVariantNumeric: "tabular-nums" } as const;
-
 export function OrderTotals({ subtotal, delivery_fee, total }: OrderTotalsProps) {
   return (
-    <div className="space-y-2" style={{ padding: "16px 24px", background: "#fafafa" }}>
-      <div className="flex justify-between" style={{ fontSize: 13, color: "#6b6b6b" }}>
-        <span>Sous-total</span>
-        <span style={AMOUNT_STYLE}>{formatPrice(subtotal)}</span>
+    <dl className="m-0 space-y-2.5 border-t border-[var(--som-border)] bg-[var(--som-surface-alt)] px-5 py-5 lg:px-6">
+      <div className="flex justify-between text-[14px] font-light text-[var(--som-gray)]">
+        <dt>Sous-total</dt>
+        <dd className="m-0 tabular-nums">{formatPrice(subtotal)}</dd>
       </div>
-      <div className="flex justify-between" style={{ fontSize: 13, color: "#6b6b6b" }}>
-        <span>Livraison</span>
-        <span style={AMOUNT_STYLE}>{formatPrice(delivery_fee)}</span>
+      <div className="flex justify-between text-[14px] font-light text-[var(--som-gray)]">
+        <dt>Livraison</dt>
+        <dd className="m-0 tabular-nums">{formatPrice(delivery_fee)}</dd>
       </div>
-      <div
-        className="flex justify-between pt-2"
-        style={{ fontSize: 16, fontWeight: 600, color: "#000000", borderTop: "1px solid rgba(81,31,41,0.1)" }}
-      >
-        <span>Total</span>
-        <span style={AMOUNT_STYLE}>{formatPrice(total)}</span>
+      <div className="flex items-baseline justify-between border-t border-[var(--som-border)] pt-3 text-[var(--som-ink)]">
+        <dt className="text-[13px] font-medium uppercase tracking-[0.14em]">Total</dt>
+        <dd className="m-0 text-[18px] font-medium tabular-nums">{formatPrice(total)}</dd>
       </div>
-    </div>
+    </dl>
   );
 }

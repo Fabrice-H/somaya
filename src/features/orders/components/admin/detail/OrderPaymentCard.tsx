@@ -1,23 +1,15 @@
-import { CreditCard } from "lucide-react";
+import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
 import { PAYMENT_METHOD_LABELS } from "../../../constants";
 import type { PaymentMethod } from "../../../types";
 import { PAYMENT_METHOD_ICONS } from "../icons";
-import { OrderPanel } from "./OrderPanel";
+import { InfoLine } from "./InfoLine";
 
 export function OrderPaymentCard({ method }: { method: PaymentMethod }) {
-  const PaymentIcon = PAYMENT_METHOD_ICONS[method];
-
   return (
-    <OrderPanel icon={CreditCard} title="Paiement">
-      <div style={{ padding: "20px 24px" }}>
-        <div
-          className="inline-flex items-center gap-2"
-          style={{ padding: "10px 16px", background: "#fafafa", fontSize: 14, fontWeight: 500, color: "#000000" }}
-        >
-          <PaymentIcon size={16} style={{ color: "#6b6b6b" }} />
-          {PAYMENT_METHOD_LABELS[method]}
-        </div>
-      </div>
-    </OrderPanel>
+    <AdminCard title="Paiement">
+      <InfoLine icon={PAYMENT_METHOD_ICONS[method]} label="Mode de paiement">
+        <p className="m-0">{PAYMENT_METHOD_LABELS[method]}</p>
+      </InfoLine>
+    </AdminCard>
   );
 }

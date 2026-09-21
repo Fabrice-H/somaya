@@ -1,28 +1,34 @@
+import { AdminPage } from "@/shared/components/admin/ui/AdminPage";
+import { ORDERS_PATH } from "../../../constants";
+import { formatOrderDateLong } from "../../../utils";
 import type { OrderDetail } from "../../../types";
-import { OrderActionsCard } from "./OrderActionsCard";
 import { OrderCustomerCard } from "./OrderCustomerCard";
-import { OrderDetailHeader } from "./OrderDetailHeader";
+import { OrderDeliveryCard } from "./OrderDeliveryCard";
+import { OrderDetailActions } from "./OrderDetailHeader";
 import { OrderItemsCard } from "./OrderItemsCard";
 import { OrderPaymentCard } from "./OrderPaymentCard";
 import { OrderTimelineCard } from "./OrderTimelineCard";
 
 export function OrderDetailView({ order }: { order: OrderDetail }) {
   return (
-    <div>
-      <OrderDetailHeader order={order} />
-      <div style={{ padding: "32px 40px" }}>
-        <div className="grid lg:grid-cols-3 gap-6" style={{ maxWidth: 1200 }}>
-          <div className="lg:col-span-2 space-y-6">
-            <OrderItemsCard order={order} />
-            <OrderActionsCard order={order} />
-          </div>
-          <div className="space-y-6">
-            <OrderCustomerCard order={order} />
-            <OrderPaymentCard method={order.payment_method} />
-            <OrderTimelineCard order={order} />
-          </div>
+    <AdminPage
+      eyebrow="Commande"
+      title={order.order_number}
+      description={`Passée le ${formatOrderDateLong(order.created_at)}`}
+      back={{ href: ORDERS_PATH, label: "Retour aux commandes" }}
+      actions={<OrderDetailActions order={order} />}
+    >
+      <div className="grid items-start gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <OrderItemsCard order={order} />
+        </div>
+        <div className="space-y-6">
+          <OrderTimelineCard order={order} />
+          <OrderCustomerCard order={order} />
+          <OrderDeliveryCard order={order} />
+          <OrderPaymentCard method={order.payment_method} />
         </div>
       </div>
-    </div>
+    </AdminPage>
   );
 }

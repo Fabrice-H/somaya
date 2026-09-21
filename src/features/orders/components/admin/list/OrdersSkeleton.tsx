@@ -1,38 +1,45 @@
+const STAT_PLACEHOLDERS = [1, 2, 3, 4];
 const TAB_PLACEHOLDERS = [1, 2, 3, 4, 5, 6, 7];
 const ROW_PLACEHOLDERS = [1, 2, 3, 4, 5];
 
+const BLOCK = "animate-pulse bg-[var(--som-surface)]";
+
 export function OrdersSkeleton() {
   return (
-    <div style={{ padding: "32px 40px" }}>
-      <div className="mb-8">
-        <div className="h-8 w-32 bg-[#fafafa] animate-pulse mb-2" />
-        <div className="h-4 w-48 bg-[#fafafa] animate-pulse" />
+    <div className="mx-auto w-full max-w-[1280px] px-5 pb-16 pt-8 lg:px-10 lg:pt-10" aria-busy="true">
+      <div className="mb-8 border-b border-[var(--som-border)] pb-6 lg:mb-10">
+        <div className={`mb-3 h-3 w-16 ${BLOCK}`} />
+        <div className={`h-7 w-44 ${BLOCK}`} />
+        <div className={`mt-2 h-4 w-72 max-w-full ${BLOCK}`} />
       </div>
-      <div className="flex flex-wrap gap-2 mb-4">
-        {TAB_PLACEHOLDERS.map((i) => (
-          <div key={i} className="h-8 bg-[#fafafa] animate-pulse" style={{ width: 80 + i * 10 }} />
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {STAT_PLACEHOLDERS.map((i) => (
+          <div key={i} className="border border-[var(--som-border)] bg-white p-5 lg:p-6">
+            <div className={`h-3 w-20 ${BLOCK}`} />
+            <div className={`mt-4 h-7 w-16 ${BLOCK}`} />
+          </div>
         ))}
       </div>
-      <div
-        className="flex flex-wrap items-center gap-3 mb-6"
-        style={{ padding: "16px 20px", background: "#fafafa", border: "1px solid rgba(81,31,41,0.1)" }}
-      >
-        <div className="h-11 flex-1 min-w-[280px] bg-white animate-pulse" />
-        <div className="h-11 w-40 bg-white animate-pulse" />
-        <div className="h-11 w-40 bg-white animate-pulse" />
+      <div className="mt-10 flex h-12 gap-7 overflow-hidden border-b border-[var(--som-border)]">
+        {TAB_PLACEHOLDERS.map((i) => (
+          <div key={i} className={`my-auto h-3 w-20 shrink-0 ${BLOCK}`} />
+        ))}
       </div>
-      <div style={{ background: "white", border: "1px solid rgba(81,31,41,0.1)" }}>
-        <div className="h-12 bg-[#fafafa]" style={{ borderBottom: "1px solid rgba(81,31,41,0.1)" }} />
+      <div className="mt-6 border border-[var(--som-border)] bg-white">
+        <div className="flex flex-wrap gap-3 border-b border-[var(--som-border)] p-5 lg:px-6">
+          <div className={`h-[52px] w-full md:w-[380px] ${BLOCK}`} />
+          <div className={`h-[52px] w-[180px] ${BLOCK}`} />
+          <div className={`h-[52px] w-[180px] ${BLOCK}`} />
+        </div>
         {ROW_PLACEHOLDERS.map((i) => (
           <div
             key={i}
-            className="h-16 animate-pulse"
-            style={{
-              borderBottom: i < ROW_PLACEHOLDERS.length ? "1px solid rgba(81,31,41,0.1)" : "none",
-              background: i % 2 === 0 ? "#fafafa" : "white",
-              opacity: 1 - i * 0.1,
-            }}
-          />
+            className="flex h-16 items-center gap-6 border-b border-[var(--som-border)] px-5 last:border-b-0 lg:px-6"
+          >
+            <div className={`h-3 w-20 ${BLOCK}`} />
+            <div className={`h-3 flex-1 ${BLOCK}`} />
+            <div className={`h-3 w-16 ${BLOCK}`} />
+          </div>
         ))}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import type { OrderStatus, OrderStatusFilter, OrdersStats, PaymentMethod, StatusColors } from "./types";
+import type { OrderStatus, OrderStatusFilter, OrdersStats, PaymentMethod } from "./types";
 
 export const ORDERS_CACHE_TAG = "orders";
 
@@ -19,25 +19,16 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   pending: "En attente",
   confirmed: "Confirmée",
   preparing: "En préparation",
-  shipped: "En livraison",
+  shipped: "Expédiée",
   delivered: "Livrée",
   cancelled: "Annulée",
 };
 
-export const ORDER_STATUS_COLORS: Record<OrderStatus, StatusColors> = {
-  pending: { bg: "#FEF3C7", text: "#92400E" },
-  confirmed: { bg: "#DBEAFE", text: "#1E40AF" },
-  preparing: { bg: "#EDE9FE", text: "#5B21B6" },
-  shipped: { bg: "#CFFAFE", text: "#0E7490" },
-  delivered: { bg: "#D1FAE5", text: "#065F46" },
-  cancelled: { bg: "#FEE2E2", text: "#991B1B" },
-};
-
 export const ORDER_STATUS_FILTERS: { value: OrderStatusFilter; label: string }[] = [
-  { value: "all", label: "Tous" },
+  { value: "all", label: "Toutes" },
   ...ORDER_STATUSES.map((value) => ({
     value,
-    label: value === "preparing" ? "En prép." : ORDER_STATUS_LABELS[value],
+    label: ORDER_STATUS_LABELS[value],
   })),
 ];
 
