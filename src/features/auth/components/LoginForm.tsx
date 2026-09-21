@@ -38,7 +38,7 @@ export function LoginForm() {
                 type="email"
                 autoComplete="email"
                 required
-                className="w-full px-4 py-3 rounded-lg border border-black
+                className="w-full px-4 py-3 rounded-lg border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)]
                          focus:outline-none focus:ring-2 focus:ring-black/10
                          text-[#3c161e] placeholder:text-[#3c161e]/40"
                 placeholder="admin@somaya.ci"
@@ -56,7 +56,7 @@ export function LoginForm() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-black
+                  className="w-full px-4 py-3 rounded-lg border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)]
                            focus:outline-none focus:ring-2 focus:ring-black/10
                            text-[#3c161e] placeholder:text-[#3c161e]/40 pr-12"
                   placeholder="Votre mot de passe"

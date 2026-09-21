@@ -27,7 +27,7 @@ export function LotItemsSection({ items, uploadingIds, onAdd, onRemove, onUpdate
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed border-black">
+        <div className="text-center py-12 border-2 border-dashed border-[var(--som-border)]">
           <Package size={48} className="mx-auto text-[#3c161e]/20 mb-4" />
           <p className="text-[#6b6b6b] mb-4">Aucun article dans ce lot</p>
           <button

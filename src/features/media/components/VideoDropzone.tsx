@@ -36,7 +36,7 @@ export function VideoDropzone({ value, onChange }: VideoDropzoneProps) {
         onClick={() => !isUploading && inputRef.current?.click()}
         className={clsx(
           "border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all",
-          isUploading ? "border-black bg-[#511f29]/5" : "border-gray-200 hover:border-[#511f29]/50 hover:bg-[#511f29]/5"
+          isUploading ? "border-[var(--som-primary)] bg-[#511f29]/5" : "border-gray-200 hover:border-[#511f29]/50 hover:bg-[#511f29]/5"
         )}
       >
         <input

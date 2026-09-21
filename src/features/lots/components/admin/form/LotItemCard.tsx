@@ -4,7 +4,7 @@ import { parseNumberInput } from "@/features/lots/utils";
 import type { PriceLotItem } from "@/features/lots/types";
 
 const FIELD_CLASS =
-  "w-full h-9 px-3 border border-black text-sm focus:outline-none focus:ring-2 focus:ring-black/10 bg-white text-[#000000]";
+  "w-full h-9 px-3 border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-sm focus:outline-none focus:ring-2 focus:ring-black/10 bg-white text-[#000000]";
 
 type LotItemCardProps = {
   item: PriceLotItem;
@@ -17,7 +17,7 @@ type LotItemCardProps = {
 
 export function LotItemCard({ item, index, isUploading, onUpdate, onRemove, onUpload }: LotItemCardProps) {
   return (
-    <div className="border border-black overflow-hidden bg-[#fafafa]">
+    <div className="border border-[var(--som-border)] overflow-hidden bg-[#fafafa]">
       <div className="relative aspect-square bg-white">
         {item.image ? (
           <>

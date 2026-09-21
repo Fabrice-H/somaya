@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import { STOCK_FILTER_OPTIONS } from "@/features/products/constants";
 import type { AdminProductFilters, CategoryOption } from "@/features/products/types";
 
-const SELECT_CLASS = "h-11 px-4 bg-[#fafafa] border border-black text-[#000000] text-sm outline-none cursor-pointer";
+const SELECT_CLASS = "h-11 px-4 bg-[#fafafa] border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-[#000000] text-sm outline-none cursor-pointer";
 
 interface ProductListFiltersProps {
   filters: AdminProductFilters;
@@ -31,7 +31,7 @@ export function ProductListFilters({ filters, categories, onChange }: ProductLis
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Rechercher un produit..."
-            className="w-full h-11 pl-10 pr-4 bg-[#fafafa] border border-black text-[#000000] text-sm outline-none transition-colors focus:border-black"
+            className="w-full h-11 pl-10 pr-4 bg-[#fafafa] border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-[#000000] text-sm outline-none transition-colors focus:border-black"
           />
         </div>
       </form>

@@ -28,7 +28,8 @@
   --som-surface-alt: #fafafa;
   --som-border: #e6e6e6;
   --som-border-strong: #cfcfcf;
-  --som-border-input: var(--som-black);
+  --som-border-input: #e2dedc;
+  --som-border-input-hover: #bdb7b4;
   --som-text: var(--som-black);
   --som-text-secondary: #4a4a4a;
   --som-text-muted: #6b6b6b;
@@ -36,7 +37,7 @@
   --som-text-on-dark: #ffffff;
   --som-text-on-dark-muted: rgba(255, 255, 255, 0.72);
   --som-focus: var(--som-primary);
-  --som-focus-ring: rgba(81, 31, 41, 0.14);
+  --som-focus-ring: rgba(0, 0, 0, 0.04);
   --som-success: #1f7a45;
   --som-error: #c62828;
   --som-error-tint: #fdecec;
@@ -414,31 +415,76 @@ body {
 
 .input-som {
   width: 100%;
-  min-height: 48px;
+  min-height: 52px;
   background: var(--som-white);
   border: 1px solid var(--som-border-input);
   color: var(--som-text);
-  padding: 12px 14px;
+  padding: 14px 16px;
   font-size: 16px;
+  font-weight: 300;
   font-family: var(--font-stack);
   border-radius: 2px;
   outline: none;
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background-color 0.2s ease;
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 @media (min-width: 768px) {
   .input-som {
-    font-size: 14px;
+    font-size: 15px;
   }
+}
+
+.input-som:hover {
+  border-color: var(--som-border-input-hover);
 }
 
 .input-som:focus,
 .input-som:focus-visible {
   border-color: var(--som-text);
   box-shadow: 0 0 0 3px var(--som-focus-ring);
+}
+
+.input-group-som {
+  display: flex;
+  align-items: stretch;
+  min-height: 52px;
+  background: var(--som-white);
+  border: 1px solid var(--som-border-input);
+  border-radius: 2px;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.input-group-som:hover {
+  border-color: var(--som-border-input-hover);
+}
+
+.input-group-som:focus-within {
+  border-color: var(--som-text);
+  box-shadow: 0 0 0 3px var(--som-focus-ring);
+}
+
+.input-group-som:has([aria-invalid="true"]) {
+  border-color: var(--som-error);
+}
+
+.input-group-som > span {
+  display: flex;
+  align-items: center;
+  padding: 0 4px 0 16px;
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--som-text-muted);
+}
+
+.input-group-som > .input-som {
+  min-height: 0;
+  border: 0;
+  box-shadow: none;
+  padding-left: 8px;
 }
 
 .input-som::placeholder {

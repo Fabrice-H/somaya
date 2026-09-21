@@ -50,7 +50,7 @@ export function NewCollectionForm({ draft, saving, onChange, onSubmit, onCancel 
         </div>
       </div>
 
-      <div className="flex gap-3 mt-6 pt-4 border-t border-black">
+      <div className="flex gap-3 mt-6 pt-4 border-t border-[var(--som-border)]">
         <button
           type="button"
           onClick={onSubmit}
@@ -63,7 +63,7 @@ export function NewCollectionForm({ draft, saving, onChange, onSubmit, onCancel 
         <button
           type="button"
           onClick={onCancel}
-          className="h-11 px-6 border border-black text-[#000000] text-sm font-medium hover:bg-[#fafafa] transition-colors"
+          className="h-11 px-6 border border-[var(--som-border)] text-[#000000] text-sm font-medium hover:bg-[#fafafa] transition-colors"
         >
           Annuler
         </button>

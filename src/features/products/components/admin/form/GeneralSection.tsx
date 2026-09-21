@@ -58,7 +58,7 @@ export function GeneralSection({ categories, isEditMode }: GeneralSectionProps) 
               required
               pattern="[a-z0-9-]+"
               maxLength={255}
-              className="flex-1 px-4 py-2.5 rounded-lg border border-black focus:outline-none focus:ring-2 focus:ring-black/10 text-[#3c161e] font-mono text-sm"
+              className="flex-1 px-4 py-2.5 rounded-lg border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] focus:outline-none focus:ring-2 focus:ring-black/10 text-[#3c161e] font-mono text-sm"
             />
             <button
               type="button"

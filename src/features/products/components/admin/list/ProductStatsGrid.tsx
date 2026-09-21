@@ -11,7 +11,7 @@ export function ProductStatsGrid({ stats }: { stats: ProductStats }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8" style={{ maxWidth: 800 }}>
       {STAT_ITEMS.map(({ key, label, color }) => (
-        <div key={key} className="bg-[#fafafa] border border-black p-4">
+        <div key={key} className="bg-[#fafafa] border border-[var(--som-border)] p-4">
           <div className={`text-2xl font-bold ${color}`}>{stats[key]}</div>
           <div className="text-xs text-[#6b6b6b] mt-1">{label}</div>
         </div>

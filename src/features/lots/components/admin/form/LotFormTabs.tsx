@@ -14,7 +14,7 @@ type LotFormTabsProps = {
 
 export function LotFormTabs({ active, onChange }: LotFormTabsProps) {
   return (
-    <div className="flex gap-1 overflow-x-auto bg-[#fafafa] border-b border-black" style={{ padding: "0 40px" }}>
+    <div className="flex gap-1 overflow-x-auto bg-[#fafafa] border-b border-[var(--som-border)]" style={{ padding: "0 40px" }}>
       {LOT_FORM_TABS.map((tab) => {
         const isActive = active === tab.key;
         return (

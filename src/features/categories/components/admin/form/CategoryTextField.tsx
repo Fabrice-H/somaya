@@ -15,7 +15,7 @@ export function CategoryTextField({ id, label, hint, className = "w-full", ...in
       <input
         id={id}
         {...inputProps}
-        className={`${className} h-12 px-4 bg-[#fafafa] border border-black text-[#000000] text-sm outline-none transition-colors focus:border-black`}
+        className={`${className} h-12 px-4 bg-[#fafafa] border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-[#000000] text-sm outline-none transition-colors focus:border-black`}
       />
       {hint && <p className="text-xs text-[#6b6b6b] mt-1">{hint}</p>}
     </div>

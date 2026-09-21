@@ -55,10 +55,8 @@ export function DetailsStep({ customer, fieldErrors, onChange, onNext }: Details
             hint="Nous vous appelons pour confirmer la livraison."
           >
             {(props) => (
-              <div className="flex">
-                <span className="flex min-h-12 items-center border border-r-0 border-[var(--som-border-input)] bg-[var(--som-surface-alt)] px-4 text-[14px] text-[var(--som-gray)]">
-                  +225
-                </span>
+              <div className="input-group-som">
+                <span>+225</span>
                 <input
                   {...props}
                   type="tel"

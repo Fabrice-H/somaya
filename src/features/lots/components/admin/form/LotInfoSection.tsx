@@ -2,7 +2,7 @@ import { parseNumberInput } from "@/features/lots/utils";
 import type { CategoryOption } from "@/features/categories/types";
 
 const INPUT_CLASS =
-  "w-full h-11 px-4 border border-black focus:outline-none focus:ring-2 focus:ring-black/10 text-[#000000]";
+  "w-full h-11 px-4 border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] focus:outline-none focus:ring-2 focus:ring-black/10 text-[#000000]";
 
 type LotInfoSectionProps = {
   name: string;

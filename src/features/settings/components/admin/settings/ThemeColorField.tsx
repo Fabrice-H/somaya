@@ -16,7 +16,7 @@ export function ThemeColorField({ label, hint, value, onChange }: ThemeColorFiel
           type="color"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="w-12 h-12 border border-black cursor-pointer"
+          className="w-12 h-12 border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] cursor-pointer"
         />
         <input
           type="text"

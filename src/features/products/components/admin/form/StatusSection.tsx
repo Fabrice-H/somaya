@@ -23,7 +23,7 @@ export function StatusSection() {
         <select
           value={is_new ? "yes" : "no"}
           onChange={(e) => setField("is_new", e.target.value === "yes")}
-          className="h-11 px-4 pr-10 bg-transparent border border-black text-[#000000] text-sm outline-none cursor-pointer appearance-none focus:ring-2 focus:ring-black/10"
+          className="h-11 px-4 pr-10 bg-transparent border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-[#000000] text-sm outline-none cursor-pointer appearance-none focus:ring-2 focus:ring-black/10"
           style={{
             backgroundImage: SELECT_ARROW,
             backgroundRepeat: "no-repeat",

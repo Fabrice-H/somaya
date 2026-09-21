@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export const INPUT_CLASS =
-  "w-full px-4 py-2.5 rounded-lg border border-black focus:outline-none focus:ring-2 focus:ring-black/10 text-[#3c161e]";
+  "w-full px-4 py-2.5 rounded-lg border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] focus:outline-none focus:ring-2 focus:ring-black/10 text-[#3c161e]";
 
 interface FormFieldProps {
   label: string;

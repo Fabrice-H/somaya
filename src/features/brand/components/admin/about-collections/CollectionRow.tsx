@@ -3,7 +3,8 @@ import { ChevronDown, ChevronUp, Eye, EyeOff, Trash2 } from "lucide-react";
 import type { AboutCollectionData, CollectionPatch } from "../../../types";
 import { ColorSelect } from "./ColorSelect";
 
-const smallFieldClass = "bg-white border border-black text-[#000000] outline-none focus:border-black";
+const smallFieldClass =
+  "bg-white border border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-[#000000] outline-none focus:border-black";
 const arrowClass = "p-1 hover:bg-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed";
 
 type CollectionRowProps = {
@@ -29,7 +30,7 @@ export function CollectionRow({
 }: CollectionRowProps) {
   return (
     <div
-      className="flex items-center gap-3 p-3 bg-[#fafafa] border border-black transition-opacity"
+      className="flex items-center gap-3 p-3 bg-[#fafafa] border border-[var(--som-border)] transition-opacity"
       style={{ opacity: saving ? 0.6 : 1 }}
     >
       <div className="flex flex-col gap-0.5">

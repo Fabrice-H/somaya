@@ -11,7 +11,7 @@ type LotFormHeaderProps = {
 export function LotFormHeader({ isEdit, name, isPending, onBack, onDelete }: LotFormHeaderProps) {
   return (
     <div
-      className="flex items-center justify-between gap-4 flex-wrap bg-[#fafafa] border-b border-black"
+      className="flex items-center justify-between gap-4 flex-wrap bg-[#fafafa] border-b border-[var(--som-border)]"
       style={{ padding: "24px 40px" }}
     >
       <div className="flex items-center gap-4">
@@ -19,7 +19,7 @@ export function LotFormHeader({ isEdit, name, isPending, onBack, onDelete }: Lot
           type="button"
           onClick={onBack}
           aria-label="Retour"
-          className="w-10 h-10 flex items-center justify-center border border-black hover:bg-white transition-colors"
+          className="w-10 h-10 flex items-center justify-center border border-[var(--som-border)] hover:bg-white transition-colors"
         >
           <ArrowLeft size={18} className="text-[#000000]" />
         </button>

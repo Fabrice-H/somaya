@@ -34,7 +34,7 @@ export function HeroTabsNav({ activeTab, onTabChange, isActive, onActiveChange }
             type="checkbox"
             checked={isActive}
             onChange={(event) => onActiveChange(event.target.checked)}
-            className="w-5 h-5 rounded border-black text-[#3c161e] focus:ring-black/10"
+            className="w-5 h-5 rounded border-[var(--som-border-input)] hover:border-[var(--som-border-input-hover)] text-[#3c161e] focus:ring-black/10"
           />
           <div>
             <span className="font-medium text-sm text-[#000000]">Actif</span>
