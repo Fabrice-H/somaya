@@ -11,7 +11,7 @@ async function main() {
 
   if (!email || !password) {
     console.log("Usage: pnpm tsx scripts/reset-admin-password.ts EMAIL NEW_PASSWORD");
-    console.log("Example: pnpm tsx scripts/reset-admin-password.ts admin@somaya.ci secret123");
+    console.log("Example: pnpm tsx scripts/reset-admin-password.ts admin@somaya.ci MOT_DE_PASSE_FORT");
     process.exit(1);
   }
 
@@ -45,7 +45,6 @@ async function main() {
   console.log("Password reset successfully!");
   console.log(`\nCredentials:`);
   console.log(`  Email: ${email}`);
-  console.log(`  Password: ${password}`);
 }
 
 main().catch((error) => {

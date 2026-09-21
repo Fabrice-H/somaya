@@ -11,7 +11,7 @@ async function main() {
 
   if (!email || !password || !name) {
     console.log("Usage: pnpm tsx scripts/create-admin.ts EMAIL PASSWORD NAME");
-    console.log('Example: pnpm tsx scripts/create-admin.ts admin@somaya.ci secret123 "Admin SOMAYA"');
+    console.log('Example: pnpm tsx scripts/create-admin.ts admin@somaya.ci MOT_DE_PASSE_FORT "Admin SOMAYA"');
     process.exit(1);
   }
 
@@ -44,7 +44,6 @@ async function main() {
   console.log("✅ Admin user created successfully!");
   console.log(`\nCredentials:`);
   console.log(`  Email: ${email}`);
-  console.log(`  Password: ${password}`);
 }
 
 main().catch((error) => {

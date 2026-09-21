@@ -54,9 +54,14 @@ async function runMigration() {
 async function createInitialAdmin() {
   console.log("\n👤 Creating initial admin user...\n");
 
-  const adminEmail = "admin@somaya.ci";
-  const adminPassword = "Admin123!";
-  const adminName = "Administrateur";
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  const adminName = process.env.ADMIN_NAME ?? "Administrateur";
+
+  if (!adminEmail || !adminPassword || adminPassword.length < 12) {
+    console.log("⏭️  ADMIN_EMAIL / ADMIN_PASSWORD (12 caractères min.) non définis, admin non créé.");
+    return;
+  }
 
   try {
     const existing = await sql`
@@ -78,8 +83,6 @@ async function createInitialAdmin() {
     console.log("✅ Admin user created successfully!");
     console.log("\n📋 Credentials:");
     console.log(`   Email: ${adminEmail}`);
-    console.log(`   Password: ${adminPassword}`);
-    console.log("\n⚠️  Please change the password after first login!");
   } catch (error: unknown) {
     const err = error as Error;
     console.error("❌ Error creating admin:", err.message);
