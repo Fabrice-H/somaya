@@ -1,7 +1,7 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { db, storeSettings } from "@/shared/lib/db";
 import { requireAdmin } from "@/features/auth/server/session";
 import { SETTINGS_CACHE_TAG, STORE_SETTINGS_ID } from "../constants";
@@ -42,6 +42,6 @@ export async function updateSettings(input: SettingsInput): Promise<ActionResult
     return { success: false, error: "Erreur lors de la mise à jour" };
   }
 
-  revalidateTag(SETTINGS_CACHE_TAG, "max");
+  updateTag(SETTINGS_CACHE_TAG);
   return { success: true };
 }

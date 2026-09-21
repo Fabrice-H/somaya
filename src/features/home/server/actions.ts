@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { db, heroBanner } from "@/shared/lib/db";
 import { requireAdmin } from "@/features/auth/server/session";
 import { HERO_BANNER_ID, HERO_CACHE_TAG } from "../constants";
@@ -43,6 +43,6 @@ export async function updateHeroBanner(input: HeroBannerInput): Promise<ActionRe
     return { success: false, error: "Erreur lors de la mise à jour" };
   }
 
-  revalidateTag(HERO_CACHE_TAG, "max");
+  updateTag(HERO_CACHE_TAG);
   return { success: true };
 }

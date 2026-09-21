@@ -9,6 +9,11 @@ export const HOME_LIMITS = {
 } as const;
 
 export const HERO_LAYOUTS = ["split", "centered", "fullwidth"] as const;
+export const HERO_OVERLAYS = {
+  centered: "bg-black/35",
+  fullwidth: "bg-[linear-gradient(180deg,rgba(0,0,0,0)_35%,rgba(0,0,0,0.6)_100%)]",
+} as const;
+
 export const HERO_MEDIA_TYPES = ["image", "video"] as const;
 
 export const HERO_COLORS = {

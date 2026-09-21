@@ -1,7 +1,7 @@
 "use server";
 
 import { randomUUID } from "crypto";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { db, orderItems, orders } from "@/shared/lib/db";
 import { getDeliveryFee } from "@/features/settings/server/queries";
 import { generateOrderNumber } from "@/features/orders/utils";
@@ -69,7 +69,7 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
       ),
     ]);
 
-    revalidateTag(ORDERS_CACHE_TAG, "max");
+    updateTag(ORDERS_CACHE_TAG);
     return {
       ok: true,
       order: { customer, deliveryMethod, orderNumber, lines: pricedLines, subtotal, deliveryFee, total },

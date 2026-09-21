@@ -1,7 +1,7 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { db, testimonials } from "@/shared/lib/db";
 import { requireAdmin } from "@/features/auth/server/session";
 import { ADMIN_SETTINGS_PATH, TESTIMONIALS_CACHE_TAG } from "../constants";
@@ -12,7 +12,7 @@ const UNAUTHORIZED: TestimonialActionResult = { success: false, error: "Non auto
 
 function revalidateTestimonials() {
   revalidatePath(ADMIN_SETTINGS_PATH);
-  revalidateTag(TESTIMONIALS_CACHE_TAG, "max");
+  updateTag(TESTIMONIALS_CACHE_TAG);
 }
 
 export async function createTestimonial(input: TestimonialInput): Promise<TestimonialActionResult> {

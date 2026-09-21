@@ -1,6 +1,10 @@
 import type { HeroBanner } from "@/shared/lib/db/schema";
-import { HERO_FORM_DEFAULTS } from "./constants";
-import type { HeroBannerData, HeroBannerInput } from "./types";
+import { HERO_FORM_DEFAULTS, HERO_LAYOUTS } from "./constants";
+import type { HeroBannerData, HeroBannerInput, HeroLayout } from "./types";
+
+export function toHeroLayout(value: string | null | undefined): HeroLayout {
+  return HERO_LAYOUTS.find((layout) => layout === value) ?? "split";
+}
 
 export function toHeroBannerData(row: HeroBanner): HeroBannerData {
   return {

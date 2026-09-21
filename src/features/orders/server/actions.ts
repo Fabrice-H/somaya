@@ -1,7 +1,7 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { db, orders } from "@/shared/lib/db";
 import { requireAdmin } from "@/features/auth/server/session";
 import { ORDERS_CACHE_TAG } from "../constants";
@@ -31,7 +31,7 @@ export async function updateOrderStatus(input: unknown): Promise<OrderActionResu
     return { ok: false, error: "Erreur lors de la mise à jour" };
   }
 
-  revalidateTag(ORDERS_CACHE_TAG, "max");
+  updateTag(ORDERS_CACHE_TAG);
   revalidatePath("/admin", "layout");
   return { ok: true };
 }

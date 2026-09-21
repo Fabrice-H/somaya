@@ -2,7 +2,7 @@
 
 import { eq } from "drizzle-orm";
 import { after } from "next/server";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { db, priceLots } from "@/shared/lib/db";
 import { requireAdmin } from "@/features/auth/server/session";
 import { deleteImage } from "@/features/media/server/actions";
@@ -16,7 +16,7 @@ const UNAUTHORIZED: PriceLotActionResult = { success: false, error: "Non autoris
 function revalidatePriceLots(id?: string) {
   PRICE_LOTS_REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
   if (id) revalidatePath(`${ADMIN_LOTS_PATH}/${id}`);
-  revalidateTag(PRICE_LOTS_CACHE_TAG, "max");
+  updateTag(PRICE_LOTS_CACHE_TAG);
 }
 
 export async function createPriceLot(input: PriceLotInput): Promise<PriceLotActionResult> {

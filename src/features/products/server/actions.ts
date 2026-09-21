@@ -1,7 +1,7 @@
 "use server";
 
 import { after } from "next/server";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, products } from "@/shared/lib/db";
@@ -66,7 +66,7 @@ function isUniqueViolation(error: unknown): boolean {
 function revalidateProducts(id?: string) {
   revalidatePath(ADMIN_PRODUCTS_PATH);
   if (id) revalidatePath(`${ADMIN_PRODUCTS_PATH}/${id}`);
-  revalidateTag(PRODUCTS_CACHE_TAG, "max");
+  updateTag(PRODUCTS_CACHE_TAG);
 }
 
 export async function createProduct(input: ProductInput): Promise<ProductActionResult> {

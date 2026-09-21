@@ -1,7 +1,7 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { categories, db } from "@/shared/lib/db";
 import { requireAdmin } from "@/features/auth/server/session";
 import { CATEGORIES_CACHE_TAG, CATEGORY_REVALIDATE_PATHS } from "../constants";
@@ -12,7 +12,7 @@ const UNAUTHORIZED: CategoryActionResult = { success: false, error: "Non autoris
 
 function revalidateCategories() {
   CATEGORY_REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
-  revalidateTag(CATEGORIES_CACHE_TAG, "max");
+  updateTag(CATEGORIES_CACHE_TAG);
 }
 
 function isUniqueViolation(error: unknown) {
