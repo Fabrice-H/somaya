@@ -58,18 +58,16 @@ export function CategoryCard({ category, onDelete }: CategoryCardProps) {
             </Badge>
           </div>
         </div>
-        <div className="flex shrink-0 flex-col">
-          <Link
-            href={href}
-            aria-label={`Modifier ${category.name}`}
-            className={`${ICON_BUTTON} hover:text-[var(--som-ink)]`}
-          >
-            <Pencil size={15} strokeWidth={1.5} aria-hidden />
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <Link href={href} aria-label={`Modifier ${category.name}`} className="btn-secondary btn-sm whitespace-nowrap">
+            <Pencil size={14} strokeWidth={1.5} aria-hidden />
+            Modifier
           </Link>
           <button
             type="button"
             onClick={() => onDelete(category)}
             aria-label={`Supprimer ${category.name}`}
+            title="Supprimer"
             className={`${ICON_BUTTON} cursor-pointer hover:text-[var(--som-error)]`}
           >
             <Trash2 size={15} strokeWidth={1.5} aria-hidden />

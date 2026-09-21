@@ -1,4 +1,3 @@
-import { formatPrice } from "@/shared/lib/format";
 import type { CategoryOption } from "@/features/categories/types";
 import type { ProductSummary } from "@/features/products/types";
 import type { FlatLotItem, LotFilters, LotSortOption, LotsStats, PriceLot, PriceLotItem } from "./types";
@@ -35,10 +34,6 @@ export function getLotsStats(lots: PriceLot[]): LotsStats {
 export function getLotCategories(lots: PriceLot[]): CategoryOption[] {
   const categories = new Map(lots.flatMap((lot) => (lot.category ? [[lot.category.id, lot.category] as const] : [])));
   return [...categories.values()].sort((a, b) => a.name.localeCompare(b.name));
-}
-
-export function formatLotPrice(price: number): string {
-  return formatPrice(price).replace(" FCFA", " F");
 }
 
 export const lotItemName = ({ item, lot }: FlatLotItem) => item.label || lot.name;

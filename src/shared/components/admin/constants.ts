@@ -1,13 +1,4 @@
-import {
-  FolderOpen,
-  Home,
-  Layers,
-  LayoutDashboard,
-  MessageSquareQuote,
-  Package,
-  Settings,
-  ShoppingBag,
-} from "lucide-react";
+import { FolderOpen, Layers, LayoutDashboard, MessageSquareQuote, Package, Settings, ShoppingBag } from "lucide-react";
 import type { BadgeTone } from "./ui/Badge";
 
 export const ADMIN_NAVIGATION = [
@@ -24,7 +15,6 @@ export const ADMIN_NAVIGATION = [
   {
     label: "Contenu",
     items: [
-      { name: "Page d'accueil", href: "/admin/hero-banner", icon: Home },
       { name: "Témoignages", href: "/admin/temoignages", icon: MessageSquareQuote },
       { name: "Réglages", href: "/admin/reglages", icon: Settings },
     ],

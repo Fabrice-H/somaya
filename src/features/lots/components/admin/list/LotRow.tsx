@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
-import { Layers, Trash2 } from "lucide-react";
+import { Layers, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/shared/components/admin/ui/Badge";
 import { Td } from "@/shared/components/admin/ui/Table";
 import { ADMIN_LOTS_PATH } from "@/features/lots/constants";
-import { formatLotPrice } from "@/features/lots/utils";
+import { formatPrice } from "@/shared/lib/format";
 import { LotVisibilityToggle } from "./LotVisibilityToggle";
 import type { PriceLot } from "@/features/lots/types";
 
@@ -59,14 +59,20 @@ export function LotRow({ lot, selected, loading, onSelect, onToggle, onDelete }:
         </div>
       </Td>
       <Td align="right">
-        <span className="whitespace-nowrap tabular-nums">{formatLotPrice(lot.price)}</span>
+        <span className="whitespace-nowrap tabular-nums">{formatPrice(lot.price)}</span>
       </Td>
       <Td align="right" muted>
         <span className="tabular-nums">{lot.total_items}</span>
       </Td>
       <Td>
         <Badge tone={inStock ? "success" : "danger"}>
-          <span className="tabular-nums">{lot.total_stock}</span> u.
+          {inStock ? (
+            <>
+              En stock · <span className="tabular-nums">{lot.total_stock}</span>
+            </>
+          ) : (
+            "Épuisé"
+          )}
         </Badge>
       </Td>
       <Td>
@@ -75,18 +81,28 @@ export function LotRow({ lot, selected, loading, onSelect, onToggle, onDelete }:
         </div>
       </Td>
       <Td align="right">
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            onDelete();
-          }}
-          title="Supprimer"
-          aria-label={`Supprimer ${lot.name}`}
-          className="inline-flex h-10 w-10 cursor-pointer items-center justify-center text-[var(--som-gray)] transition-colors hover:bg-white hover:text-[var(--som-error)]"
-        >
-          <Trash2 size={15} strokeWidth={1.5} aria-hidden />
-        </button>
+        <div className="flex items-center justify-end gap-1">
+          <Link
+            href={`${ADMIN_LOTS_PATH}/${lot.id}`}
+            onClick={stopPropagation}
+            className="btn-secondary btn-sm whitespace-nowrap"
+          >
+            <Pencil size={14} strokeWidth={1.5} aria-hidden />
+            Modifier
+          </Link>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete();
+            }}
+            title="Supprimer"
+            aria-label={`Supprimer ${lot.name}`}
+            className="inline-flex h-10 w-10 cursor-pointer items-center justify-center text-[var(--som-gray)] transition-colors hover:bg-white hover:text-[var(--som-error)]"
+          >
+            <Trash2 size={15} strokeWidth={1.5} aria-hidden />
+          </button>
+        </div>
       </Td>
     </tr>
   );

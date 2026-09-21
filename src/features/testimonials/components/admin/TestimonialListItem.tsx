@@ -67,19 +67,16 @@ export function TestimonialListItem({ item, onToggleActive, onEdit, onDelete }: 
           )}
           {item.isActive ? "Masquer" : "Publier"}
         </button>
-        <div className="flex">
-          <button
-            type="button"
-            onClick={onEdit}
-            aria-label="Modifier"
-            className={`${ICON_BUTTON} hover:text-[var(--som-ink)]`}
-          >
-            <Pencil size={15} strokeWidth={1.5} aria-hidden />
+        <div className="flex items-center gap-1">
+          <button type="button" onClick={onEdit} className="btn-secondary btn-sm cursor-pointer whitespace-nowrap">
+            <Pencil size={14} strokeWidth={1.5} aria-hidden />
+            Modifier
           </button>
           <button
             type="button"
             onClick={onDelete}
             aria-label="Supprimer"
+            title="Supprimer"
             className={`${ICON_BUTTON} hover:text-[var(--som-error)]`}
           >
             <Trash2 size={15} strokeWidth={1.5} aria-hidden />
