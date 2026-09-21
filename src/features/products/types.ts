@@ -1,20 +1,57 @@
 import type { Category } from "@/features/categories/server/actions";
+import type { COLORS, SIZES } from "./constants";
 
-export const COLORS = [
-  { value: "orange", label: "Orange" },
-  { value: "rouge", label: "Rouge" },
-  { value: "violet", label: "Violet" },
-  { value: "bleu", label: "Bleu" },
-  { value: "noir", label: "Noir" },
-  { value: "blanc", label: "Blanc" },
-  { value: "creme", label: "Crème" },
-  { value: "camel", label: "Camel" },
-  { value: "vert", label: "Vert" },
-  { value: "or", label: "Or" },
-  { value: "gris", label: "Gris" },
-] as const;
+export type ProductSummaryLot = {
+  id: string;
+  name: string;
+  price: number;
+  images: string[];
+  stock: number;
+  isAvailable: boolean;
+};
 
-export const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "Unique"] as const;
+export type ProductSummary = {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  oldPrice: number | null;
+  images: string[];
+  isNew: boolean;
+  isBestseller: boolean;
+  isFeatured: boolean;
+  stock?: number;
+  createdAt?: string;
+  category: { id: string; name: string; slug: string } | null;
+  lots: ProductSummaryLot[];
+};
+
+export type ShopProduct = ProductSummary & { description: string | null };
+
+export type LotOptionItem = {
+  id: string;
+  image: string;
+  stock: number;
+  label?: string;
+};
+
+export type LotOption = {
+  id: string;
+  name: string;
+  price: number;
+  isAvailable: boolean;
+  items: LotOptionItem[];
+};
+
+export type SelectedLotItem = {
+  lotId: string;
+  lotName: string;
+  lotPrice: number;
+  itemId: string;
+  itemImage: string;
+  itemStock: number;
+  itemLabel?: string;
+};
 
 export type ColorValue = (typeof COLORS)[number]["value"];
 export type SizeValue = (typeof SIZES)[number];

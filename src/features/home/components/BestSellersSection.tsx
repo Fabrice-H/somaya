@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { ProductCard } from "@/features/products/components/ProductCard";
-import type { HomePageProduct } from "@/features/home/server/queries";
+import type { ProductSummary } from "@/features/products/types";
 
 // ============================================================
 // Types
 // ============================================================
 
 interface BestSellersSectionProps {
-  products: HomePageProduct[];
+  products: ProductSummary[];
 }
 
 // ============================================================

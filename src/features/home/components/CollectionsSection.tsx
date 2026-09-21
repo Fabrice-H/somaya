@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { HomePageCategory } from "@/features/home/server/queries";
+import type { Category } from "@/shared/lib/db/schema";
 
 // ============================================================
 // Types
 // ============================================================
 
 interface CollectionsSectionProps {
-  categories: HomePageCategory[];
+  categories: Category[];
 }
 
 // Default fallback images based on category slug
@@ -22,7 +22,7 @@ const FALLBACK_IMAGES: Record<string, string> = {
 };
 
 // Get image URL with fallback
-function getCategoryImage(category: HomePageCategory): string {
+function getCategoryImage(category: Category): string {
   if (category.imageUrl) return category.imageUrl;
   return FALLBACK_IMAGES[category.slug] || FALLBACK_IMAGES.default;
 }

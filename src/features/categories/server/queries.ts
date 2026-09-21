@@ -1,69 +1,36 @@
-import { db, categories } from "@/shared/lib/db";
-import { eq, asc, sql } from "drizzle-orm";
-import type { Category } from "@/shared/lib/db/schema";
+import "server-only";
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
+import { asc, eq, sql } from "drizzle-orm";
+import { categories, db } from "@/shared/lib/db";
+import { CATEGORIES_CACHE_TAG } from "../constants";
+import type { CategoryWithProductCount } from "../types";
 
-// ============================================================
-// Server-side data fetching functions for Categories
-// ============================================================
+export const getActiveCategories = unstable_cache(
+  () =>
+    db.query.categories.findMany({
+      where: eq(categories.isActive, true),
+      orderBy: [asc(categories.position)],
+    }),
+  ["active-categories"],
+  { revalidate: 300, tags: [CATEGORIES_CACHE_TAG] }
+);
 
-export type CategoryWithProductCount = Category & {
-  productCount: number;
-};
-
-/**
- * Get all categories (active only by default)
- */
-export async function getCategories(
-  activeOnly = true
-): Promise<Category[]> {
-  const conditions = activeOnly ? eq(categories.isActive, true) : undefined;
-
-  const result = await db.query.categories.findMany({
-    where: conditions,
-    orderBy: [asc(categories.position)],
+export const getCategoryBySlug = cache(async (slug: string) => {
+  const category = await db.query.categories.findFirst({
+    where: eq(categories.slug, slug),
   });
+  return category ?? null;
+});
 
-  return result;
-}
-
-/**
- * Get all categories with product count
- */
-export async function getCategoriesWithProductCount(
-  activeOnly = true
-): Promise<CategoryWithProductCount[]> {
+export async function getCategoriesWithProductCount() {
   const result = await db.execute(sql`
-    SELECT
-      c.*,
-      COALESCE(COUNT(p.id), 0)::int as "productCount"
+    SELECT c.*, COALESCE(COUNT(p.id), 0)::int AS "productCount"
     FROM categories c
     LEFT JOIN products p ON p.category_id = c.id AND p.is_active = true
-    ${activeOnly ? sql`WHERE c.is_active = true` : sql``}
+    WHERE c.is_active = true
     GROUP BY c.id
     ORDER BY c.position ASC
   `);
-
   return result.rows as CategoryWithProductCount[];
-}
-
-/**
- * Get a single category by ID
- */
-export async function getCategoryById(id: string): Promise<Category | null> {
-  const result = await db.query.categories.findFirst({
-    where: eq(categories.id, id),
-  });
-
-  return result || null;
-}
-
-/**
- * Get a single category by slug
- */
-export async function getCategoryBySlug(slug: string): Promise<Category | null> {
-  const result = await db.query.categories.findFirst({
-    where: eq(categories.slug, slug),
-  });
-
-  return result || null;
 }

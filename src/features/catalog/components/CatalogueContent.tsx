@@ -15,7 +15,7 @@ import {
   type EmptySuggestion,
   type FilterChip,
 } from "@/shared/components/listing/ShopFilters";
-import type { ShopProduct } from "@/features/products/server/queries";
+import type { ShopProduct } from "@/features/products/types";
 
 // ============================================================
 // Types & helpers
@@ -25,6 +25,8 @@ interface CatalogueContentProps {
   categories: Array<{ id: string; name: string; slug: string; imageUrl?: string | null }>;
   products: ShopProduct[];
   initialSearchQuery?: string;
+  initialCategory?: string | null;
+  title?: string;
 }
 
 type SortOption = "newest" | "price-asc" | "price-desc" | "name";
@@ -90,13 +92,19 @@ function matchesFilters(p: ShopProduct, f: Filters): boolean {
 // CatalogueContent
 // ============================================================
 
-export function CatalogueContent({ categories, products, initialSearchQuery = "" }: CatalogueContentProps) {
+export function CatalogueContent({
+  categories,
+  products,
+  initialSearchQuery = "",
+  initialCategory = null,
+  title = "La boutique",
+}: CatalogueContentProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("q") ?? initialSearchQuery;
 
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(initialCategory);
   const [priceRange, setPriceRange] = useState<PriceRangeKey | null>(null);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
@@ -212,8 +220,8 @@ export function CatalogueContent({ categories, products, initialSearchQuery = ""
     <div className="bg-white">
       <div className="mx-auto max-w-[1400px] px-4 md:px-8 lg:px-12">
         <ShopTopBar
-          crumb="Boutique"
-          title="La boutique"
+          crumb={title === "La boutique" ? "Boutique" : title}
+          title={title}
           count={filteredProducts.length}
           sortValue={sortBy}
           sortOptions={SORT_OPTIONS}

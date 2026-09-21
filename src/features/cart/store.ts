@@ -43,18 +43,8 @@ export interface AddItemResult {
   maxStock: number;
 }
 
-// Generate a unique key for cart items
-// For lot items: productId:lotId:itemId
-// For standard lots (legacy): productId:lotId
-// For standard products: productId
 function getCartKey(productId: string, lotId?: string | null, itemId?: string | null): string {
-  if (lotId && itemId) {
-    return `${productId}:${lotId}:${itemId}`;
-  }
-  if (lotId) {
-    return `${productId}:${lotId}`;
-  }
-  return productId;
+  return [productId, lotId, itemId].filter(Boolean).join(":");
 }
 
 interface CartState {

@@ -1,7 +1,5 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { HeaderWrapper } from "@/shared/components/layout/HeaderWrapper";
-import { Footer } from "@/shared/components/layout/Footer";
 
 interface ComingSoonProps {
   icon: LucideIcon;
@@ -13,9 +11,7 @@ interface ComingSoonProps {
 // Placeholder page for features announced in the header but not built yet
 export function ComingSoon({ icon: Icon, eyebrow, title, text }: ComingSoonProps) {
   return (
-    <>
-      <HeaderWrapper />
-      <main className="bg-white px-4 py-20 md:py-28">
+    <section className="bg-white px-4 py-20 md:py-28">
         <div className="mx-auto flex max-w-[520px] flex-col items-center text-center">
           <Icon size={40} strokeWidth={1.25} aria-hidden className="text-[var(--som-primary)]" />
           <p className="mt-6 text-[11px] uppercase tracking-[0.3em] text-[var(--som-gray)]">{eyebrow}</p>
@@ -29,8 +25,6 @@ export function ComingSoon({ icon: Icon, eyebrow, title, text }: ComingSoonProps
             Découvrir la boutique
           </Link>
         </div>
-      </main>
-      <Footer />
-    </>
+      </section>
   );
 }

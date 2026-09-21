@@ -1,3 +1,5 @@
+import { CONTACT_DEFAULTS } from "@/shared/config/site";
+
 /**
  * Generate a URL-friendly slug from a string
  */
@@ -23,6 +25,10 @@ export function formatPriceXOF(price: number): string {
 /**
  * WhatsApp link to the shop with a pre-filled message
  */
-export function createWhatsAppLink(message: string): string {
-  return `https://wa.me/2250508905666?text=${encodeURIComponent(message)}`;
+export function whatsappNumberDigits(number: string = CONTACT_DEFAULTS.whatsapp): string {
+  return number.replace(/\D/g, "");
+}
+
+export function createWhatsAppLink(message: string, number?: string): string {
+  return `https://wa.me/${whatsappNumberDigits(number)}?text=${encodeURIComponent(message)}`;
 }

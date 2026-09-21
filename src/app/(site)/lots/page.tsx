@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-import { HeaderWrapper } from "@/shared/components/layout/HeaderWrapper";
-import { Footer } from "@/shared/components/layout/Footer";
 import { LotsContent } from "@/features/lots/components/LotsContent";
 import { getActivePriceLots } from "@/features/lots/server/queries";
 
@@ -30,15 +28,11 @@ export default async function LotsPage() {
 
   return (
     <>
-      <HeaderWrapper />
-      <main>
         <LotsContent
           lots={lots}
           availablePrices={availablePrices}
           categories={categories}
         />
-      </main>
-      <Footer />
     </>
   );
 }

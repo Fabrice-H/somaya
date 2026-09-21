@@ -1,8 +1,8 @@
 import Image from "next/image";
-import type { HomeTestimonial } from "@/features/home/server/queries";
+import type { TestimonialCard } from "@/features/testimonials/types";
 
 interface TestimonialsSectionProps {
-  testimonials: HomeTestimonial[];
+  testimonials: TestimonialCard[];
 }
 
 // ============================================================

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Heart, ShoppingBag } from "lucide-react";
-import type { HomePageProduct } from "@/features/home/server/queries";
+import type { ProductSummary } from "@/features/products/types";
 import { useCartStore } from "@/features/cart/store";
 import { useWishlistStore } from "@/features/wishlist/store";
 
@@ -13,7 +13,7 @@ import { useWishlistStore } from "@/features/wishlist/store";
 // ============================================================
 
 interface ProductCardProps {
-  product: HomePageProduct;
+  product: ProductSummary;
   priority?: boolean;
   showBadge?: boolean;
   /** Open a detail view instead of navigating to /produit (e.g. lot items) */

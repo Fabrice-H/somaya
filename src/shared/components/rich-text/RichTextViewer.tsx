@@ -16,11 +16,6 @@ export function RichTextViewer({ content, className = '' }: RichTextViewerProps)
       <div
         className={`rich-text-content ${className}`}
         dangerouslySetInnerHTML={{ __html: content }}
-        style={{
-          fontSize: 14,
-          lineHeight: 1.7,
-          color: '#000000',
-        }}
       />
       <style jsx global>{`
         .rich-text-content h2 {

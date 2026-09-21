@@ -1,8 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { HeaderWrapper } from "@/shared/components/layout/HeaderWrapper";
-import { Footer } from "@/shared/components/layout/Footer";
 import { getCategoriesWithProductCount } from "@/features/categories/server/queries";
 
 export const metadata: Metadata = {
@@ -18,8 +16,6 @@ export default async function CategoriesPage() {
 
   return (
     <>
-      <HeaderWrapper />
-      <main className="bg-[#fafafa] min-h-screen">
         {/* Header */}
         <div className="bg-[#511f29] py-[clamp(40px,6vw,60px)] px-[clamp(20px,4vw,48px)] text-center">
           <h1 className="font-[family-name:var(--font-stack)] font-normal text-[clamp(32px,5vw,48px)] text-[#ffffff] m-0 leading-tight">
@@ -86,8 +82,6 @@ export default async function CategoriesPage() {
             </div>
           )}
         </div>
-      </main>
-      <Footer />
     </>
   );
 }

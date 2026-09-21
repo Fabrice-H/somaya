@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-import { HeaderWrapper } from "@/shared/components/layout/HeaderWrapper";
-import { Footer } from "@/shared/components/layout/Footer";
 import { LegalPageLayout } from "@/features/legal/components/LegalPageLayout";
 
 export const metadata: Metadata = {
@@ -12,8 +10,6 @@ export const metadata: Metadata = {
 export default function LivraisonRetoursPage() {
   return (
     <>
-      <HeaderWrapper />
-      <main>
         <LegalPageLayout
           title="Livraison & Retours"
           lastUpdated="16 Août 2026"
@@ -114,8 +110,6 @@ export default function LivraisonRetoursPage() {
             <li><strong>Téléphone :</strong> +225 07 78 78 42 68</li>
           </ul>
         </LegalPageLayout>
-      </main>
-      <Footer />
     </>
   );
 }

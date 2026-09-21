@@ -1,17 +1,9 @@
+import { getActiveCategories } from "@/features/categories/server/queries";
 import { Header } from "./Header";
-import { getCategories } from "@/features/categories/server/queries";
 
 export async function HeaderWrapper() {
-  const categories = await getCategories();
-
+  const categories = await getActiveCategories();
   return (
-    <Header
-      categories={categories.map((c) => ({
-        id: c.id,
-        name: c.name,
-        slug: c.slug,
-        imageUrl: c.imageUrl,
-      }))}
-    />
+    <Header categories={categories.map(({ id, name, slug, imageUrl }) => ({ id, name, slug, imageUrl }))} />
   );
 }

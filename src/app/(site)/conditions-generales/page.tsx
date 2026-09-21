@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-import { HeaderWrapper } from "@/shared/components/layout/HeaderWrapper";
-import { Footer } from "@/shared/components/layout/Footer";
 import { LegalPageLayout } from "@/features/legal/components/LegalPageLayout";
 
 export const metadata: Metadata = {
@@ -12,8 +10,6 @@ export const metadata: Metadata = {
 export default function ConditionsGeneralesPage() {
   return (
     <>
-      <HeaderWrapper />
-      <main>
         <LegalPageLayout
           title="Conditions Générales de Vente"
           lastUpdated="16 Août 2026"
@@ -115,8 +111,6 @@ export default function ConditionsGeneralesPage() {
             <li>Adresse : Angré Château, Abidjan, Côte d&apos;Ivoire</li>
           </ul>
         </LegalPageLayout>
-      </main>
-      <Footer />
     </>
   );
 }

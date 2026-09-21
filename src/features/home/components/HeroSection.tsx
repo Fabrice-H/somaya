@@ -3,14 +3,14 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import type { HomeHeroBanner } from "@/features/home/server/queries";
+import type { HeroBannerContent } from "@/features/home/types";
 
 // ============================================================
 // Types
 // ============================================================
 
 interface HeroSectionProps {
-  data?: HomeHeroBanner | null;
+  data?: HeroBannerContent | null;
 }
 
 // Default values

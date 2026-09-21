@@ -1,65 +1,38 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { HeaderWrapper } from "@/shared/components/layout/HeaderWrapper";
-import { Footer } from "@/shared/components/layout/Footer";
-import { CategoryContent } from "@/features/catalog/components/CategoryContent";
-import { getCategoryBySlug, getCategories } from "@/features/categories/server/queries";
-import { getProducts } from "@/features/products/server/queries";
+import { CatalogueContent } from "@/features/catalog/components/CatalogueContent";
+import { getActiveCategories, getCategoryBySlug } from "@/features/categories/server/queries";
+import { getShopProducts } from "@/features/products/server/queries";
 
 type Props = {
   params: Promise<{ category: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { category: categorySlug } = await params;
-  const category = await getCategoryBySlug(categorySlug);
-
-  if (!category) {
-    return {
-      title: "Catégorie non trouvée | SO'MAYA",
-    };
-  }
-
+  const { category: slug } = await params;
+  const category = await getCategoryBySlug(slug);
+  if (!category) return { title: "Catégorie introuvable | SO'MAYA" };
   return {
     title: `${category.name} | SO'MAYA - Mode & Accessoires`,
-    description: category.description || `Découvrez notre collection ${category.name}`,
+    description: category.description ?? `Découvrez notre collection ${category.name}`,
   };
 }
 
-export async function generateStaticParams() {
-  try {
-    const categories = await getCategories();
-    return categories.map((category) => ({
-      category: category.slug,
-    }));
-  } catch (error) {
-    console.warn("generateStaticParams: Database not available, skipping pre-render", error);
-    return [];
-  }
-}
-
 export default async function CategoryPage({ params }: Props) {
-  const { category: categorySlug } = await params;
-  const category = await getCategoryBySlug(categorySlug);
-
-  if (!category) {
-    notFound();
-  }
-
-  // Fetch products for this category
-  const { products } = await getProducts({
-    categorySlug: category.slug,
-    isActive: true,
-    limit: 100,
-  });
+  const { category: slug } = await params;
+  const [category, categories, products] = await Promise.all([
+    getCategoryBySlug(slug),
+    getActiveCategories(),
+    getShopProducts(),
+  ]);
+  if (!category) notFound();
 
   return (
-    <>
-      <HeaderWrapper />
-      <main style={{ paddingTop: "20px" }}>
-        <CategoryContent category={category} products={products} />
-      </main>
-      <Footer />
-    </>
+    <CatalogueContent
+      categories={categories}
+      products={products}
+      initialCategory={category.slug}
+      title={category.name}
+    />
   );
 }

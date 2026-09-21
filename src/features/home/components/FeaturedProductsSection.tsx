@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { ProductCard } from "@/features/products/components/ProductCard";
-import type { HomePageProduct } from "@/features/home/server/queries";
+import type { ProductSummary } from "@/features/products/types";
 
 interface FeaturedProductsSectionProps {
-  products: HomePageProduct[];
+  products: ProductSummary[];
 }
 
 export function FeaturedProductsSection({ products }: FeaturedProductsSectionProps) {

@@ -17,7 +17,7 @@ import {
   type FilterChip,
 } from "@/shared/components/listing/ShopFilters";
 import { useCartStore } from "@/features/cart/store";
-import type { HomePageProduct } from "@/features/home/server/queries";
+import type { ProductSummary } from "@/features/products/types";
 import type { PriceLotPublic, PriceLotItemPublic } from "@/features/lots/server/queries";
 
 // ============================================================
@@ -56,7 +56,7 @@ function formatPrice(price: number): string {
 const itemName = ({ item, lot }: FlatItem) => item.label || lot.name;
 
 // Lot item -> shared product card format
-function toCardProduct(flat: FlatItem): HomePageProduct {
+function toCardProduct(flat: FlatItem): ProductSummary {
   const { item, lot } = flat;
   return {
     id: item.id,
