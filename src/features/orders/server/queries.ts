@@ -53,6 +53,8 @@ export async function getOrders(filter: OrdersFilter): Promise<PaginatedOrders> 
           customerLastName: orders.customerLastName,
           customerPhone: orders.customerPhone,
           paymentMethod: orders.paymentMethod,
+          paymentStatus: orders.paymentStatus,
+          orderChannel: orders.orderChannel,
           total: orders.total,
           createdAt: orders.createdAt,
         })
@@ -99,7 +101,7 @@ export async function getOrder(id: string): Promise<OrderDetail | null> {
 
   const order = await db.query.orders.findFirst({
     where: eq(orders.id, parsed.data),
-    with: { items: true },
+    with: { items: true, payments: { orderBy: (payment, { desc: descending }) => [descending(payment.createdAt)] } },
   });
 
   return order ? toOrderDetail(order) : null;

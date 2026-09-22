@@ -26,7 +26,7 @@ export function OrderDetailView({ order }: { order: OrderDetail }) {
           <OrderTimelineCard order={order} />
           <OrderCustomerCard order={order} />
           <OrderDeliveryCard order={order} />
-          <OrderPaymentCard method={order.payment_method} />
+          <OrderPaymentCard order={order} />
         </div>
       </div>
     </AdminPage>

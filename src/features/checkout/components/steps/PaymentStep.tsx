@@ -1,7 +1,7 @@
 import { Banknote, ShieldCheck } from "lucide-react";
 import { formatPrice } from "@/shared/lib/format";
 import { PAYMENT_METHODS } from "@/shared/config/navigation";
-import type { CheckoutFormValues, DeliveryMethod } from "../../schemas";
+import type { CheckoutFormValues, CheckoutPaymentMethod, DeliveryMethod } from "../../schemas";
 import { ChoiceCard } from "../ChoiceCard";
 import { StepActions } from "../StepActions";
 
@@ -12,6 +12,9 @@ type PaymentStepProps = {
   total: number;
   error: string | null;
   pending: boolean;
+  paymentMethod: CheckoutPaymentMethod;
+  onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
+  onlinePaymentEnabled: boolean;
   onEdit: (step: number) => void;
   onBack: () => void;
   onSubmit: () => void;
@@ -57,11 +60,15 @@ export function PaymentStep({
   total,
   error,
   pending,
+  paymentMethod,
+  onPaymentMethodChange,
+  onlinePaymentEnabled,
   onEdit,
   onBack,
   onSubmit,
 }: PaymentStepProps) {
   const isPickup = deliveryMethod === "pickup";
+  const isOnline = paymentMethod === "online";
 
   return (
     <div>
@@ -89,8 +96,8 @@ export function PaymentStep({
         <ChoiceCard
           name="payment"
           value="cash"
-          checked
-          onChange={() => undefined}
+          checked={!isOnline}
+          onChange={() => onPaymentMethodChange("cash")}
           icon={<Banknote size={17} strokeWidth={1.4} />}
           title={isPickup ? "Paiement au retrait" : "Paiement à la livraison"}
           description="En espèces ou par mobile money à la réception de votre commande."
@@ -98,13 +105,17 @@ export function PaymentStep({
         <ChoiceCard
           name="payment"
           value="online"
-          checked={false}
-          disabled
-          onChange={() => undefined}
+          checked={isOnline}
+          disabled={!onlinePaymentEnabled}
+          onChange={() => onPaymentMethodChange("online")}
           icon={<ShieldCheck size={17} strokeWidth={1.4} />}
           title="Payer maintenant"
-          aside={<span className="text-[11px] uppercase tracking-[0.16em] text-[var(--som-gray)]">Bientôt</span>}
-          description="Paiement en ligne sécurisé."
+          aside={
+            onlinePaymentEnabled ? undefined : (
+              <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--som-gray)]">Bientôt</span>
+            )
+          }
+          description="Paiement mobile money sécurisé, confirmation immédiate."
         >
           <span className="mt-3 flex flex-wrap gap-2">
             {PAYMENT_METHODS.map((method) => (
@@ -122,9 +133,19 @@ export function PaymentStep({
       <p className="m-0 mt-6 flex gap-3 border border-[var(--som-border)] p-5 text-[13px] font-light leading-relaxed text-[#4a4a4a]">
         <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--som-primary)]" />
         <span>
-          Après validation, vous pourrez nous envoyer le récapitulatif sur WhatsApp. Vous réglerez{" "}
-          <span className="font-medium text-[var(--som-ink)] tabular-nums">{formatPrice(total)}</span>{" "}
-          {isPickup ? "au retrait en boutique" : "à la livraison"}.
+          {isOnline ? (
+            <>
+              Vous allez être redirigée vers notre partenaire de paiement pour régler{" "}
+              <span className="font-medium text-[var(--som-ink)] tabular-nums">{formatPrice(total)}</span> par mobile
+              money. Votre commande est confirmée dès réception du paiement.
+            </>
+          ) : (
+            <>
+              Après validation, vous pourrez nous envoyer le récapitulatif sur WhatsApp. Vous réglerez{" "}
+              <span className="font-medium text-[var(--som-ink)] tabular-nums">{formatPrice(total)}</span>{" "}
+              {isPickup ? "au retrait en boutique" : "à la livraison"}.
+            </>
+          )}
         </span>
       </p>
 
@@ -138,7 +159,7 @@ export function PaymentStep({
         onBack={onBack}
         onNext={onSubmit}
         pending={pending}
-        nextLabel={`Confirmer · ${formatPrice(total)}`}
+        nextLabel={`${isOnline ? "Payer" : "Confirmer"} · ${formatPrice(total)}`}
       />
     </div>
   );

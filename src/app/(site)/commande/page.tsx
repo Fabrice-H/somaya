@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getCustomerSession } from "@/features/account/server/session";
 import { CheckoutContent } from "@/features/checkout/components/CheckoutContent";
+import { isOnlinePaymentEnabled } from "@/features/payments/server/registry";
 import { getDeliveryFee, getStoreContact } from "@/features/settings/server/queries";
 import { localPhone } from "@/shared/lib/phone";
 
@@ -36,6 +37,7 @@ export default async function CheckoutPage() {
       storeAddress={contact.address}
       storeHours={contact.hours}
       account={account}
+      onlinePaymentEnabled={isOnlinePaymentEnabled()}
     />
   );
 }

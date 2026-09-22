@@ -9,6 +9,7 @@ import { ORDERS_CACHE_TAG } from "@/features/orders/constants";
 import { getCustomerSession } from "@/features/account/server/session";
 import { refreshCustomerStats, upsertCustomerFromOrder } from "@/features/customers/server/service";
 import { emitEvent } from "@/features/events/server/events";
+import { startPayment } from "@/features/payments/server/service";
 import { consumeRateLimit, getClientIp } from "@/shared/lib/rate-limit";
 import { ORDER_RATE_LIMIT, PICKUP_LABEL } from "../constants";
 import { checkoutSchema } from "../schemas";
@@ -32,7 +33,7 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     return { ok: false, error: "Trop de commandes envoyées. Réessayez dans quelques minutes." };
   }
 
-  const { customer, deliveryMethod, lines } = parsed.data;
+  const { customer, deliveryMethod, paymentMethod, lines } = parsed.data;
   const isPickup = deliveryMethod === "pickup";
 
   try {
@@ -99,9 +100,29 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     await emitEvent({ type: "order.created", orderId, customerId: customerRecord?.id ?? null });
 
     updateTag(ORDERS_CACHE_TAG);
+
+    let checkoutUrl: string | null = null;
+    let paymentError: string | null = null;
+    if (paymentMethod === "online") {
+      const payment = await startPayment(orderId);
+      if (payment.ok) checkoutUrl = payment.checkoutUrl;
+      else paymentError = payment.error;
+    }
+
     return {
       ok: true,
-      order: { customer, deliveryMethod, orderNumber, lines: pricedLines, subtotal, deliveryFee, total },
+      order: {
+        customer,
+        deliveryMethod,
+        paymentMethod,
+        checkoutUrl,
+        paymentError,
+        orderNumber,
+        lines: pricedLines,
+        subtotal,
+        deliveryFee,
+        total,
+      },
     };
   } catch (error) {
     if (error instanceof PricingError) return { ok: false, error: error.message };

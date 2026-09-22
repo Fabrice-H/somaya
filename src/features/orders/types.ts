@@ -1,4 +1,5 @@
 import type { Order as DbOrder } from "@/shared/lib/db/schema";
+import type { OrderChannel, PaymentDto } from "@/features/payments/types";
 
 export type OrderStatus = DbOrder["status"];
 export type PaymentMethod = DbOrder["paymentMethod"];
@@ -22,6 +23,8 @@ export interface OrderSummary {
   customer_name: string;
   customer_phone: string;
   payment_method: PaymentMethod;
+  payment_status: PaymentStatus;
+  order_channel: OrderChannel;
   total: number;
   created_at: string;
 }
@@ -33,7 +36,8 @@ export interface OrderDetail extends OrderSummary {
   customer_address: string | null;
   customer_commune: string | null;
   customer_notes: string | null;
-  payment_status: PaymentStatus;
+  paid_at: string | null;
+  payments: PaymentDto[];
   subtotal: number;
   delivery_fee: number;
   delivered_at: string | null;

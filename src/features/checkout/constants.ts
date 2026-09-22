@@ -20,6 +20,7 @@ export const PRICE_LOT_PREFIX = "lot-";
 export const VARIANT_PREFIX = "variant:";
 
 export const DELIVERY_METHODS = ["delivery", "pickup"] as const;
+export const CHECKOUT_PAYMENT_METHODS = ["cash", "online"] as const;
 
 export const CHECKOUT_STEPS = [
   { id: "details", label: "Coordonnées" },

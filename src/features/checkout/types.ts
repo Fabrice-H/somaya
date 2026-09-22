@@ -13,11 +13,14 @@ export type PricedLine = {
   lineTotal: number;
 };
 
-import type { CheckoutCustomer, DeliveryMethod } from "./schemas";
+import type { CheckoutCustomer, CheckoutPaymentMethod, DeliveryMethod } from "./schemas";
 
 export type PlacedOrder = {
   customer: CheckoutCustomer;
   deliveryMethod: DeliveryMethod;
+  paymentMethod: CheckoutPaymentMethod;
+  checkoutUrl: string | null;
+  paymentError: string | null;
   orderNumber: string;
   lines: PricedLine[];
   subtotal: number;

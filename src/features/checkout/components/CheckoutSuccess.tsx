@@ -24,6 +24,11 @@ export function CheckoutSuccess({ order, whatsapp, hasAccount }: CheckoutSuccess
       <h1 className="m-0 mt-3 text-[26px] font-semibold uppercase tracking-[0.06em] text-[var(--som-ink)] md:text-[32px]">
         Merci {order.customer.firstName}
       </h1>
+      {order.paymentError && (
+        <p role="alert" className="m-0 mt-6 bg-[var(--som-error-tint)] px-4 py-3 text-[13px] text-[var(--som-error)]">
+          {order.paymentError}
+        </p>
+      )}
       <p className="m-0 mt-4 text-[15px] font-light leading-relaxed text-[#4a4a4a]">
         Votre commande <span className="font-normal text-[var(--som-ink)]"> {order.orderNumber} </span> d&apos;un
         montant de <span className="font-normal text-[var(--som-ink)] tabular-nums">{formatPrice(order.total)}</span>{" "}

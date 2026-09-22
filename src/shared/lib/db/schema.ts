@@ -23,9 +23,16 @@ export const orderStatusEnum = pgEnum("order_status", [
   "cancelled",
 ]);
 
-export const paymentMethodEnum = pgEnum("payment_method", ["cash", "mobile_money", "bank_transfer"]);
+export const paymentMethodEnum = pgEnum("payment_method", ["cash", "mobile_money", "bank_transfer", "online"]);
 
-export const paymentStatusEnum = pgEnum("payment_status", ["pending", "paid", "refunded"]);
+export const paymentStatusEnum = pgEnum("payment_status", [
+  "pending",
+  "processing",
+  "paid",
+  "failed",
+  "cancelled",
+  "refunded",
+]);
 
 export const adminUsers = pgTable(
   "admin_users",
@@ -189,6 +196,8 @@ export const orders = pgTable(
     status: orderStatusEnum("status").default("pending").notNull(),
     paymentMethod: paymentMethodEnum("payment_method").default("cash").notNull(),
     paymentStatus: paymentStatusEnum("payment_status").default("pending").notNull(),
+    orderChannel: varchar("order_channel", { length: 20 }).default("whatsapp").notNull(),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
     subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
     deliveryFee: decimal("delivery_fee", { precision: 10, scale: 2 }).default("0").notNull(),
     total: decimal("total", { precision: 10, scale: 2 }).notNull(),
@@ -250,6 +259,43 @@ export const loyaltyTransactions = pgTable(
     index("idx_loyalty_transactions_customer").on(table.customerId, table.createdAt),
     uniqueIndex("uq_loyalty_transactions_order_type").on(table.orderId, table.type),
   ]
+);
+
+export const payments = pgTable(
+  "payments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orderId: uuid("order_id")
+      .notNull()
+      .references(() => orders.id, { onDelete: "cascade" }),
+    provider: varchar("provider", { length: 30 }).notNull(),
+    providerReference: varchar("provider_reference", { length: 255 }).unique(),
+    reference: varchar("reference", { length: 100 }).notNull().unique(),
+    amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
+    currency: varchar("currency", { length: 3 }).default("XOF").notNull(),
+    status: paymentStatusEnum("status").default("pending").notNull(),
+    paymentMethod: varchar("payment_method", { length: 20 }),
+    checkoutUrl: text("checkout_url"),
+    failureReason: varchar("failure_reason", { length: 255 }),
+    raw: jsonb("raw"),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index("idx_payments_order").on(table.orderId), index("idx_payments_status").on(table.status)]
+);
+
+export const paymentWebhookEvents = pgTable(
+  "payment_webhook_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    provider: varchar("provider", { length: 30 }).notNull(),
+    eventId: varchar("event_id", { length: 255 }).notNull(),
+    payload: jsonb("payload"),
+    processedAt: timestamp("processed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex("uq_payment_webhook_events").on(table.provider, table.eventId)]
 );
 
 export const domainEvents = pgTable(
@@ -441,8 +487,13 @@ export const loyaltyTransactionsRelations = relations(loyaltyTransactions, ({ on
   order: one(orders, { fields: [loyaltyTransactions.orderId], references: [orders.id] }),
 }));
 
+export const paymentsRelations = relations(payments, ({ one }) => ({
+  order: one(orders, { fields: [payments.orderId], references: [orders.id] }),
+}));
+
 export const ordersRelations = relations(orders, ({ many, one }) => ({
   items: many(orderItems),
+  payments: many(payments),
   customer: one(customers, {
     fields: [orders.customerId],
     references: [customers.id],
@@ -497,6 +548,9 @@ export type LoyaltySettings = typeof loyaltySettings.$inferSelect;
 export type LoyaltyTransaction = typeof loyaltyTransactions.$inferSelect;
 
 export type DomainEventRow = typeof domainEvents.$inferSelect;
+
+export type Payment = typeof payments.$inferSelect;
+export type NewPayment = typeof payments.$inferInsert;
 
 export type Order = typeof orders.$inferSelect;
 export type NewOrder = typeof orders.$inferInsert;

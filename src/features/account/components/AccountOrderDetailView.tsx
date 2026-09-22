@@ -3,6 +3,7 @@ import { ArrowLeft, MessageCircle } from "lucide-react";
 import { formatDateTime } from "@/shared/lib/format";
 import { whatsappHref } from "@/shared/lib/phone";
 import { PAYMENT_METHOD_LABELS } from "@/features/orders/constants";
+import { PAYMENT_STATUS_BADGES } from "@/features/payments/constants";
 import { OrderItemsSummary } from "@/features/tracking/components/OrderItemsSummary";
 import { OrderStatusTimeline } from "@/features/tracking/components/OrderStatusTimeline";
 import { ACCOUNT_ORDERS_PATH } from "../constants";
@@ -40,12 +41,7 @@ export function AccountOrderDetailView({ order, whatsapp }: { order: AccountOrde
         <div>
           <dt className="text-[11px] uppercase tracking-[0.18em] text-[var(--som-gray)]">Paiement</dt>
           <dd className="m-0 mt-1 font-light text-[#4a4a4a]">
-            {PAYMENT_METHOD_LABELS[order.payment_method]} ·{" "}
-            {order.payment_status === "paid"
-              ? "Payé"
-              : order.payment_status === "refunded"
-                ? "Remboursé"
-                : "En attente"}
+            {PAYMENT_METHOD_LABELS[order.payment_method]} · {PAYMENT_STATUS_BADGES[order.payment_status].label}
           </dd>
         </div>
       </dl>

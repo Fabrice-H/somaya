@@ -36,12 +36,14 @@ export const PAYMENT_METHOD_SHORT_LABELS: Record<PaymentMethod, string> = {
   mobile_money: "Mobile",
   cash: "Espèces",
   bank_transfer: "Virement",
+  online: "En ligne",
 };
 
 export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   mobile_money: "Mobile Money",
   cash: "Espèces",
   bank_transfer: "Virement bancaire",
+  online: "Paiement en ligne",
 };
 
 export const CUSTOMER_STATUS_MESSAGES: Record<OrderStatus, string> = {

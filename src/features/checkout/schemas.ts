@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { normalizePhone } from "@/shared/lib/phone";
-import { ABIDJAN_COMMUNES, DELIVERY_METHODS, MAX_CART_LINES, MAX_LINE_QUANTITY } from "./constants";
+import {
+  ABIDJAN_COMMUNES,
+  CHECKOUT_PAYMENT_METHODS,
+  DELIVERY_METHODS,
+  MAX_CART_LINES,
+  MAX_LINE_QUANTITY,
+} from "./constants";
 
 const requiredText = (label: string, max: number) =>
   z.string().trim().min(1, `${label} est requis`).max(max, `${label} est trop long`);
@@ -36,6 +42,7 @@ export const checkoutSchema = z
   .object({
     customer: checkoutCustomerSchema,
     deliveryMethod: z.enum(DELIVERY_METHODS),
+    paymentMethod: z.enum(CHECKOUT_PAYMENT_METHODS).default("cash"),
     lines: z.array(checkoutLineSchema).min(1, "Votre panier est vide").max(MAX_CART_LINES),
   })
   .superRefine(({ customer, deliveryMethod }, ctx) => {
@@ -47,4 +54,5 @@ export const checkoutSchema = z
 export type CheckoutCustomer = z.output<typeof checkoutCustomerSchema>;
 export type CheckoutFormValues = Record<keyof CheckoutCustomer, string>;
 export type CheckoutLine = z.output<typeof checkoutLineSchema>;
+export type CheckoutPaymentMethod = (typeof CHECKOUT_PAYMENT_METHODS)[number];
 export type DeliveryMethod = (typeof DELIVERY_METHODS)[number];

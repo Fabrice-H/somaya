@@ -30,6 +30,14 @@ export function OrderRow({ order, onOpen }: { order: OrderSummary; onOpen: (href
         <span className="inline-flex items-center gap-2 text-[13px]">
           <PaymentIcon size={15} strokeWidth={1.5} aria-hidden />
           {PAYMENT_METHOD_SHORT_LABELS[order.payment_method]}
+          {order.payment_status === "paid" && (
+            <span className="text-[10px] uppercase tracking-[0.12em] text-[var(--som-success)]">Payée</span>
+          )}
+          {order.payment_method === "online" && order.payment_status !== "paid" && (
+            <span className="text-[10px] uppercase tracking-[0.12em] text-[#8a5a14]">
+              {order.payment_status === "failed" ? "Échec" : "Non payée"}
+            </span>
+          )}
         </span>
       </Td>
       <Td>

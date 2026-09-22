@@ -19,6 +19,7 @@ type CheckoutContentProps = {
   storeAddress: string;
   storeHours: string;
   account: CheckoutFormValues | null;
+  onlinePaymentEnabled: boolean;
 };
 
 function EmptyCheckout() {
@@ -38,7 +39,14 @@ function EmptyCheckout() {
   );
 }
 
-export function CheckoutContent({ deliveryFee, whatsapp, storeAddress, storeHours, account }: CheckoutContentProps) {
+export function CheckoutContent({
+  deliveryFee,
+  whatsapp,
+  storeAddress,
+  storeHours,
+  account,
+  onlinePaymentEnabled,
+}: CheckoutContentProps) {
   const hasMounted = useHasMounted();
   const checkout = useCheckout(account);
 
@@ -82,6 +90,9 @@ export function CheckoutContent({ deliveryFee, whatsapp, storeAddress, storeHour
           {checkout.step === 2 && (
             <PaymentStep
               customer={checkout.customer}
+              paymentMethod={checkout.paymentMethod}
+              onPaymentMethodChange={checkout.setPaymentMethod}
+              onlinePaymentEnabled={onlinePaymentEnabled}
               deliveryMethod={checkout.deliveryMethod}
               deliveryFee={appliedFee}
               total={total}

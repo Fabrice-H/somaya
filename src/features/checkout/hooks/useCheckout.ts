@@ -1,7 +1,12 @@
 import { useState, useTransition } from "react";
 import { useCartStore } from "@/features/cart/store";
 import { ABIDJAN_COMMUNES } from "../constants";
-import { checkoutCustomerSchema, type CheckoutFormValues, type DeliveryMethod } from "../schemas";
+import {
+  checkoutCustomerSchema,
+  type CheckoutFormValues,
+  type CheckoutPaymentMethod,
+  type DeliveryMethod,
+} from "../schemas";
 import { placeOrder } from "../server/actions";
 import type { PlacedOrder } from "../types";
 
@@ -38,6 +43,7 @@ export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
   const [step, setStep] = useState(0);
   const [customer, setCustomer] = useState<CheckoutFormValues>(initialCustomer ?? EMPTY_FORM);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("delivery");
+  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>("cash");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [placed, setPlaced] = useState<PlacedOrder | null>(null);
@@ -73,6 +79,7 @@ export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
       const result = await placeOrder({
         customer,
         deliveryMethod,
+        paymentMethod,
         lines: items.map(({ productId, lotId, itemId, quantity }) => ({ productId, lotId, itemId, quantity })),
       });
       if (!result.ok) {
@@ -80,8 +87,12 @@ export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
         setFieldErrors(result.fieldErrors ?? {});
         return;
       }
-      setPlaced(result.order);
       clearCart();
+      if (result.order.checkoutUrl) {
+        window.location.assign(result.order.checkoutUrl);
+        return;
+      }
+      setPlaced(result.order);
     });
   };
 
@@ -93,6 +104,8 @@ export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
     updateField,
     deliveryMethod,
     setDeliveryMethod,
+    paymentMethod,
+    setPaymentMethod,
     fieldErrors,
     error,
     isPending,

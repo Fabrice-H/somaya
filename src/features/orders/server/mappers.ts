@@ -1,4 +1,6 @@
 import type { Order as DbOrder, OrderItem as DbOrderItem } from "@/shared/lib/db/schema";
+import type { Payment as DbPayment } from "@/shared/lib/db/schema";
+import { toPaymentDto } from "@/features/payments/server/queries";
 import type { OrderDetail, OrderItem, OrderSummary } from "../types";
 
 type OrderSummaryRow = Pick<
@@ -10,6 +12,8 @@ type OrderSummaryRow = Pick<
   | "customerLastName"
   | "customerPhone"
   | "paymentMethod"
+  | "paymentStatus"
+  | "orderChannel"
   | "total"
   | "createdAt"
 >;
@@ -22,6 +26,8 @@ export function toOrderSummary(order: OrderSummaryRow): OrderSummary {
     customer_name: `${order.customerFirstName} ${order.customerLastName}`,
     customer_phone: order.customerPhone,
     payment_method: order.paymentMethod,
+    payment_status: order.paymentStatus,
+    order_channel: order.orderChannel === "online" ? "online" : "whatsapp",
     total: Number(order.total),
     created_at: order.createdAt.toISOString(),
   };
@@ -39,7 +45,7 @@ export function toOrderItem(item: DbOrderItem): OrderItem {
   };
 }
 
-export function toOrderDetail(order: DbOrder & { items: DbOrderItem[] }): OrderDetail {
+export function toOrderDetail(order: DbOrder & { items: DbOrderItem[]; payments?: DbPayment[] }): OrderDetail {
   return {
     ...toOrderSummary(order),
     customer_id: order.customerId,
@@ -48,7 +54,8 @@ export function toOrderDetail(order: DbOrder & { items: DbOrderItem[] }): OrderD
     customer_address: order.customerAddress,
     customer_commune: order.customerCommune,
     customer_notes: order.customerNotes,
-    payment_status: order.paymentStatus,
+    paid_at: order.paidAt?.toISOString() ?? null,
+    payments: (order.payments ?? []).map(toPaymentDto),
     subtotal: Number(order.subtotal),
     delivery_fee: Number(order.deliveryFee),
     delivered_at: order.deliveredAt?.toISOString() ?? null,
