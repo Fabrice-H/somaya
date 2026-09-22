@@ -532,9 +532,9 @@ Graphiques simples **sans nouvelle dépendance** (barres SVG / CSS) : chiffre d'
 | 1 Clients / CRM | terminé (22/09/2026) |
 | 2 Événements + Stock | terminé (22/09/2026) |
 | 3 Fidélité | terminé (22/09/2026) |
-| 4 Notifications | en cours |
+| 4 Notifications | reporté après 6 et 7 |
 | 5 Automatisations | à faire |
 | 6 Paiement Jèko | à faire |
-| 7 Espace client | à faire |
+| 7 Espace client | en cours (priorisé) |
 | 8 Dashboard | à faire |
 | 9 Recette | à faire |

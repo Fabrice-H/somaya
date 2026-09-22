@@ -30,13 +30,13 @@ function detailErrors(values: CheckoutFormValues): FieldErrors {
   }, {});
 }
 
-export function useCheckout() {
+export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
   const itemsByKey = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clearCart);
   const items = Object.values(itemsByKey);
 
   const [step, setStep] = useState(0);
-  const [customer, setCustomer] = useState<CheckoutFormValues>(EMPTY_FORM);
+  const [customer, setCustomer] = useState<CheckoutFormValues>(initialCustomer ?? EMPTY_FORM);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("delivery");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);

@@ -6,6 +6,7 @@ import { db, orderItems, orders } from "@/shared/lib/db";
 import { getDeliveryFee } from "@/features/settings/server/queries";
 import { generateOrderNumber } from "@/features/orders/utils";
 import { ORDERS_CACHE_TAG } from "@/features/orders/constants";
+import { getCustomerSession } from "@/features/account/server/session";
 import { refreshCustomerStats, upsertCustomerFromOrder } from "@/features/customers/server/service";
 import { emitEvent } from "@/features/events/server/events";
 import { consumeRateLimit, getClientIp } from "@/shared/lib/rate-limit";
@@ -41,10 +42,14 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     const total = subtotal + deliveryFee;
     const orderId = randomUUID();
     const orderNumber = generateOrderNumber();
-    const customerRecord = await upsertCustomerFromOrder(customer).catch((error: unknown) => {
-      console.error("upsertCustomerFromOrder failed", error);
-      return null;
-    });
+    const [customerRecord, sessionCustomer] = await Promise.all([
+      upsertCustomerFromOrder(customer).catch((error: unknown) => {
+        console.error("upsertCustomerFromOrder failed", error);
+        return null;
+      }),
+      getCustomerSession().catch(() => null),
+    ]);
+    const claimedAt = customerRecord && sessionCustomer?.id === customerRecord.id ? new Date() : null;
 
     await db.batch([
       db.insert(orders).values({
@@ -55,6 +60,7 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
         customerPhone: customer.phone,
         customerEmail: customer.email || null,
         customerId: customerRecord?.id ?? null,
+        claimedAt,
         customerAddress: isPickup ? PICKUP_LABEL : customer.address,
         customerCommune: isPickup ? PICKUP_LABEL : customer.commune,
         customerNotes: customer.notes || null,

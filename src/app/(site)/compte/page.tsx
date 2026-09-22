@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
-import { User } from "lucide-react";
-import { ComingSoon } from "@/shared/components/ui/ComingSoon";
+import { AccountOverview } from "@/features/account/components/AccountOverview";
+import { AccountShell } from "@/features/account/components/AccountShell";
+import { getAccountOverview } from "@/features/account/server/queries";
+import { requireCustomer } from "@/features/account/server/session";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Mon compte | SO'MAYA",
-  description: "L'espace client SO'MAYA arrive bientôt.",
+  robots: { index: false },
 };
 
-export default function ComptePage() {
+export default async function AccountPage() {
+  const customer = await requireCustomer("/compte");
+  const overview = await getAccountOverview(customer);
   return (
-    <ComingSoon
-      icon={User}
-      eyebrow="Espace client"
-      title="Mon compte"
-      text="Suivez vos commandes, retrouvez votre historique d'achats et gérez vos informations en un seul endroit."
-    />
+    <AccountShell firstName={customer.firstName}>
+      <AccountOverview overview={overview} />
+    </AccountShell>
   );
 }

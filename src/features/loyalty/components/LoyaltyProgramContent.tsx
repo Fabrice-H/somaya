@@ -111,9 +111,14 @@ export function LoyaltyProgramContent({ settings }: { settings: LoyaltySettingsD
           Vos points sont rattachés à votre numéro de téléphone. Votre espace client, pour suivre votre solde et vos
           commandes, arrive bientôt. En attendant, notre équipe vous renseigne sur WhatsApp.
         </p>
-        <Link href="/catalogue" className="btn-primary mt-8">
-          Découvrir la boutique
-        </Link>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link href="/compte/inscription" className="btn-primary">
+            Créer mon compte
+          </Link>
+          <Link href="/catalogue" className="btn-secondary">
+            Découvrir la boutique
+          </Link>
+        </div>
       </section>
     </div>
   );

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useHasMounted } from "@/shared/hooks/useHasMounted";
 import { lineTotal } from "@/features/cart/utils";
 import { useCheckout } from "../hooks/useCheckout";
+import type { CheckoutFormValues } from "../schemas";
 import { CheckoutStepper } from "./CheckoutStepper";
 import { CheckoutSuccess } from "./CheckoutSuccess";
 import { OrderSummary } from "./OrderSummary";
@@ -17,6 +18,7 @@ type CheckoutContentProps = {
   whatsapp: string;
   storeAddress: string;
   storeHours: string;
+  account: CheckoutFormValues | null;
 };
 
 function EmptyCheckout() {
@@ -36,12 +38,13 @@ function EmptyCheckout() {
   );
 }
 
-export function CheckoutContent({ deliveryFee, whatsapp, storeAddress, storeHours }: CheckoutContentProps) {
+export function CheckoutContent({ deliveryFee, whatsapp, storeAddress, storeHours, account }: CheckoutContentProps) {
   const hasMounted = useHasMounted();
-  const checkout = useCheckout();
+  const checkout = useCheckout(account);
 
   if (!hasMounted) return <div className="min-h-[60vh]" />;
-  if (checkout.placed) return <CheckoutSuccess order={checkout.placed} whatsapp={whatsapp} />;
+  if (checkout.placed)
+    return <CheckoutSuccess order={checkout.placed} whatsapp={whatsapp} hasAccount={account !== null} />;
   if (checkout.items.length === 0) return <EmptyCheckout />;
 
   const appliedFee = checkout.deliveryMethod === "pickup" ? 0 : deliveryFee;

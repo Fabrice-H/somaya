@@ -1,12 +1,11 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
-import { adminUsers, db } from "@/shared/lib/db";
-import { loginSchema } from "../schemas";
-import { verifyPassword } from "./password";
-
-const SESSION_MAX_AGE_SECONDS = 12 * 60 * 60;
-const TIMING_SAFE_HASH = "$2b$12$gx7Qd7bGsax/KB.1tqfNNuNTZFRXJmW/U8KoLMZl.SwmvOtjZWb3m";
+import { adminUsers, customers, db } from "@/shared/lib/db";
+import { normalizePhone } from "@/shared/lib/phone";
+import { SESSION_MAX_AGE_SECONDS } from "../constants";
+import { customerLoginSchema, loginSchema } from "../schemas";
+import { TIMING_SAFE_HASH, verifyPassword } from "./password";
 
 async function authorizeAdmin(credentials: unknown) {
   const parsed = loginSchema.safeParse(credentials);
@@ -17,12 +16,28 @@ async function authorizeAdmin(credentials: unknown) {
   if (!admin?.isActive || !valid) return null;
 
   await db.update(adminUsers).set({ lastLoginAt: new Date() }).where(eq(adminUsers.id, admin.id));
-  return { id: admin.id, email: admin.email, name: admin.name ?? "" };
+  return { id: admin.id, email: admin.email, name: admin.name ?? "", role: "admin" as const };
+}
+
+async function authorizeCustomer(credentials: unknown) {
+  const parsed = customerLoginSchema.safeParse(credentials);
+  if (!parsed.success) return null;
+  const phone = normalizePhone(parsed.data.phone);
+  if (!phone) return null;
+
+  const customer = await db.query.customers.findFirst({ where: eq(customers.phone, phone) });
+  const valid = await verifyPassword(parsed.data.password, customer?.passwordHash ?? TIMING_SAFE_HASH);
+  if (!customer?.passwordHash || !valid) return null;
+
+  await db.update(customers).set({ lastLoginAt: new Date() }).where(eq(customers.id, customer.id));
+  return { id: customer.id, email: customer.email, name: customer.firstName, role: "customer" as const };
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
+      id: "credentials",
+      name: "Administration",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Mot de passe", type: "password" },
@@ -36,16 +51,40 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       },
     }),
+    Credentials({
+      id: "customer",
+      name: "Espace client",
+      credentials: {
+        phone: { label: "Téléphone", type: "tel" },
+        password: { label: "Mot de passe", type: "password" },
+      },
+      authorize: async (credentials) => {
+        try {
+          return await authorizeCustomer(credentials);
+        } catch (error) {
+          console.error("Customer authorization failed", error);
+          return null;
+        }
+      },
+    }),
   ],
   pages: { signIn: "/" },
   session: { strategy: "jwt", maxAge: SESSION_MAX_AGE_SECONDS },
   callbacks: {
     jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+        token.issuedAt = Date.now();
+      }
       return token;
     },
     session({ session, token }) {
-      if (session.user && token.id) session.user.id = token.id as string;
+      if (session.user && token.id && token.role) {
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.issuedAt = token.issuedAt ?? 0;
+      }
       return session;
     },
   },
