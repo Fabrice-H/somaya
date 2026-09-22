@@ -72,7 +72,7 @@ export function AccountMenu({ isActive }: { isActive: (href: string) => boolean 
       <div
         role="menu"
         aria-hidden={!open}
-        className={`absolute right-0 top-full z-[70] mt-2 w-[240px] border border-[var(--som-border)] bg-white shadow-[0_16px_40px_rgba(0,0,0,0.12)] transition-[opacity,transform] duration-200 ${
+        className={`absolute right-0 top-full z-[70] mt-2 w-[268px] border border-[var(--som-border)] bg-white shadow-[0_16px_40px_rgba(0,0,0,0.12)] transition-[opacity,transform] duration-200 ${
           open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"
         }`}
       >
