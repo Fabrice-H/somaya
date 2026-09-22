@@ -15,8 +15,10 @@ export type JekoConfig = z.infer<typeof jekoSchema>;
 
 const isProduction = process.env.NODE_ENV === "production" && process.env.VERCEL_ENV === "production";
 
+const stage = process.env.APP_STAGE?.trim().toLowerCase() === "prod" ? "prod" : isProduction ? "prod" : "dev";
+
 function envByStage(name: string, aliases: string[] = []): string | undefined {
-  const suffix = isProduction ? "_PROD" : "_DEV";
+  const suffix = stage === "prod" ? "_PROD" : "_DEV";
   const candidates = [name, ...aliases].flatMap((base) => [`${base}${suffix}`, base]);
   for (const key of candidates) {
     const value = process.env[key]?.trim();
