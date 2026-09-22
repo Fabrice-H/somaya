@@ -92,6 +92,8 @@ export function CheckoutContent({
               customer={checkout.customer}
               paymentMethod={checkout.paymentMethod}
               onPaymentMethodChange={checkout.setPaymentMethod}
+              operator={checkout.operator}
+              onOperatorChange={checkout.setOperator}
               onlinePaymentEnabled={onlinePaymentEnabled}
               deliveryMethod={checkout.deliveryMethod}
               deliveryFee={appliedFee}

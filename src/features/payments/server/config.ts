@@ -15,19 +15,29 @@ export type JekoConfig = z.infer<typeof jekoSchema>;
 
 const isProduction = process.env.NODE_ENV === "production" && process.env.VERCEL_ENV === "production";
 
+function envByStage(name: string, aliases: string[] = []): string | undefined {
+  const suffix = isProduction ? "_PROD" : "_DEV";
+  const candidates = [name, ...aliases].flatMap((base) => [`${base}${suffix}`, base]);
+  for (const key of candidates) {
+    const value = process.env[key]?.trim();
+    if (value) return value;
+  }
+  return undefined;
+}
+
 export function getJekoConfig(): JekoConfig | null {
   const parsed = jekoSchema.safeParse({
-    apiKey: process.env.JEKO_API_KEY ?? (isProduction ? process.env.JEKO_KEY_PROD : process.env.JEKO_KEY_DEV),
-    apiKeyId: process.env.JEKO_API_KEY_ID,
-    storeId: process.env.JEKO_STORE_ID,
-    webhookSecret: process.env.JEKO_WEBHOOK_SECRET,
-    apiBase: process.env.JEKO_API_BASE ?? JEKO_DEFAULT_API_BASE,
+    apiKey: envByStage("JEKO_API_KEY", ["JEKO_KEY"]),
+    apiKeyId: envByStage("JEKO_API_KEY_ID"),
+    storeId: envByStage("JEKO_STORE_ID"),
+    webhookSecret: envByStage("JEKO_WEBHOOK_SECRET"),
+    apiBase: envByStage("JEKO_API_BASE") ?? JEKO_DEFAULT_API_BASE,
   });
   return parsed.success ? parsed.data : null;
 }
 
 export function getConfiguredProviderId(): PaymentProviderId | null {
-  const requested = process.env.PAYMENT_PROVIDER?.trim().toLowerCase();
+  const requested = envByStage("PAYMENT_PROVIDER")?.toLowerCase();
   if (requested === "fake") return process.env.NODE_ENV === "production" && isProduction ? null : "fake";
   if (requested === "jeko") return getJekoConfig() ? "jeko" : null;
   return null;

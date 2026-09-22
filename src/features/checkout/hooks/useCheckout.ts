@@ -8,6 +8,7 @@ import {
   type DeliveryMethod,
 } from "../schemas";
 import { placeOrder } from "../server/actions";
+import type { OnlineOperator } from "@/features/payments/types";
 import type { PlacedOrder } from "../types";
 
 type FieldErrors = Record<string, string[]>;
@@ -44,6 +45,7 @@ export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
   const [customer, setCustomer] = useState<CheckoutFormValues>(initialCustomer ?? EMPTY_FORM);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("delivery");
   const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>("cash");
+  const [operator, setOperator] = useState<OnlineOperator | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [placed, setPlaced] = useState<PlacedOrder | null>(null);
@@ -75,11 +77,16 @@ export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
 
   const submit = () => {
     setError(null);
+    if (paymentMethod === "online" && !operator) {
+      setError("Choisissez votre opérateur mobile money.");
+      return;
+    }
     startTransition(async () => {
       const result = await placeOrder({
         customer,
         deliveryMethod,
         paymentMethod,
+        operator: paymentMethod === "online" ? operator : null,
         lines: items.map(({ productId, lotId, itemId, quantity }) => ({ productId, lotId, itemId, quantity })),
       });
       if (!result.ok) {
@@ -106,6 +113,8 @@ export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
     setDeliveryMethod,
     paymentMethod,
     setPaymentMethod,
+    operator,
+    setOperator,
     fieldErrors,
     error,
     isPending,

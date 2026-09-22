@@ -2,10 +2,12 @@
 
 import { useState, useTransition } from "react";
 import { RefreshCw } from "lucide-react";
+import { ONLINE_OPERATORS } from "../constants";
 import { retryPaymentAction } from "../server/actions";
 
 export function PaymentRetryForm({ orderNumber }: { orderNumber: string }) {
   const [phone, setPhone] = useState("");
+  const [operator, setOperator] = useState<string>(ONLINE_OPERATORS[0].id);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -13,7 +15,7 @@ export function PaymentRetryForm({ orderNumber }: { orderNumber: string }) {
     event.preventDefault();
     setError(null);
     startTransition(async () => {
-      const result = await retryPaymentAction({ orderNumber, phone });
+      const result = await retryPaymentAction({ orderNumber, phone, operator });
       if (!result.ok) {
         setError(result.error);
         return;
@@ -40,6 +42,21 @@ export function PaymentRetryForm({ orderNumber }: { orderNumber: string }) {
           className="input-som"
         />
       </div>
+      <label htmlFor="retryOperator" className="label-som mt-4">
+        Opérateur
+      </label>
+      <select
+        id="retryOperator"
+        value={operator}
+        onChange={(event) => setOperator(event.target.value)}
+        className="input-som"
+      >
+        {ONLINE_OPERATORS.map((item) => (
+          <option key={item.id} value={item.id}>
+            {item.label}
+          </option>
+        ))}
+      </select>
       {error && (
         <p role="alert" className="error-som m-0">
           {error}

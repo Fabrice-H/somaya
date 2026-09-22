@@ -33,7 +33,7 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     return { ok: false, error: "Trop de commandes envoyées. Réessayez dans quelques minutes." };
   }
 
-  const { customer, deliveryMethod, paymentMethod, lines } = parsed.data;
+  const { customer, deliveryMethod, paymentMethod, operator, lines } = parsed.data;
   const isPickup = deliveryMethod === "pickup";
 
   try {
@@ -103,8 +103,8 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
 
     let checkoutUrl: string | null = null;
     let paymentError: string | null = null;
-    if (paymentMethod === "online") {
-      const payment = await startPayment(orderId);
+    if (paymentMethod === "online" && operator) {
+      const payment = await startPayment(orderId, operator);
       if (payment.ok) checkoutUrl = payment.checkoutUrl;
       else paymentError = payment.error;
     }

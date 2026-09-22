@@ -7,7 +7,13 @@ import { emitEvent } from "@/features/events/server/events";
 import { ORDERS_CACHE_TAG } from "@/features/orders/constants";
 import { PAYMENT_RETURN_PATH } from "../constants";
 import { amountsMatch, canTransition } from "../transitions";
-import type { ParsedWebhook, PaymentProvider, ProviderPaymentState, StartPaymentResult } from "../types";
+import type {
+  OnlineOperator,
+  ParsedWebhook,
+  PaymentProvider,
+  ProviderPaymentState,
+  StartPaymentResult,
+} from "../types";
 import { getPublicSiteUrl } from "./config";
 import { getPaymentProvider } from "./registry";
 
@@ -24,7 +30,7 @@ function returnUrls(orderNumber: string) {
   return { successUrl: build("ok"), errorUrl: build("ko") };
 }
 
-export async function startPayment(orderId: string): Promise<StartPaymentResult> {
+export async function startPayment(orderId: string, operator: OnlineOperator): Promise<StartPaymentResult> {
   const provider = getPaymentProvider();
   if (!provider) return { ok: false, error: "Le paiement en ligne n'est pas disponible pour le moment." };
 
@@ -36,8 +42,9 @@ export async function startPayment(orderId: string): Promise<StartPaymentResult>
     where: and(eq(payments.orderId, order.id), inArray(payments.status, [...REUSABLE_STATUSES])),
     orderBy: [desc(payments.createdAt)],
   });
-  if (existing?.checkoutUrl && existing.provider === provider.id)
+  if (existing?.checkoutUrl && existing.provider === provider.id && existing.paymentMethod === operator) {
     return { ok: true, checkoutUrl: existing.checkoutUrl };
+  }
 
   const attempt = await db
     .select({ count: payments.id })
@@ -50,6 +57,7 @@ export async function startPayment(orderId: string): Promise<StartPaymentResult>
   try {
     const created = await provider.createPayment({
       reference,
+      paymentMethod: operator,
       amount,
       currency: "XOF",
       description: `Commande ${order.orderNumber} · SO'MAYA`,
@@ -68,6 +76,7 @@ export async function startPayment(orderId: string): Promise<StartPaymentResult>
       reference,
       amount: String(amount),
       status: "pending",
+      paymentMethod: operator,
       checkoutUrl: created.checkoutUrl,
       raw: created.raw,
     });

@@ -100,7 +100,10 @@ export class JekoProvider implements PaymentProvider {
       currency: input.currency,
       reference: input.reference,
       description: input.description,
-      paymentDetails: { type: "redirect", data: { successUrl: input.successUrl, errorUrl: input.errorUrl } },
+      paymentDetails: {
+        type: "redirect",
+        data: { paymentMethod: input.paymentMethod, successUrl: input.successUrl, errorUrl: input.errorUrl },
+      },
       customer: {
         firstName: input.customer.firstName,
         lastName: input.customer.lastName,

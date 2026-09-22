@@ -361,6 +361,8 @@ payment_webhook_events
 - Vérification : `GET /payment_requests/{id}` → `status: pending | success | error`, avec `transaction.amount.amount`.
 - Webhook `TRANSACTION_COMPLETED` : corps = la transaction (`id`, `status`, `amount`, `transactionDetails.reference`, `executedAt`), en-tête **`Jeko-Signature`** = HMAC-SHA256 du **corps brut**, en hexadécimal minuscule. Retour HTTP 200 attendu, 3 relances possibles, doublons et désordre possibles → idempotence obligatoire.
 - Limites : 500 requêtes / minute.
+- **Vérifié en réel le 22/09/2026** (clé dev, boutique de test) : `paymentDetails.data.paymentMethod` est **obligatoire** (la cliente choisit l'opérateur sur notre site) ; `successUrl`/`errorUrl` doivent être publiques (pas `localhost` → test réel sur Vercel) ; référence déjà utilisée → 409 ; `GET` renvoie `status` sans `transaction` tant que rien n'est payé.
+- URL de webhook enregistrée chez Jèko : `https://somaya-ci.vercel.app/webhooks/jeko` (alias de `/api/payments/jeko/webhook`).
 
 **Architecture** :
 

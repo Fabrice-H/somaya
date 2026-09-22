@@ -4,7 +4,8 @@ import { eq } from "drizzle-orm";
 import { db, orders, payments } from "@/shared/lib/db";
 import { normalizePhone } from "@/shared/lib/phone";
 import { consumeRateLimit, getClientIp } from "@/shared/lib/rate-limit";
-import { PAYMENT_RATE_LIMIT } from "../constants";
+import { ONLINE_OPERATOR_IDS, PAYMENT_RATE_LIMIT } from "../constants";
+import type { OnlineOperator } from "../types";
 import type { StartPaymentResult } from "../types";
 import { getConfiguredProviderId } from "./config";
 import { recordFakeOutcome } from "./providers/fake";
@@ -12,10 +13,19 @@ import { applyProviderState, startPayment } from "./service";
 
 const retrySchema = { orderNumber: /^SM-\d{8}-[A-Z0-9]{4}$/ };
 
-export async function retryPaymentAction(input: { orderNumber: string; phone: string }): Promise<StartPaymentResult> {
+const isOperator = (value: unknown): value is OnlineOperator =>
+  typeof value === "string" && (ONLINE_OPERATOR_IDS as readonly string[]).includes(value);
+
+export async function retryPaymentAction(input: {
+  orderNumber: string;
+  phone: string;
+  operator: string;
+}): Promise<StartPaymentResult> {
   const orderNumber = String(input?.orderNumber ?? "").toUpperCase();
   const phone = normalizePhone(String(input?.phone ?? ""));
-  if (!retrySchema.orderNumber.test(orderNumber) || !phone) return { ok: false, error: "Informations invalides" };
+  if (!retrySchema.orderNumber.test(orderNumber) || !phone || !isOperator(input?.operator)) {
+    return { ok: false, error: "Informations invalides" };
+  }
 
   const ip = await getClientIp();
   if (!consumeRateLimit(`payment-retry:${ip}`, PAYMENT_RATE_LIMIT)) {
@@ -24,7 +34,7 @@ export async function retryPaymentAction(input: { orderNumber: string; phone: st
 
   const order = await db.query.orders.findFirst({ where: eq(orders.orderNumber, orderNumber) });
   if (!order || normalizePhone(order.customerPhone) !== phone) return { ok: false, error: "Commande introuvable" };
-  return startPayment(order.id);
+  return startPayment(order.id, input.operator);
 }
 
 export async function completeFakePaymentAction(input: { providerReference: string; outcome: "paid" | "failed" }) {
@@ -35,7 +45,7 @@ export async function completeFakePaymentAction(input: { providerReference: stri
   const state = {
     status: input.outcome === "paid" ? ("paid" as const) : ("failed" as const),
     amount: Number(payment.amount),
-    paymentMethod: "fake",
+    paymentMethod: payment.paymentMethod ?? "fake",
     failureReason: input.outcome === "failed" ? "payment_failed" : null,
     raw: { fake: true, outcome: input.outcome },
   };

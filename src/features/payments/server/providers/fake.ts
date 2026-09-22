@@ -28,7 +28,7 @@ export class FakeProvider implements PaymentProvider {
     outcomes.set(providerReference, {
       status: "pending",
       amount: input.amount,
-      paymentMethod: null,
+      paymentMethod: input.paymentMethod,
       failureReason: null,
       raw: null,
     });

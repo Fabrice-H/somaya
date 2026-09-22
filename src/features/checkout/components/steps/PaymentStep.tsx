@@ -1,6 +1,8 @@
 import { Banknote, ShieldCheck } from "lucide-react";
 import { formatPrice } from "@/shared/lib/format";
-import { PAYMENT_METHODS } from "@/shared/config/navigation";
+import Image from "next/image";
+import { ONLINE_OPERATORS } from "@/features/payments/constants";
+import type { OnlineOperator } from "@/features/payments/types";
 import type { CheckoutFormValues, CheckoutPaymentMethod, DeliveryMethod } from "../../schemas";
 import { ChoiceCard } from "../ChoiceCard";
 import { StepActions } from "../StepActions";
@@ -14,6 +16,8 @@ type PaymentStepProps = {
   pending: boolean;
   paymentMethod: CheckoutPaymentMethod;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
+  operator: OnlineOperator | null;
+  onOperatorChange: (operator: OnlineOperator) => void;
   onlinePaymentEnabled: boolean;
   onEdit: (step: number) => void;
   onBack: () => void;
@@ -62,6 +66,8 @@ export function PaymentStep({
   pending,
   paymentMethod,
   onPaymentMethodChange,
+  operator,
+  onOperatorChange,
   onlinePaymentEnabled,
   onEdit,
   onBack,
@@ -117,15 +123,44 @@ export function PaymentStep({
           }
           description="Paiement mobile money sécurisé, confirmation immédiate."
         >
-          <span className="mt-3 flex flex-wrap gap-2">
-            {PAYMENT_METHODS.map((method) => (
-              <span
-                key={method.name}
-                className="bg-[var(--som-surface)] px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] text-[#4a4a4a]"
-              >
-                {method.name}
-              </span>
-            ))}
+          <span
+            role="radiogroup"
+            aria-label="Opérateur mobile money"
+            className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4"
+          >
+            {ONLINE_OPERATORS.map((item) => {
+              const selected = isOnline && operator === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  disabled={!onlinePaymentEnabled}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    onPaymentMethodChange("online");
+                    onOperatorChange(item.id);
+                  }}
+                  className={`flex cursor-pointer flex-col items-center gap-2 border p-3 text-[11px] uppercase tracking-[0.12em] transition-colors disabled:cursor-not-allowed ${
+                    selected
+                      ? "border-[var(--som-primary)] bg-[var(--som-primary-50)] text-[var(--som-ink)]"
+                      : "border-[var(--som-border)] text-[#4a4a4a] hover:border-[var(--som-border-strong)]"
+                  }`}
+                >
+                  <span className="relative h-8 w-14 overflow-hidden rounded-sm" style={{ backgroundColor: item.bg }}>
+                    <Image
+                      src={item.logo}
+                      alt=""
+                      fill
+                      sizes="56px"
+                      className={item.fit === "cover" ? "object-cover" : "object-contain p-1"}
+                    />
+                  </span>
+                  {item.label}
+                </button>
+              );
+            })}
           </span>
         </ChoiceCard>
       </div>

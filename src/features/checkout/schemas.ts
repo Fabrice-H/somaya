@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { normalizePhone } from "@/shared/lib/phone";
+import { ONLINE_OPERATOR_IDS } from "@/features/payments/constants";
 import {
   ABIDJAN_COMMUNES,
   CHECKOUT_PAYMENT_METHODS,
@@ -43,9 +44,13 @@ export const checkoutSchema = z
     customer: checkoutCustomerSchema,
     deliveryMethod: z.enum(DELIVERY_METHODS),
     paymentMethod: z.enum(CHECKOUT_PAYMENT_METHODS).default("cash"),
+    operator: z.enum(ONLINE_OPERATOR_IDS).nullable().default(null),
     lines: z.array(checkoutLineSchema).min(1, "Votre panier est vide").max(MAX_CART_LINES),
   })
-  .superRefine(({ customer, deliveryMethod }, ctx) => {
+  .superRefine(({ customer, deliveryMethod, paymentMethod, operator }, ctx) => {
+    if (paymentMethod === "online" && !operator) {
+      ctx.addIssue({ code: "custom", path: ["operator"], message: "Choisissez votre opérateur mobile money" });
+    }
     if (deliveryMethod === "delivery" && !(ABIDJAN_COMMUNES as readonly string[]).includes(customer.commune)) {
       ctx.addIssue({ code: "custom", path: ["customer", "commune"], message: "Choisissez votre commune" });
     }

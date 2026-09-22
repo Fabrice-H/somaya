@@ -4,8 +4,11 @@ export type PaymentStatus = "pending" | "processing" | "paid" | "failed" | "canc
 
 export type OrderChannel = "whatsapp" | "online";
 
+export type OnlineOperator = "wave" | "orange" | "mtn" | "moov" | "djamo";
+
 export type CreatePaymentInput = {
   reference: string;
+  paymentMethod: OnlineOperator;
   amount: number;
   currency: string;
   description: string;

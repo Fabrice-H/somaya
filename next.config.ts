@@ -40,6 +40,7 @@ const nextConfig: NextConfig = {
       { source: "/:path*", headers: securityHeaders },
       { source: "/admin/:path*", headers: privateHeaders },
       { source: "/api/:path*", headers: privateHeaders },
+      { source: "/webhooks/:path*", headers: privateHeaders },
     ];
   },
   async redirects() {
