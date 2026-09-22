@@ -18,7 +18,12 @@ async function main() {
   const journal = JSON.parse(readFileSync(path.join(MIGRATIONS_DIR, "meta", "_journal.json"), "utf8")) as {
     entries: JournalEntry[];
   };
-  const upTo = Number(process.argv[2] ?? journal.entries.at(-1)?.idx ?? -1);
+  const upToArg = process.argv[2];
+  if (upToArg === undefined) {
+    console.error("Usage : pnpm db:baseline <idx>   (idx = dernière migration déjà présente en base, ex. 7)");
+    process.exit(1);
+  }
+  const upTo = Number(upToArg);
 
   await sql`CREATE SCHEMA IF NOT EXISTS "drizzle"`;
   await sql`CREATE TABLE IF NOT EXISTS "drizzle"."__drizzle_migrations" (
