@@ -1,5 +1,8 @@
 import "server-only";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
+import { revalidateTag } from "next/cache";
+import { PRICE_LOTS_CACHE_TAG } from "@/features/lots/constants";
+import { PRODUCTS_CACHE_TAG } from "@/features/products/constants";
 import { db, orderItems, orders, priceLots, productLots, products } from "@/shared/lib/db";
 import type { OrderItem } from "@/shared/lib/db/schema";
 import { adjustItemStock, clampStock, shortfallWarning } from "../adjust";
@@ -15,7 +18,9 @@ export async function applyOrderStock(orderId: string): Promise<StockResult> {
   if (!claimed) return { changed: false, warnings: [] };
 
   const lines = await db.query.orderItems.findMany({ where: eq(orderItems.orderId, orderId) });
-  return { changed: true, warnings: await adjustLines(lines, -1) };
+  const warnings = await adjustLines(lines, -1);
+  invalidateCatalog();
+  return { changed: true, warnings };
 }
 
 export async function restoreOrderStock(orderId: string): Promise<StockResult> {
@@ -28,7 +33,13 @@ export async function restoreOrderStock(orderId: string): Promise<StockResult> {
 
   const lines = await db.query.orderItems.findMany({ where: eq(orderItems.orderId, orderId) });
   await adjustLines(lines, 1);
+  invalidateCatalog();
   return { changed: true, warnings: [] };
+}
+
+function invalidateCatalog() {
+  revalidateTag(PRODUCTS_CACHE_TAG, "max");
+  revalidateTag(PRICE_LOTS_CACHE_TAG, "max");
 }
 
 async function adjustLines(lines: OrderItem[], direction: 1 | -1): Promise<string[]> {
