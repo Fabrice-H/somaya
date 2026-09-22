@@ -147,13 +147,12 @@ export async function getCustomer(id: string): Promise<CustomerDetail | null> {
         status: orders.status,
         total: orders.total,
         createdAt: orders.createdAt,
-        itemsCount:
-          sql<number>`(select coalesce(sum(${orderItems.quantity}), 0) from ${orderItems} where ${orderItems.orderId} = ${orders.id})`.mapWith(
-            Number
-          ),
+        itemsCount: sql<number>`coalesce(sum(${orderItems.quantity}), 0)`.mapWith(Number),
       })
       .from(orders)
+      .leftJoin(orderItems, eq(orderItems.orderId, orders.id))
       .where(eq(orders.customerId, row.id))
+      .groupBy(orders.id)
       .orderBy(desc(orders.createdAt))
       .limit(CUSTOMER_ORDERS_LIMIT),
     db

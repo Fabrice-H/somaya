@@ -57,11 +57,6 @@ export function LoyaltySettingsForm({ settings }: { settings: LoyaltySettingsDat
       <AdminCard
         title="Règles du programme"
         description="Modifiable à tout moment ; les niveaux sont recalculés à l'enregistrement."
-        action={
-          <button type="submit" disabled={isPending} className="btn-primary btn-sm disabled:opacity-50">
-            {isPending ? "Enregistrement…" : "Enregistrer"}
-          </button>
-        }
       >
         <div className="space-y-6">
           <label className="flex cursor-pointer items-center gap-3 text-[14px] text-[var(--som-ink)]">
@@ -156,12 +151,17 @@ export function LoyaltySettingsForm({ settings }: { settings: LoyaltySettingsDat
             </div>
           </div>
 
-          <p
-            role="status"
-            className={`m-0 min-h-4 text-[12px] ${message?.tone === "error" ? "text-[var(--som-error)]" : "text-[var(--som-success)]"}`}
-          >
-            {message?.text ?? ""}
-          </p>
+          <div className="flex items-center justify-between gap-3 border-t border-[var(--som-border)] pt-5">
+            <p
+              role="status"
+              className={`m-0 text-[12px] ${message?.tone === "error" ? "text-[var(--som-error)]" : "text-[var(--som-success)]"}`}
+            >
+              {message?.text ?? ""}
+            </p>
+            <button type="submit" disabled={isPending} className="btn-primary btn-sm disabled:opacity-50">
+              {isPending ? "Enregistrement…" : "Enregistrer"}
+            </button>
+          </div>
         </div>
       </AdminCard>
     </form>
