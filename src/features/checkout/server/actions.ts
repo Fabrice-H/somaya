@@ -7,6 +7,7 @@ import { getDeliveryFee } from "@/features/settings/server/queries";
 import { generateOrderNumber } from "@/features/orders/utils";
 import { ORDERS_CACHE_TAG } from "@/features/orders/constants";
 import { refreshCustomerStats, upsertCustomerFromOrder } from "@/features/customers/server/service";
+import { emitEvent } from "@/features/events/server/events";
 import { consumeRateLimit, getClientIp } from "@/shared/lib/rate-limit";
 import { ORDER_RATE_LIMIT, PICKUP_LABEL } from "../constants";
 import { checkoutSchema } from "../schemas";
@@ -76,6 +77,8 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
           size: line.size,
           lotId: line.lotId,
           lotName: line.variant,
+          itemId: line.itemId,
+          priceLotId: line.priceLotId,
           lineTotal: String(line.lineTotal),
         }))
       ),
@@ -85,7 +88,9 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
       await refreshCustomerStats(customerRecord.id).catch((error: unknown) =>
         console.error("refreshCustomerStats failed", error)
       );
+      if (customerRecord.created) await emitEvent({ type: "customer.created", customerId: customerRecord.id });
     }
+    await emitEvent({ type: "order.created", orderId, customerId: customerRecord?.id ?? null });
 
     updateTag(ORDERS_CACHE_TAG);
     return {

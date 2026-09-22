@@ -71,6 +71,13 @@
       "when": 1790067413170,
       "tag": "0009_customers",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790071802085,
+      "tag": "0010_events_stock",
+      "breakpoints": true
     }
   ]
 }

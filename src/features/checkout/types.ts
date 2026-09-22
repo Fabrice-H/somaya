@@ -1,6 +1,8 @@
 export type PricedLine = {
   productId: string | null;
   lotId: string | null;
+  priceLotId: string | null;
+  itemId: string | null;
   name: string;
   variant: string | null;
   color: string | null;

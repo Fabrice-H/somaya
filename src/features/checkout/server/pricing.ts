@@ -61,6 +61,8 @@ export async function priceCheckoutLines(lines: CheckoutLine[]): Promise<PricedL
       return line({
         productId: null,
         lotId: null,
+        priceLotId: lot.id,
+        itemId: item.id,
         name,
         variant: name === lot.name ? null : lot.name,
         color: null,
@@ -84,6 +86,8 @@ export async function priceCheckoutLines(lines: CheckoutLine[]): Promise<PricedL
       return line({
         productId: product.id,
         lotId: productLot.id,
+        priceLotId: null,
+        itemId: item?.id ?? null,
         name: product.name,
         variant: [productLot.name, item?.label].filter(Boolean).join(" · "),
         color: null,
@@ -99,6 +103,8 @@ export async function priceCheckoutLines(lines: CheckoutLine[]): Promise<PricedL
     return line({
       productId: product.id,
       lotId: null,
+      priceLotId: null,
+      itemId: null,
       name: product.name,
       variant: [color, size && `Taille ${size}`].filter(Boolean).join(" · ") || null,
       color,

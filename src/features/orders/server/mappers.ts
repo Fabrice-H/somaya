@@ -52,6 +52,7 @@ export function toOrderDetail(order: DbOrder & { items: DbOrderItem[] }): OrderD
     subtotal: Number(order.subtotal),
     delivery_fee: Number(order.deliveryFee),
     delivered_at: order.deliveredAt?.toISOString() ?? null,
+    stock_applied_at: order.stockAppliedAt?.toISOString() ?? null,
     updated_at: order.updatedAt.toISOString(),
     items: order.items.map(toOrderItem),
   };

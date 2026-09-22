@@ -11,7 +11,7 @@ interface OrderStatusUpdateProps {
   currentStatus: OrderStatus;
 }
 
-type Feedback = { type: "success" | "error"; text: string };
+type Feedback = { type: "success" | "error" | "warning"; text: string };
 
 const FEEDBACK_DURATION_MS = 3000;
 
@@ -36,7 +36,11 @@ export function OrderStatusUpdate({ orderId, currentStatus }: OrderStatusUpdateP
     startTransition(async () => {
       const result = await updateOrderStatus({ id: orderId, status: next });
       if (result.ok) {
-        setFeedback({ type: "success", text: "Statut mis à jour" });
+        setFeedback(
+          result.warnings.length > 0
+            ? { type: "warning", text: `Statut mis à jour. ${result.warnings.join(" · ")}` }
+            : { type: "success", text: "Statut mis à jour" }
+        );
         router.refresh();
       } else {
         setFeedback({ type: "error", text: result.error });
@@ -63,8 +67,12 @@ export function OrderStatusUpdate({ orderId, currentStatus }: OrderStatusUpdateP
       </select>
       <p
         role="status"
-        className={`m-0 mt-1.5 min-h-4 text-[12px] font-light sm:absolute sm:left-0 sm:top-full ${
-          feedback?.type === "error" ? "text-[var(--som-error)]" : "text-[var(--som-success)]"
+        className={`m-0 mt-1.5 min-h-4 text-[12px] font-light sm:absolute sm:left-0 sm:top-full sm:w-[420px] sm:text-right ${
+          feedback?.type === "error"
+            ? "text-[var(--som-error)]"
+            : feedback?.type === "warning"
+              ? "text-[#8a5a14]"
+              : "text-[var(--som-success)]"
         }`}
       >
         {feedback?.text}

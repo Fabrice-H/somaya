@@ -37,6 +37,7 @@ export interface OrderDetail extends OrderSummary {
   subtotal: number;
   delivery_fee: number;
   delivered_at: string | null;
+  stock_applied_at: string | null;
   updated_at: string;
   items: OrderItem[];
 }
@@ -68,4 +69,4 @@ export interface StatusColors {
   text: string;
 }
 
-export type OrderActionResult = { ok: true } | { ok: false; error: string };
+export type OrderActionResult = { ok: true; warnings: string[] } | { ok: false; error: string };

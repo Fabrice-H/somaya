@@ -529,8 +529,8 @@ Graphiques simples **sans nouvelle dépendance** (barres SVG / CSS) : chiffre d'
 | Étape | État |
 |---|---|
 | 0 Fondations | terminé (22/09/2026) |
-| 1 Clients / CRM | en cours |
-| 2 Événements + Stock | à faire |
+| 1 Clients / CRM | terminé (22/09/2026) |
+| 2 Événements + Stock | en cours |
 | 3 Fidélité | à faire |
 | 4 Notifications | à faire |
 | 5 Automatisations | à faire |

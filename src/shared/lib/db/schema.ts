@@ -188,6 +188,7 @@ export const orders = pgTable(
     total: decimal("total", { precision: 10, scale: 2 }).notNull(),
     deliveryZoneId: uuid("delivery_zone_id").references(() => deliveryZones.id, { onDelete: "set null" }),
     customerId: uuid("customer_id").references(() => customers.id, { onDelete: "set null" }),
+    stockAppliedAt: timestamp("stock_applied_at", { withTimezone: true }),
     deliveredAt: timestamp("delivered_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
@@ -216,10 +217,24 @@ export const orderItems = pgTable(
     size: varchar("size", { length: 50 }),
     lotId: uuid("lot_id").references(() => productLots.id, { onDelete: "set null" }),
     lotName: varchar("lot_name", { length: 100 }),
+    itemId: varchar("item_id", { length: 200 }),
+    priceLotId: uuid("price_lot_id").references(() => priceLots.id, { onDelete: "set null" }),
     lineTotal: decimal("line_total", { precision: 10, scale: 2 }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [index("idx_order_items_order_id").on(table.orderId)]
+);
+
+export const domainEvents = pgTable(
+  "domain_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    type: varchar("type", { length: 60 }).notNull(),
+    aggregateId: uuid("aggregate_id"),
+    payload: jsonb("payload"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index("idx_domain_events_type_created").on(table.type, table.createdAt)]
 );
 
 export const storeSettings = pgTable("store_settings", {
@@ -446,6 +461,8 @@ export type Customer = typeof customers.$inferSelect;
 export type NewCustomer = typeof customers.$inferInsert;
 
 export type LoyaltySettings = typeof loyaltySettings.$inferSelect;
+
+export type DomainEventRow = typeof domainEvents.$inferSelect;
 
 export type Order = typeof orders.$inferSelect;
 export type NewOrder = typeof orders.$inferInsert;
