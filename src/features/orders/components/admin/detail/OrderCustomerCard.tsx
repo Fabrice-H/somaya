@@ -1,4 +1,6 @@
-import { Mail, MessageSquare, Phone, User } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, Mail, MessageSquare, Phone, User } from "lucide-react";
+import { CUSTOMERS_PATH } from "@/features/customers/constants";
 import { AdminCard } from "@/shared/components/admin/ui/AdminCard";
 import { telHref } from "@/shared/lib/phone";
 import type { OrderDetail } from "../../../types";
@@ -9,7 +11,20 @@ const LINK_CLASS =
 
 export function OrderCustomerCard({ order }: { order: OrderDetail }) {
   return (
-    <AdminCard title="Client">
+    <AdminCard
+      title="Client"
+      action={
+        order.customer_id ? (
+          <Link
+            href={`${CUSTOMERS_PATH}/${order.customer_id}`}
+            className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.16em] text-[var(--som-primary)] hover:underline"
+          >
+            Fiche client
+            <ArrowUpRight size={13} strokeWidth={1.5} aria-hidden />
+          </Link>
+        ) : undefined
+      }
+    >
       <div className="space-y-4">
         <InfoLine icon={User}>
           <p className="m-0 font-medium">{order.customer_name}</p>

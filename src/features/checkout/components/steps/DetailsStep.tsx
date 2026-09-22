@@ -48,6 +48,26 @@ export function DetailsStep({ customer, fieldErrors, onChange, onNext }: Details
         </CheckoutField>
         <div className="sm:col-span-2">
           <CheckoutField
+            id="email"
+            label="Email"
+            error={fieldErrors.email}
+            hint="Facultatif, pour recevoir le suivi de votre commande."
+          >
+            {(props) => (
+              <input
+                {...props}
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                value={customer.email}
+                onChange={(e) => onChange("email", e.target.value)}
+                className="input-som"
+              />
+            )}
+          </CheckoutField>
+        </div>
+        <div className="sm:col-span-2">
+          <CheckoutField
             id="phone"
             label="Téléphone"
             required

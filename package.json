@@ -18,7 +18,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "db:baseline": "tsx scripts/baseline-migrations.ts"
+    "db:baseline": "tsx scripts/baseline-migrations.ts",
+    "db:backfill": "tsx scripts/backfill-customers.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

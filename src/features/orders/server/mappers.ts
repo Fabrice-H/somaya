@@ -42,6 +42,7 @@ export function toOrderItem(item: DbOrderItem): OrderItem {
 export function toOrderDetail(order: DbOrder & { items: DbOrderItem[] }): OrderDetail {
   return {
     ...toOrderSummary(order),
+    customer_id: order.customerId,
     customer_first_name: order.customerFirstName,
     customer_email: order.customerEmail,
     customer_address: order.customerAddress,

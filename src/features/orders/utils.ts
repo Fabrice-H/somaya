@@ -2,6 +2,8 @@ import { CUSTOMER_STATUS_MESSAGES } from "./constants";
 import type { OrderNotificationData } from "./types";
 import { formatPrice } from "@/shared/lib/format";
 
+export { escapeLikePattern, getVisiblePages } from "@/shared/lib/utils";
+
 const longDateFormatter = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
   month: "long",
@@ -51,14 +53,4 @@ export function buildStatusMessage(order: OrderNotificationData): string {
 
 export function buildFollowUpMessage(order: OrderNotificationData): string {
   return `Bonjour ${order.customer_first_name},\n\nNous avons bien reçu votre commande ${order.order_number}.\n\nMerci de confirmer votre disponibilité pour la livraison.\n\nL'équipe SO'MAYA`;
-}
-
-export function getVisiblePages(page: number, totalPages: number): number[] {
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
-  if (totalPages <= 7) return pages;
-  return pages.filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1);
-}
-
-export function escapeLikePattern(value: string): string {
-  return value.replace(/[\\%_]/g, (char) => `\\${char}`);
 }

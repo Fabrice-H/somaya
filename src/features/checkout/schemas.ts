@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizePhone } from "@/shared/lib/phone";
 import { ABIDJAN_COMMUNES, DELIVERY_METHODS, MAX_CART_LINES, MAX_LINE_QUANTITY } from "./constants";
 
 const requiredText = (label: string, max: number) =>
@@ -10,7 +11,15 @@ export const checkoutCustomerSchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(/^[0-9 +]{8,20}$/, "Numéro de téléphone invalide"),
+    .regex(/^[0-9 +]{8,20}$/, "Numéro de téléphone invalide")
+    .refine((value) => normalizePhone(value) !== null, "Numéro de téléphone invalide (10 chiffres attendus)"),
+  email: z
+    .string()
+    .trim()
+    .max(255)
+    .optional()
+    .default("")
+    .refine((value) => value === "" || z.email().safeParse(value).success, "Email invalide"),
   commune: z.string().trim().max(100).optional().default(""),
   address: z.string().trim().max(300).optional().default(""),
   notes: z.string().trim().max(500).optional().default(""),

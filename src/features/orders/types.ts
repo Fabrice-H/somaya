@@ -27,6 +27,7 @@ export interface OrderSummary {
 }
 
 export interface OrderDetail extends OrderSummary {
+  customer_id: string | null;
   customer_first_name: string;
   customer_email: string | null;
   customer_address: string | null;

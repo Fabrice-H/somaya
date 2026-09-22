@@ -7,11 +7,21 @@ import type { PlacedOrder } from "../types";
 
 type FieldErrors = Record<string, string[]>;
 
-const EMPTY_FORM: CheckoutFormValues = { firstName: "", lastName: "", phone: "", commune: "", address: "", notes: "" };
-const DETAIL_FIELDS = ["firstName", "lastName", "phone"] as const;
+const EMPTY_FORM: CheckoutFormValues = {
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+  commune: "",
+  address: "",
+  notes: "",
+};
+const DETAIL_FIELDS = ["firstName", "lastName", "phone", "email"] as const;
 
 function detailErrors(values: CheckoutFormValues): FieldErrors {
-  const result = checkoutCustomerSchema.pick({ firstName: true, lastName: true, phone: true }).safeParse(values);
+  const result = checkoutCustomerSchema
+    .pick({ firstName: true, lastName: true, phone: true, email: true })
+    .safeParse(values);
   if (result.success) return {};
   return result.error.issues.reduce<FieldErrors>((errors, issue) => {
     const key = String(issue.path[0]);

@@ -6,6 +6,7 @@ import { db, orderItems, orders } from "@/shared/lib/db";
 import { getDeliveryFee } from "@/features/settings/server/queries";
 import { generateOrderNumber } from "@/features/orders/utils";
 import { ORDERS_CACHE_TAG } from "@/features/orders/constants";
+import { refreshCustomerStats, upsertCustomerFromOrder } from "@/features/customers/server/service";
 import { consumeRateLimit, getClientIp } from "@/shared/lib/rate-limit";
 import { ORDER_RATE_LIMIT, PICKUP_LABEL } from "../constants";
 import { checkoutSchema } from "../schemas";
@@ -39,6 +40,10 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     const total = subtotal + deliveryFee;
     const orderId = randomUUID();
     const orderNumber = generateOrderNumber();
+    const customerRecord = await upsertCustomerFromOrder(customer).catch((error: unknown) => {
+      console.error("upsertCustomerFromOrder failed", error);
+      return null;
+    });
 
     await db.batch([
       db.insert(orders).values({
@@ -47,6 +52,8 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
         customerFirstName: customer.firstName,
         customerLastName: customer.lastName,
         customerPhone: customer.phone,
+        customerEmail: customer.email || null,
+        customerId: customerRecord?.id ?? null,
         customerAddress: isPickup ? PICKUP_LABEL : customer.address,
         customerCommune: isPickup ? PICKUP_LABEL : customer.commune,
         customerNotes: customer.notes || null,
@@ -73,6 +80,12 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
         }))
       ),
     ]);
+
+    if (customerRecord) {
+      await refreshCustomerStats(customerRecord.id).catch((error: unknown) =>
+        console.error("refreshCustomerStats failed", error)
+      );
+    }
 
     updateTag(ORDERS_CACHE_TAG);
     return {

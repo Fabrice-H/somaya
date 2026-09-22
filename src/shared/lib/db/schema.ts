@@ -134,6 +134,40 @@ export const deliveryZones = pgTable("delivery_zones", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const customers = pgTable(
+  "customers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    phone: varchar("phone", { length: 20 }).notNull().unique(),
+    email: varchar("email", { length: 255 }),
+    firstName: varchar("first_name", { length: 255 }).notNull(),
+    lastName: varchar("last_name", { length: 255 }).notNull(),
+    ordersCount: integer("orders_count").default(0).notNull(),
+    totalSpent: decimal("total_spent", { precision: 12, scale: 2 }).default("0").notNull(),
+    firstOrderAt: timestamp("first_order_at", { withTimezone: true }),
+    lastOrderAt: timestamp("last_order_at", { withTimezone: true }),
+    loyaltyPoints: integer("loyalty_points").default(0).notNull(),
+    loyaltyLevel: varchar("loyalty_level", { length: 30 }).default("new").notNull(),
+    notes: text("notes"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("idx_customers_last_order_at").on(table.lastOrderAt),
+    index("idx_customers_total_spent").on(table.totalSpent),
+  ]
+);
+
+export const loyaltySettings = pgTable("loyalty_settings", {
+  id: uuid("id").primaryKey().default("00000000-0000-0000-0000-000000000004"),
+  pointsPerStep: integer("points_per_step").default(1).notNull(),
+  amountStep: integer("amount_step").default(1000).notNull(),
+  levels: jsonb("levels"),
+  segmentRules: jsonb("segment_rules"),
+  isEnabled: boolean("is_enabled").default(true).notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const orders = pgTable(
   "orders",
   {
@@ -153,6 +187,7 @@ export const orders = pgTable(
     deliveryFee: decimal("delivery_fee", { precision: 10, scale: 2 }).default("0").notNull(),
     total: decimal("total", { precision: 10, scale: 2 }).notNull(),
     deliveryZoneId: uuid("delivery_zone_id").references(() => deliveryZones.id, { onDelete: "set null" }),
+    customerId: uuid("customer_id").references(() => customers.id, { onDelete: "set null" }),
     deliveredAt: timestamp("delivered_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
@@ -161,6 +196,7 @@ export const orders = pgTable(
     index("idx_orders_status").on(table.status),
     index("idx_orders_created_at").on(table.createdAt),
     index("idx_orders_order_number").on(table.orderNumber),
+    index("idx_orders_customer_id").on(table.customerId),
   ]
 );
 
@@ -353,8 +389,16 @@ export const productLotsRelations = relations(productLots, ({ one }) => ({
   }),
 }));
 
+export const customersRelations = relations(customers, ({ many }) => ({
+  orders: many(orders),
+}));
+
 export const ordersRelations = relations(orders, ({ many, one }) => ({
   items: many(orderItems),
+  customer: one(customers, {
+    fields: [orders.customerId],
+    references: [customers.id],
+  }),
   deliveryZone: one(deliveryZones, {
     fields: [orders.deliveryZoneId],
     references: [deliveryZones.id],
@@ -397,6 +441,11 @@ export type NewProductLot = typeof productLots.$inferInsert;
 
 export type DeliveryZone = typeof deliveryZones.$inferSelect;
 export type NewDeliveryZone = typeof deliveryZones.$inferInsert;
+
+export type Customer = typeof customers.$inferSelect;
+export type NewCustomer = typeof customers.$inferInsert;
+
+export type LoyaltySettings = typeof loyaltySettings.$inferSelect;
 
 export type Order = typeof orders.$inferSelect;
 export type NewOrder = typeof orders.$inferInsert;
