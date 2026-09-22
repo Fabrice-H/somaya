@@ -34,7 +34,7 @@ export function AccountOrderDetailView({ order, whatsapp }: { order: AccountOrde
         <div>
           <dt className="text-[11px] uppercase tracking-[0.18em] text-[var(--som-gray)]">Livraison</dt>
           <dd className="m-0 mt-1 font-light text-[#4a4a4a]">
-            {[order.address, order.commune].filter(Boolean).join(", ") || "Retrait en boutique"}
+            {[...new Set([order.address, order.commune].filter(Boolean))].join(", ") || "Retrait en boutique"}
           </dd>
         </div>
         <div>
