@@ -531,8 +531,8 @@ Graphiques simples **sans nouvelle dépendance** (barres SVG / CSS) : chiffre d'
 | 0 Fondations | terminé (22/09/2026) |
 | 1 Clients / CRM | terminé (22/09/2026) |
 | 2 Événements + Stock | terminé (22/09/2026) |
-| 3 Fidélité | en cours |
-| 4 Notifications | à faire |
+| 3 Fidélité | terminé (22/09/2026) |
+| 4 Notifications | en cours |
 | 5 Automatisations | à faire |
 | 6 Paiement Jèko | à faire |
 | 7 Espace client | à faire |

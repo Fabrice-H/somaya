@@ -3,6 +3,7 @@ import { and, asc, count, desc, eq, gte, ilike, isNull, lt, ne, or, sql, type SQ
 import { customers, db, orderItems, orders } from "@/shared/lib/db";
 import { escapeLikePattern } from "@/shared/lib/utils";
 import { assertAdmin } from "@/features/auth/server/session";
+import { getCustomerLoyaltyHistory } from "@/features/loyalty/server/queries";
 import {
   CUSTOMER_ORDERS_LIMIT,
   CUSTOMER_SEGMENTS,
@@ -138,7 +139,7 @@ export async function getCustomer(id: string): Promise<CustomerDetail | null> {
   ]);
   if (!row) return null;
 
-  const [customerOrders, topProducts] = await Promise.all([
+  const [customerOrders, topProducts, loyaltyHistory] = await Promise.all([
     db
       .select({
         id: orders.id,
@@ -168,6 +169,7 @@ export async function getCustomer(id: string): Promise<CustomerDetail | null> {
       .groupBy(orderItems.productName)
       .orderBy(desc(sql`sum(${orderItems.quantity})`))
       .limit(CUSTOMER_TOP_PRODUCTS_LIMIT),
+    getCustomerLoyaltyHistory(row.id),
   ]);
 
   const summary = toCustomerSummary(row, rules);
@@ -190,5 +192,6 @@ export async function getCustomer(id: string): Promise<CustomerDetail | null> {
       quantity: product.quantity,
       orders_count: product.ordersCount,
     })),
+    loyalty_history: loyaltyHistory,
   };
 }

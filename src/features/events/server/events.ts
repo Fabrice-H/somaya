@@ -1,5 +1,6 @@
 import "server-only";
 import { db, domainEvents } from "@/shared/lib/db";
+import { registerLoyaltyHandlers } from "@/features/loyalty/server/handlers";
 import { registerStockHandlers } from "@/features/stock/server/handlers";
 import { aggregateIdOf, createEventBus } from "../bus";
 import type { DomainEvent, EmitResult } from "../types";
@@ -10,6 +11,7 @@ const bus = createEventBus(async (event) => {
 });
 
 registerStockHandlers(bus);
+registerLoyaltyHandlers(bus);
 
 export function emitEvent(event: DomainEvent): Promise<EmitResult> {
   return bus.emit(event);

@@ -10,6 +10,7 @@ import {
   jsonb,
   pgEnum,
   index,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -225,6 +226,26 @@ export const orderItems = pgTable(
   (table) => [index("idx_order_items_order_id").on(table.orderId)]
 );
 
+export const loyaltyTransactions = pgTable(
+  "loyalty_transactions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    customerId: uuid("customer_id")
+      .notNull()
+      .references(() => customers.id, { onDelete: "cascade" }),
+    orderId: uuid("order_id").references(() => orders.id, { onDelete: "set null" }),
+    type: varchar("type", { length: 20 }).notNull(),
+    points: integer("points").notNull(),
+    reason: varchar("reason", { length: 255 }),
+    actorEmail: varchar("actor_email", { length: 255 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("idx_loyalty_transactions_customer").on(table.customerId, table.createdAt),
+    uniqueIndex("uq_loyalty_transactions_order_type").on(table.orderId, table.type),
+  ]
+);
+
 export const domainEvents = pgTable(
   "domain_events",
   {
@@ -406,6 +427,12 @@ export const productLotsRelations = relations(productLots, ({ one }) => ({
 
 export const customersRelations = relations(customers, ({ many }) => ({
   orders: many(orders),
+  loyaltyTransactions: many(loyaltyTransactions),
+}));
+
+export const loyaltyTransactionsRelations = relations(loyaltyTransactions, ({ one }) => ({
+  customer: one(customers, { fields: [loyaltyTransactions.customerId], references: [customers.id] }),
+  order: one(orders, { fields: [loyaltyTransactions.orderId], references: [orders.id] }),
 }));
 
 export const ordersRelations = relations(orders, ({ many, one }) => ({
@@ -461,6 +488,7 @@ export type Customer = typeof customers.$inferSelect;
 export type NewCustomer = typeof customers.$inferInsert;
 
 export type LoyaltySettings = typeof loyaltySettings.$inferSelect;
+export type LoyaltyTransaction = typeof loyaltyTransactions.$inferSelect;
 
 export type DomainEventRow = typeof domainEvents.$inferSelect;
 

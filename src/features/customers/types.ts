@@ -1,5 +1,5 @@
 import type { OrderStatus } from "@/features/orders/types";
-import type { LoyaltyLevel } from "@/features/loyalty/constants";
+import type { LoyaltyLevel, LoyaltyTransactionDto } from "@/features/loyalty/types";
 
 export type CustomerSegment = "new" | "active" | "loyal" | "vip" | "inactive";
 export type CustomerSegmentFilter = CustomerSegment | "all";
@@ -59,6 +59,7 @@ export interface CustomerDetail extends CustomerSummary {
   average_order: number;
   orders: CustomerOrder[];
   top_products: CustomerTopProduct[];
+  loyalty_history: LoyaltyTransactionDto[];
 }
 
 export interface CustomersFilter {

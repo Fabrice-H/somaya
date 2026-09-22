@@ -1,4 +1,4 @@
-import { FolderOpen, Layers, LayoutDashboard, Package, Settings, ShoppingBag, Users } from "lucide-react";
+import { FolderOpen, Gift, Layers, LayoutDashboard, Package, Settings, ShoppingBag, Users } from "lucide-react";
 import type { BadgeTone } from "./ui/Badge";
 
 export const ADMIN_NAVIGATION = [
@@ -16,6 +16,7 @@ export const ADMIN_NAVIGATION = [
     items: [
       { name: "Commandes", href: "/admin/commandes", icon: ShoppingBag },
       { name: "Clients", href: "/admin/customers", icon: Users },
+      { name: "Fidélité", href: "/admin/loyalty", icon: Gift },
     ],
   },
   {

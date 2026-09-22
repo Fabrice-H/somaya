@@ -1,6 +1,6 @@
 import type { Customer } from "@/shared/lib/db/schema";
-import type { LoyaltyLevel } from "@/features/loyalty/constants";
 import { LOYALTY_LEVELS } from "@/features/loyalty/constants";
+import type { LoyaltyLevel } from "@/features/loyalty/types";
 import { computeSegment } from "../segments";
 import type { CustomerSummary, SegmentRules } from "../types";
 
