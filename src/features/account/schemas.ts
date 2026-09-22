@@ -52,6 +52,15 @@ export const changePasswordSchema = z
     message: "Les deux mots de passe ne correspondent pas",
   });
 
+export const setPasswordSchema = z
+  .object({ newPassword: passwordSchema, confirmPassword: z.string().max(200) })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Les deux mots de passe ne correspondent pas",
+  });
+
+export const guestSchema = z.object({ phone: phoneSchema });
+
 export const claimOrderSchema = z.object({
   orderNumber: z
     .string()

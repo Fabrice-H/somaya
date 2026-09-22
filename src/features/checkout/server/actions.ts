@@ -33,6 +33,11 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     return { ok: false, error: "Trop de commandes envoyées. Réessayez dans quelques minutes." };
   }
 
+  const sessionCustomer = await getCustomerSession().catch(() => null);
+  if (!sessionCustomer) {
+    return { ok: false, error: "Connectez-vous ou continuez sans compte pour valider votre commande." };
+  }
+
   const { customer, deliveryMethod, paymentMethod, operator, lines } = parsed.data;
   const isPickup = deliveryMethod === "pickup";
 
@@ -43,13 +48,10 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     const total = subtotal + deliveryFee;
     const orderId = randomUUID();
     const orderNumber = generateOrderNumber();
-    const [customerRecord, sessionCustomer] = await Promise.all([
-      upsertCustomerFromOrder(customer).catch((error: unknown) => {
-        console.error("upsertCustomerFromOrder failed", error);
-        return null;
-      }),
-      getCustomerSession().catch(() => null),
-    ]);
+    const customerRecord = await upsertCustomerFromOrder(customer).catch((error: unknown) => {
+      console.error("upsertCustomerFromOrder failed", error);
+      return null;
+    });
     const claimedAt = customerRecord && sessionCustomer?.id === customerRecord.id ? new Date() : null;
 
     await db.batch([

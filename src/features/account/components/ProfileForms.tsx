@@ -1,19 +1,25 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { CheckoutField } from "@/features/checkout/components/CheckoutField";
 import { ABIDJAN_COMMUNES } from "@/features/checkout/constants";
 import { formatPhone } from "@/shared/lib/phone";
 import { PASSWORD_MIN_LENGTH } from "../constants";
-import { changePasswordAction, updateProfileAction } from "../server/actions";
+import { changePasswordAction, setPasswordAction, updateProfileAction } from "../server/actions";
 import type { AccountCustomer, AccountFormState } from "../types";
 import { FormMessage } from "./AuthCard";
 import { PasswordInput } from "./PasswordInput";
 
 export function ProfileForm({ customer }: { customer: AccountCustomer }) {
+  const { update } = useSession();
   const [state, formAction, isPending] = useActionState<AccountFormState, FormData>(updateProfileAction, {});
   const errors = state.fieldErrors ?? {};
   const value = (key: string, fallback: string) => state.values?.[key] ?? fallback;
+
+  useEffect(() => {
+    if (state.success) void update();
+  }, [state.success, update]);
 
   return (
     <form action={formAction} noValidate className="space-y-5 border border-[var(--som-border)] p-6 md:p-8">
@@ -95,17 +101,34 @@ export function ProfileForm({ customer }: { customer: AccountCustomer }) {
   );
 }
 
-export function PasswordForm() {
-  const [state, formAction, isPending] = useActionState<AccountFormState, FormData>(changePasswordAction, {});
+export function PasswordForm({ guest = false }: { guest?: boolean }) {
+  const { update } = useSession();
+  const [state, formAction, isPending] = useActionState<AccountFormState, FormData>(
+    guest ? setPasswordAction : changePasswordAction,
+    {}
+  );
   const errors = state.fieldErrors ?? {};
+
+  useEffect(() => {
+    if (guest && state.success) void update();
+  }, [guest, state.success, update]);
 
   return (
     <form action={formAction} noValidate className="space-y-5 border border-[var(--som-border)] p-6 md:p-8">
-      <h2 className="m-0 text-[11px] uppercase tracking-[0.24em] text-[var(--som-gray)]">Mot de passe</h2>
+      <h2 className="m-0 text-[11px] uppercase tracking-[0.24em] text-[var(--som-gray)]">
+        {guest ? "Sécuriser mon compte" : "Mot de passe"}
+      </h2>
+      {guest && (
+        <p className="m-0 text-[13px] font-light leading-relaxed text-[#4a4a4a]">
+          Votre espace a été créé sans mot de passe. Créez-en un pour vous reconnecter plus tard et garder vos points.
+        </p>
+      )}
       <FormMessage error={state.error} success={state.success} />
-      <CheckoutField id="currentPassword" label="Mot de passe actuel" required error={errors.currentPassword}>
-        {(props) => <PasswordInput {...props} name="currentPassword" autoComplete="current-password" />}
-      </CheckoutField>
+      {!guest && (
+        <CheckoutField id="currentPassword" label="Mot de passe actuel" required error={errors.currentPassword}>
+          {(props) => <PasswordInput {...props} name="currentPassword" autoComplete="current-password" />}
+        </CheckoutField>
+      )}
       <div className="grid gap-5 sm:grid-cols-2">
         <CheckoutField
           id="newPassword"
@@ -121,7 +144,7 @@ export function PasswordForm() {
         </CheckoutField>
       </div>
       <button type="submit" disabled={isPending} className="btn-secondary disabled:opacity-60">
-        {isPending ? "Modification…" : "Modifier le mot de passe"}
+        {isPending ? "Enregistrement…" : guest ? "Créer mon mot de passe" : "Modifier le mot de passe"}
       </button>
     </form>
   );

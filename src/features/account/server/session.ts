@@ -11,7 +11,8 @@ export const getCustomerSession = cache(async (): Promise<Customer | null> => {
   const identity = await getSessionIdentity();
   if (!identity || identity.role !== "customer") return null;
   const customer = await db.query.customers.findFirst({ where: eq(customers.id, identity.id) });
-  return customer?.passwordHash ? customer : null;
+  if (!customer?.accountCreatedAt) return null;
+  return customer.passwordHash || customer.isGuest ? customer : null;
 });
 
 export async function requireCustomer(next?: string): Promise<Customer> {

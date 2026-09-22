@@ -8,6 +8,7 @@ import { useHasMounted } from "@/shared/hooks/useHasMounted";
 import { formatPrice } from "@/shared/lib/format";
 import { useCartStore } from "../store";
 import { cartLineKey } from "../utils";
+import { CartCheckoutButton } from "./CartCheckoutButton";
 import { CartLine } from "./CartLine";
 
 export function CartSidebar() {
@@ -88,9 +89,7 @@ export function CartSidebar() {
               <p className="m-0 mt-1 text-[12px] font-light text-[var(--som-gray)]">
                 Livraison calculée à l&apos;étape suivante.
               </p>
-              <Link href="/commande" onClick={closeCart} className="btn-primary mt-5 w-full">
-                Commander
-              </Link>
+              <CartCheckoutButton onNavigate={closeCart} />
               <button
                 type="button"
                 onClick={closeCart}

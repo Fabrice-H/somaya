@@ -19,7 +19,12 @@ export async function upsertCustomerFromOrder(identity: CustomerIdentity): Promi
     .values({ phone, email, firstName: identity.firstName.trim(), lastName: identity.lastName.trim() })
     .onConflictDoUpdate({
       target: customers.phone,
-      set: { email: sql`coalesce(${customers.email}, excluded.email)`, updatedAt: new Date() },
+      set: {
+        email: sql`coalesce(${customers.email}, excluded.email)`,
+        firstName: sql`coalesce(nullif(${customers.firstName}, ''), excluded.first_name)`,
+        lastName: sql`coalesce(nullif(${customers.lastName}, ''), excluded.last_name)`,
+        updatedAt: new Date(),
+      },
     })
     .returning({ id: customers.id, created: sql<boolean>`(xmax = 0)` });
 

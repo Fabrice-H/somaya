@@ -18,8 +18,17 @@ import {
   CLAIM_RATE_LIMIT,
   REGISTER_RATE_LIMIT,
 } from "../constants";
-import { changePasswordSchema, claimOrderSchema, loginFormSchema, profileSchema, registerSchema } from "../schemas";
-import type { AccountActionResult, AccountFormState } from "../types";
+import {
+  changePasswordSchema,
+  claimOrderSchema,
+  guestSchema,
+  loginFormSchema,
+  profileSchema,
+  registerSchema,
+  setPasswordSchema,
+} from "../schemas";
+import type { AccountActionResult, AccountFormState, GuestActionResult } from "../types";
+import { createGuestToken } from "./guest-token";
 import { getCustomerSession } from "./session";
 
 const TOO_MANY_ATTEMPTS = "Trop de tentatives. Réessayez dans quelques minutes.";
@@ -67,7 +76,8 @@ export async function registerAction(_previous: AccountFormState, formData: Form
       .update(customers)
       .set({
         passwordHash,
-        accountCreatedAt: now,
+        isGuest: false,
+        accountCreatedAt: existing.accountCreatedAt ?? now,
         email: existing.email ?? email,
         firstName: existing.firstName || parsed.data.firstName,
         lastName: existing.lastName || parsed.data.lastName,
@@ -129,6 +139,17 @@ export async function customerLoginAction(_previous: AccountFormState, formData:
   const keys = [`customer-login:ip:${ip}`, `customer-login:phone:${phone}`];
   if (!keys.every((key) => consumeRateLimit(key, LOGIN_RATE_LIMIT))) {
     return { error: TOO_MANY_ATTEMPTS, values: keep(values) };
+  }
+
+  const account = await db.query.customers.findFirst({
+    where: eq(customers.phone, phone),
+    columns: { passwordHash: true, isGuest: true },
+  });
+  if (account?.isGuest && !account.passwordHash) {
+    return {
+      error: "Ce numéro a un espace invité sans mot de passe. Continuez sans compte, puis créez votre mot de passe.",
+      values: keep(values),
+    };
   }
 
   try {
@@ -219,4 +240,68 @@ export async function claimOrderAction(input: unknown): Promise<AccountActionRes
   await db.update(orders).set({ claimedAt: new Date() }).where(eq(orders.id, order.id));
   revalidatePath(ACCOUNT_PATH, "layout");
   return { ok: true, message: "Commande retrouvée et ajoutée à votre espace." };
+}
+
+export async function continueAsGuestAction(input: unknown): Promise<GuestActionResult> {
+  const parsed = guestSchema.safeParse(input);
+  if (!parsed.success)
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Numéro invalide", reason: "invalid" };
+
+  const ip = await getClientIp();
+  if (!consumeRateLimit(`guest:${ip}`, REGISTER_RATE_LIMIT))
+    return { ok: false, error: TOO_MANY_ATTEMPTS, reason: "rate" };
+
+  const phone = normalizePhone(parsed.data.phone)!;
+  const now = new Date();
+  const existing = await db.query.customers.findFirst({ where: eq(customers.phone, phone) });
+  if (existing?.passwordHash) {
+    return { ok: false, error: "Un compte existe déjà avec ce numéro.", reason: "has_account" };
+  }
+
+  let customerId: string;
+  if (existing) {
+    await db
+      .update(customers)
+      .set({ isGuest: true, accountCreatedAt: existing.accountCreatedAt ?? now, updatedAt: now })
+      .where(eq(customers.id, existing.id));
+    customerId = existing.id;
+  } else {
+    const [row] = await db
+      .insert(customers)
+      .values({ phone, firstName: "", lastName: "", isGuest: true, accountCreatedAt: now })
+      .returning({ id: customers.id });
+    customerId = row.id;
+    await emitEvent({ type: "customer.created", customerId });
+  }
+
+  try {
+    await signIn("guest", { phone, token: await createGuestToken(phone), redirect: false });
+  } catch (error) {
+    if (error instanceof AuthError) return { ok: false, error: "Connexion impossible. Réessayez.", reason: "invalid" };
+    throw error;
+  }
+  return { ok: true };
+}
+
+export async function setPasswordAction(_previous: AccountFormState, formData: FormData): Promise<AccountFormState> {
+  const customer = await getCustomerSession();
+  if (!customer) return { error: "Session expirée. Reconnectez-vous." };
+  if (customer.passwordHash) return { error: "Un mot de passe existe déjà. Utilisez le formulaire de modification." };
+
+  const parsed = setPasswordSchema.safeParse(formValues(formData, ["newPassword", "confirmPassword"]));
+  if (!parsed.success) return { fieldErrors: fieldErrorsOf(parsed.error.issues) };
+
+  await db
+    .update(customers)
+    .set({ passwordHash: await hashPassword(parsed.data.newPassword), isGuest: false, updatedAt: new Date() })
+    .where(eq(customers.id, customer.id));
+
+  try {
+    await signIn("customer", { phone: customer.phone, password: parsed.data.newPassword, redirect: false });
+  } catch (error) {
+    if (!(error instanceof AuthError)) throw error;
+  }
+
+  revalidatePath(ACCOUNT_PATH, "layout");
+  return { success: "Mot de passe créé : votre compte est sécurisé." };
 }

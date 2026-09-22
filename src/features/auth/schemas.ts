@@ -16,3 +16,8 @@ export const customerLoginSchema = z.object({
   phone: phoneSchema,
   password: z.string().min(1, "Mot de passe requis").max(200),
 });
+
+export const guestLoginSchema = z.object({
+  phone: phoneSchema,
+  token: z.string().min(10).max(200),
+});

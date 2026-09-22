@@ -54,6 +54,9 @@ export type AccountOverview = {
 export type AccountActionResult =
   { ok: true; message?: string } | { ok: false; error: string; fieldErrors?: Record<string, string[]> };
 
+export type GuestActionResult =
+  { ok: true } | { ok: false; error: string; reason?: "has_account" | "invalid" | "rate" };
+
 export type AccountFormState = {
   error?: string;
   fieldErrors?: Record<string, string[]>;

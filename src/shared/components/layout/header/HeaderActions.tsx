@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Gift, Search, ShoppingBag, User } from "lucide-react";
+import { Gift, Search, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/features/cart/store";
 import { useHasMounted } from "@/shared/hooks/useHasMounted";
+import { AccountMenu } from "./AccountMenu";
 import { NavLink } from "./NavLink";
 
 const iconButton =
@@ -46,15 +47,7 @@ export function HeaderActions({ searchOpen, onToggleSearch, isActive }: HeaderAc
       >
         <Gift size={19} strokeWidth={1.4} />
       </Link>
-      <Link
-        href="/compte"
-        aria-label="Mon compte"
-        title="Mon compte"
-        aria-current={isActive("/compte") ? "page" : undefined}
-        className={`${iconButton} hidden sm:flex`}
-      >
-        <User size={20} strokeWidth={1.4} />
-      </Link>
+      <AccountMenu isActive={isActive} />
       <button type="button" onClick={openCart} aria-label={cartLabel} className={`${iconButton} relative -mr-3 flex`}>
         <ShoppingBag size={20} strokeWidth={1.4} />
         {count > 0 && (

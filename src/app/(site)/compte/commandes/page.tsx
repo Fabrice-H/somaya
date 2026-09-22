@@ -16,7 +16,7 @@ export default async function AccountOrdersPage() {
   const customer = await requireCustomer("/compte/commandes");
   const [orders, hiddenCount] = await Promise.all([getAccountOrders(customer), getHiddenOrdersCount(customer)]);
   return (
-    <AccountShell firstName={customer.firstName}>
+    <AccountShell firstName={customer.firstName} guest={customer.isGuest && !customer.passwordHash}>
       <div className="space-y-10">
         <section>
           <h2 className="m-0 mb-4 text-[11px] uppercase tracking-[0.24em] text-[var(--som-gray)]">Mes commandes</h2>

@@ -14,10 +14,10 @@ export const metadata: Metadata = {
 export default async function AccountProfilePage() {
   const customer = await requireCustomer("/compte/informations");
   return (
-    <AccountShell firstName={customer.firstName}>
+    <AccountShell firstName={customer.firstName} guest={customer.isGuest && !customer.passwordHash}>
       <div className="space-y-8">
         <ProfileForm customer={toAccountCustomer(customer)} />
-        <PasswordForm />
+        <PasswordForm guest={customer.isGuest && !customer.passwordHash} />
       </div>
     </AccountShell>
   );

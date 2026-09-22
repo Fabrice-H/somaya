@@ -15,7 +15,7 @@ export default async function AccountPage() {
   const customer = await requireCustomer("/compte");
   const overview = await getAccountOverview(customer);
   return (
-    <AccountShell firstName={customer.firstName}>
+    <AccountShell firstName={customer.firstName} guest={customer.isGuest && !customer.passwordHash}>
       <AccountOverview overview={overview} />
     </AccountShell>
   );

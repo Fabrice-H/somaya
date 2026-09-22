@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { SessionProvider } from "next-auth/react";
 import { CartSidebar } from "@/features/cart/components/CartSidebar";
 import { useWishlistStore } from "@/features/wishlist/store";
 
@@ -19,10 +20,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <>
+    <SessionProvider refetchOnWindowFocus={false}>
       <ScrollToTop />
       {children}
       <CartSidebar />
-    </>
+    </SessionProvider>
   );
 }

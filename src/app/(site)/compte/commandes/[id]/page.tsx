@@ -19,7 +19,7 @@ export default async function AccountOrderPage({ params }: { params: Promise<{ i
   const [order, contact] = await Promise.all([getAccountOrder(customer, id), getStoreContact()]);
   if (!order) notFound();
   return (
-    <AccountShell firstName={customer.firstName}>
+    <AccountShell firstName={customer.firstName} guest={customer.isGuest && !customer.passwordHash}>
       <AccountOrderDetailView order={order} whatsapp={contact.whatsapp} />
     </AccountShell>
   );

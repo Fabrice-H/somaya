@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useHasMounted } from "@/shared/hooks/useHasMounted";
+import { CheckoutGate } from "@/features/account/components/CheckoutGate";
 import { lineTotal } from "@/features/cart/utils";
 import { useCheckout } from "../hooks/useCheckout";
 import type { CheckoutFormValues } from "../schemas";
@@ -54,6 +55,18 @@ export function CheckoutContent({
   if (checkout.placed)
     return <CheckoutSuccess order={checkout.placed} whatsapp={whatsapp} hasAccount={account !== null} />;
   if (checkout.items.length === 0) return <EmptyCheckout />;
+  if (!account) {
+    return (
+      <div className="mx-auto max-w-[520px] px-4 pb-20 pt-12 md:px-8 md:pb-28 md:pt-16">
+        <h1 className="m-0 text-center text-[26px] font-semibold uppercase tracking-[0.06em] text-[var(--som-ink)]">
+          Commande
+        </h1>
+        <div className="mt-8">
+          <CheckoutGate />
+        </div>
+      </div>
+    );
+  }
 
   const appliedFee = checkout.deliveryMethod === "pickup" ? 0 : deliveryFee;
   const total = checkout.items.reduce((sum, item) => sum + lineTotal(item), 0) + appliedFee;

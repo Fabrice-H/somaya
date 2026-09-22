@@ -158,6 +158,7 @@ export const customers = pgTable(
     loyaltyLevel: varchar("loyalty_level", { length: 30 }).default("new").notNull(),
     notes: text("notes"),
     passwordHash: varchar("password_hash", { length: 255 }),
+    isGuest: boolean("is_guest").default(false).notNull(),
     accountCreatedAt: timestamp("account_created_at", { withTimezone: true }),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
     address: text("address"),
