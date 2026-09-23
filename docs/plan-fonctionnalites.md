@@ -536,7 +536,7 @@ Graphiques simples **sans nouvelle dépendance** (barres SVG / CSS) : chiffre d'
 | 3 Fidélité | terminé (22/09/2026) |
 | 4 Notifications | reporté après 6 et 7 |
 | 5 Automatisations | à faire |
-| 6 Paiement Jèko | code terminé, test réel Jèko en attente des identifiants |
+| 6 Paiement Jèko | code terminé (idempotence, anti-doublon, réconciliation cron) ; test réel sur Vercel à faire |
 | 7 Espace client | terminé (22/09/2026) |
 | 8 Dashboard | à faire |
 | 9 Recette | à faire |

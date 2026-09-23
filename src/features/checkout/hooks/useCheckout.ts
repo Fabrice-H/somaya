@@ -46,6 +46,7 @@ export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("delivery");
   const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>("cash");
   const [operator, setOperator] = useState<OnlineOperator | null>(null);
+  const [checkoutKey, setCheckoutKey] = useState(() => crypto.randomUUID());
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [placed, setPlaced] = useState<PlacedOrder | null>(null);
@@ -87,6 +88,7 @@ export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
         deliveryMethod,
         paymentMethod,
         operator: paymentMethod === "online" ? operator : null,
+        checkoutKey,
         lines: items.map(({ productId, lotId, itemId, quantity }) => ({ productId, lotId, itemId, quantity })),
       });
       if (!result.ok) {
@@ -95,6 +97,7 @@ export function useCheckout(initialCustomer: CheckoutFormValues | null = null) {
         return;
       }
       clearCart();
+      setCheckoutKey(crypto.randomUUID());
       if (result.order.checkoutUrl) {
         window.location.assign(result.order.checkoutUrl);
         return;

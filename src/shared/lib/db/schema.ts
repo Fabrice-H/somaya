@@ -198,6 +198,7 @@ export const orders = pgTable(
     paymentMethod: paymentMethodEnum("payment_method").default("cash").notNull(),
     paymentStatus: paymentStatusEnum("payment_status").default("pending").notNull(),
     orderChannel: varchar("order_channel", { length: 20 }).default("whatsapp").notNull(),
+    checkoutKey: varchar("checkout_key", { length: 64 }).unique(),
     paidAt: timestamp("paid_at", { withTimezone: true }),
     subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
     deliveryFee: decimal("delivery_fee", { precision: 10, scale: 2 }).default("0").notNull(),

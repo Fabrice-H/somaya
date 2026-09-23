@@ -7,13 +7,15 @@ export type OrderEventType =
   | "order.shipped"
   | "order.delivered"
   | "order.cancelled"
-  | "order.paid";
+  | "order.paid"
+  | "payment.duplicate";
 
 export type OrderEvent = {
   type: OrderEventType;
   orderId: string;
   customerId: string | null;
   previousStatus?: OrderStatus;
+  paymentId?: string;
 };
 
 export type CustomerEvent = { type: "customer.created" | "customer.inactive"; customerId: string };
@@ -27,7 +29,8 @@ export type LoyaltyEvent = {
 
 export type DomainEvent = OrderEvent | CustomerEvent | LoyaltyEvent;
 
-export const isOrderEvent = (event: DomainEvent): event is OrderEvent => event.type.startsWith("order.");
+export const isOrderEvent = (event: DomainEvent): event is OrderEvent =>
+  event.type.startsWith("order.") || event.type.startsWith("payment.");
 
 export type DomainEventType = DomainEvent["type"];
 

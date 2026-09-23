@@ -1,6 +1,7 @@
 "use server";
 
 import { randomUUID } from "crypto";
+import { eq } from "drizzle-orm";
 import { updateTag } from "next/cache";
 import { db, orderItems, orders } from "@/shared/lib/db";
 import { getDeliveryFee } from "@/features/settings/server/queries";
@@ -13,7 +14,8 @@ import { startPayment } from "@/features/payments/server/service";
 import { consumeRateLimit, getClientIp } from "@/shared/lib/rate-limit";
 import { ORDER_RATE_LIMIT, PICKUP_LABEL } from "../constants";
 import { checkoutSchema } from "../schemas";
-import type { PlaceOrderResult } from "../types";
+import type { PlacedOrder, PlaceOrderResult } from "../types";
+import type { OnlineOperator } from "@/features/payments/types";
 import { PricingError, priceCheckoutLines } from "./pricing";
 
 export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
@@ -38,7 +40,10 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     return { ok: false, error: "Connectez-vous ou continuez sans compte pour valider votre commande." };
   }
 
-  const { customer, deliveryMethod, paymentMethod, operator, lines } = parsed.data;
+  const { customer, deliveryMethod, paymentMethod, operator, checkoutKey, lines } = parsed.data;
+
+  const existing = await findPlacedOrder(checkoutKey);
+  if (existing) return { ok: true, order: await withPayment(existing, paymentMethod, operator) };
   const isPickup = deliveryMethod === "pickup";
 
   try {
@@ -64,6 +69,7 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
         customerEmail: customer.email || null,
         customerId: customerRecord?.id ?? null,
         claimedAt,
+        checkoutKey,
         customerAddress: isPickup ? PICKUP_LABEL : customer.address,
         customerCommune: isPickup ? PICKUP_LABEL : customer.commune,
         customerNotes: customer.notes || null,
@@ -103,32 +109,78 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
 
     updateTag(ORDERS_CACHE_TAG);
 
-    let checkoutUrl: string | null = null;
-    let paymentError: string | null = null;
-    if (paymentMethod === "online" && operator) {
-      const payment = await startPayment(orderId, operator);
-      if (payment.ok) checkoutUrl = payment.checkoutUrl;
-      else paymentError = payment.error;
-    }
-
-    return {
-      ok: true,
-      order: {
-        customer,
-        deliveryMethod,
-        paymentMethod,
-        checkoutUrl,
-        paymentError,
-        orderNumber,
-        lines: pricedLines,
-        subtotal,
-        deliveryFee,
-        total,
-      },
+    const placed: PlacedOrder = {
+      customer,
+      deliveryMethod,
+      paymentMethod,
+      checkoutUrl: null,
+      paymentError: null,
+      orderNumber,
+      lines: pricedLines,
+      subtotal,
+      deliveryFee,
+      total,
     };
+    return { ok: true, order: await withPayment({ id: orderId, placed }, paymentMethod, operator) };
   } catch (error) {
     if (error instanceof PricingError) return { ok: false, error: error.message };
+    const replay = await findPlacedOrder(checkoutKey).catch(() => null);
+    if (replay) return { ok: true, order: await withPayment(replay, paymentMethod, operator) };
     console.error("placeOrder failed", error);
     return { ok: false, error: "Une erreur est survenue. Veuillez réessayer." };
   }
+}
+
+async function withPayment(
+  found: { id: string; placed: PlacedOrder },
+  paymentMethod: PlacedOrder["paymentMethod"],
+  operator: OnlineOperator | null
+): Promise<PlacedOrder> {
+  if (paymentMethod !== "online" || !operator) return found.placed;
+  const payment = await startPayment(found.id, operator);
+  return payment.ok
+    ? { ...found.placed, paymentMethod, checkoutUrl: payment.checkoutUrl }
+    : { ...found.placed, paymentMethod, paymentError: payment.error };
+}
+
+async function findPlacedOrder(checkoutKey: string): Promise<{ id: string; placed: PlacedOrder } | null> {
+  const order = await db.query.orders.findFirst({ where: eq(orders.checkoutKey, checkoutKey), with: { items: true } });
+  if (!order) return null;
+  const isPickup = order.customerAddress === PICKUP_LABEL;
+  return {
+    id: order.id,
+    placed: {
+      customer: {
+        firstName: order.customerFirstName,
+        lastName: order.customerLastName,
+        phone: order.customerPhone,
+        email: order.customerEmail ?? "",
+        commune: isPickup ? "" : (order.customerCommune ?? ""),
+        address: isPickup ? "" : order.customerAddress,
+        notes: order.customerNotes ?? "",
+      },
+      deliveryMethod: isPickup ? "pickup" : "delivery",
+      paymentMethod: order.paymentMethod === "online" ? "online" : "cash",
+      checkoutUrl: null,
+      paymentError: null,
+      orderNumber: order.orderNumber,
+      lines: order.items.map((item) => ({
+        productId: item.productId,
+        lotId: item.lotId,
+        priceLotId: item.priceLotId,
+        itemId: item.itemId,
+        name: item.productName,
+        variant: item.lotName,
+        color: item.color,
+        size: item.size,
+        image: item.productImage,
+        unitPrice: Number(item.productPrice),
+        quantity: item.quantity,
+        lineTotal: Number(item.lineTotal),
+      })),
+      subtotal: Number(order.subtotal),
+      deliveryFee: Number(order.deliveryFee),
+      total: Number(order.total),
+    },
+  };
 }

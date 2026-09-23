@@ -45,6 +45,7 @@ export const checkoutSchema = z
     deliveryMethod: z.enum(DELIVERY_METHODS),
     paymentMethod: z.enum(CHECKOUT_PAYMENT_METHODS).default("cash"),
     operator: z.enum(ONLINE_OPERATOR_IDS).nullable().default(null),
+    checkoutKey: z.uuid(),
     lines: z.array(checkoutLineSchema).min(1, "Votre panier est vide").max(MAX_CART_LINES),
   })
   .superRefine(({ customer, deliveryMethod, paymentMethod, operator }, ctx) => {

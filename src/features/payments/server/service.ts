@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, isNotNull, isNull, lt } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import { db, orders, payments, paymentWebhookEvents } from "@/shared/lib/db";
 import type { Payment } from "@/shared/lib/db/schema";
@@ -46,13 +46,27 @@ export async function startPayment(orderId: string, operator: OnlineOperator): P
     return { ok: true, checkoutUrl: existing.checkoutUrl };
   }
 
-  const attempt = await db
-    .select({ count: payments.id })
-    .from(payments)
-    .where(eq(payments.orderId, order.id))
-    .then((rows) => rows.length);
-  const reference = attempt === 0 ? order.orderNumber : `${order.orderNumber}-${attempt + 1}`;
+  const previous = await db.query.payments.findMany({ where: eq(payments.orderId, order.id) });
+  const reference = previous.length === 0 ? order.orderNumber : `${order.orderNumber}-${previous.length + 1}`;
   const amount = Number(order.total);
+  const now = new Date();
+
+  await db
+    .update(payments)
+    .set({ status: "cancelled", failureReason: "Remplacée par une nouvelle tentative", updatedAt: now })
+    .where(and(eq(payments.orderId, order.id), inArray(payments.status, [...REUSABLE_STATUSES])));
+
+  const [attempt] = await db
+    .insert(payments)
+    .values({
+      orderId: order.id,
+      provider: provider.id,
+      reference,
+      amount: String(amount),
+      status: "pending",
+      paymentMethod: operator,
+    })
+    .returning({ id: payments.id });
 
   try {
     const created = await provider.createPayment({
@@ -69,17 +83,15 @@ export async function startPayment(orderId: string, operator: OnlineOperator): P
         email: order.customerEmail,
       },
     });
-    await db.insert(payments).values({
-      orderId: order.id,
-      provider: provider.id,
-      providerReference: created.providerReference,
-      reference,
-      amount: String(amount),
-      status: "pending",
-      paymentMethod: operator,
-      checkoutUrl: created.checkoutUrl,
-      raw: created.raw,
-    });
+    await db
+      .update(payments)
+      .set({
+        providerReference: created.providerReference,
+        checkoutUrl: created.checkoutUrl,
+        raw: created.raw,
+        updatedAt: new Date(),
+      })
+      .where(eq(payments.id, attempt.id));
     await db
       .update(orders)
       .set({ paymentMethod: "online", orderChannel: "online", updatedAt: new Date() })
@@ -87,6 +99,10 @@ export async function startPayment(orderId: string, operator: OnlineOperator): P
     return { ok: true, checkoutUrl: created.checkoutUrl };
   } catch (error) {
     console.error("startPayment failed", error);
+    await db
+      .update(payments)
+      .set({ status: "failed", failureReason: "Création du paiement impossible", updatedAt: new Date() })
+      .where(eq(payments.id, attempt.id));
     return {
       ok: false,
       error: "Impossible de démarrer le paiement. Réessayez ou choisissez le paiement à la livraison.",
@@ -131,7 +147,27 @@ export async function applyProviderState(payment: Payment, state: ProviderPaymen
         )
       )
       .returning({ id: orders.id, customerId: orders.customerId });
-    if (order) await emitEvent({ type: "order.paid", orderId: order.id, customerId: order.customerId });
+    if (order) {
+      await emitEvent({ type: "order.paid", orderId: order.id, customerId: order.customerId });
+    } else {
+      const alreadyPaid = await db.query.orders.findFirst({
+        where: and(eq(orders.id, payment.orderId), eq(orders.paymentStatus, "paid")),
+        columns: { id: true, customerId: true },
+      });
+      if (alreadyPaid) {
+        await db
+          .update(payments)
+          .set({ failureReason: "Paiement en double : remboursement à effectuer", updatedAt: now })
+          .where(eq(payments.id, payment.id));
+        console.error("duplicate payment detected", { orderId: payment.orderId, paymentId: payment.id });
+        await emitEvent({
+          type: "payment.duplicate",
+          orderId: alreadyPaid.id,
+          customerId: alreadyPaid.customerId,
+          paymentId: payment.id,
+        });
+      }
+    }
   } else if (next === "failed" || next === "cancelled" || next === "processing") {
     await db
       .update(orders)
@@ -200,4 +236,55 @@ export async function handleWebhook(provider: PaymentProvider, webhook: ParsedWe
     .set({ processedAt: new Date() })
     .where(eq(paymentWebhookEvents.id, inserted[0].id));
   return "processed";
+}
+
+const STALE_PENDING_MS = 2 * 60 * 1000;
+const ABANDONED_ATTEMPT_MS = 60 * 60 * 1000;
+
+export type ReconcileReport = {
+  paymentsChecked: number;
+  paymentsUpdated: number;
+  attemptsAbandoned: number;
+  stockApplied: number;
+  loyaltyCredited: number;
+};
+
+export async function reconcilePayments(): Promise<
+  Pick<ReconcileReport, "paymentsChecked" | "paymentsUpdated" | "attemptsAbandoned">
+> {
+  const now = Date.now();
+  const abandoned = await db
+    .update(payments)
+    .set({ status: "cancelled", failureReason: "Tentative abandonnée", updatedAt: new Date() })
+    .where(
+      and(
+        inArray(payments.status, [...REUSABLE_STATUSES]),
+        isNull(payments.providerReference),
+        lt(payments.createdAt, new Date(now - ABANDONED_ATTEMPT_MS))
+      )
+    )
+    .returning({ id: payments.id });
+
+  const pending = await db.query.payments.findMany({
+    where: and(
+      inArray(payments.status, [...REUSABLE_STATUSES]),
+      isNotNull(payments.providerReference),
+      lt(payments.createdAt, new Date(now - STALE_PENDING_MS))
+    ),
+    limit: 100,
+  });
+
+  let updated = 0;
+  for (const payment of pending) {
+    const provider = getPaymentProvider(payment.provider);
+    if (!provider || !payment.providerReference) continue;
+    try {
+      const state = await provider.verifyPayment(payment.providerReference);
+      const after = await applyProviderState(payment, state);
+      if (after.status !== payment.status) updated += 1;
+    } catch (error) {
+      console.error("reconcile verify failed", { paymentId: payment.id, error });
+    }
+  }
+  return { paymentsChecked: pending.length, paymentsUpdated: updated, attemptsAbandoned: abandoned.length };
 }

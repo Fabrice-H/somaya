@@ -3,6 +3,7 @@ import { Badge } from "@/shared/components/admin/ui/Badge";
 import { formatDateTime, formatPrice } from "@/shared/lib/format";
 import { ORDER_CHANNEL_LABELS, PAYMENT_METHOD_NAMES, PAYMENT_STATUS_BADGES } from "@/features/payments/constants";
 import type { PaymentDto } from "@/features/payments/types";
+import { PaymentSyncButton } from "@/features/payments/components/PaymentSyncButton";
 import { PAYMENT_METHOD_LABELS } from "../../../constants";
 import type { OrderDetail } from "../../../types";
 import { PAYMENT_METHOD_ICONS } from "../icons";
@@ -50,6 +51,7 @@ export function OrderPaymentCard({ order }: { order: OrderDetail }) {
                 <PaymentAttempt key={payment.id} payment={payment} />
               ))}
             </ul>
+            <PaymentSyncButton orderId={order.id} />
           </>
         )}
       </div>

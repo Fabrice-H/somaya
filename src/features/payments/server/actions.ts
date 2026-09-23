@@ -9,7 +9,10 @@ import type { OnlineOperator } from "../types";
 import type { StartPaymentResult } from "../types";
 import { getConfiguredProviderId } from "./config";
 import { recordFakeOutcome } from "./providers/fake";
-import { applyProviderState, startPayment } from "./service";
+import { applyProviderState, startPayment, syncPaymentByReference } from "./service";
+import { requireAdmin } from "@/features/auth/server/session";
+import { revalidatePath } from "next/cache";
+import { ORDERS_PATH } from "@/features/orders/constants";
 
 const retrySchema = { orderNumber: /^SM-\d{8}-[A-Z0-9]{4}$/ };
 
@@ -52,4 +55,19 @@ export async function completeFakePaymentAction(input: { providerReference: stri
   recordFakeOutcome(reference, state);
   await applyProviderState(payment, state);
   return { ok: true as const };
+}
+
+export async function syncOrderPaymentAction(
+  orderId: string
+): Promise<{ ok: boolean; status?: string; error?: string }> {
+  const admin = await requireAdmin();
+  if (!admin) return { ok: false, error: "Non autorisé" };
+  const order = await db.query.orders.findFirst({
+    where: eq(orders.id, String(orderId)),
+    columns: { orderNumber: true },
+  });
+  if (!order) return { ok: false, error: "Commande introuvable" };
+  const payment = await syncPaymentByReference(order.orderNumber);
+  revalidatePath(`${ORDERS_PATH}/${orderId}`);
+  return payment ? { ok: true, status: payment.status } : { ok: false, error: "Aucun paiement à vérifier" };
 }

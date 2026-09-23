@@ -16,8 +16,8 @@ export type JekoConfig = z.infer<typeof jekoSchema>;
 const isProduction = process.env.NODE_ENV === "production" && process.env.VERCEL_ENV === "production";
 
 function envByStage(name: string, aliases: string[] = []): string | undefined {
-  const suffix = isProduction ? "_PROD" : "_DEV";
-  const candidates = [name, ...aliases].flatMap((base) => [`${base}${suffix}`, base]);
+  const suffixes = isProduction ? ["_PROD", ""] : ["_DEV", "", "_PROD"];
+  const candidates = [name, ...aliases].flatMap((base) => suffixes.map((suffix) => `${base}${suffix}`));
   for (const key of candidates) {
     const value = process.env[key]?.trim();
     if (value) return value;
@@ -44,7 +44,7 @@ export function getConfiguredProviderId(): PaymentProviderId | null {
 }
 
 export function getPublicSiteUrl(): string {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.AUTH_URL;
+  const configured = process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? process.env.AUTH_URL;
   if (configured) return configured.replace(/\/$/, "");
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return "http://localhost:3000";
