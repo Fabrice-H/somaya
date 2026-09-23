@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { AutomationsTab } from "@/features/automations/components/admin/AutomationsTab";
+import type { AutomationsOverview } from "@/features/automations/types";
 import { HeroBannerForm } from "@/features/home/components/admin/HeroBannerForm";
 import type { HeroBannerData } from "@/features/home/types";
 import { TestimonialsManager } from "@/features/testimonials/components/admin/TestimonialsManager";
@@ -20,9 +22,10 @@ type SettingsClientProps = {
   settings: StoreSettings | null;
   testimonials: TestimonialData[];
   heroBanner: HeroBannerData | null;
+  automations: AutomationsOverview;
 };
 
-export function SettingsClient({ settings, testimonials, heroBanner }: SettingsClientProps) {
+export function SettingsClient({ settings, testimonials, heroBanner, automations }: SettingsClientProps) {
   const { form, updateField, submit, isPending, message } = useSettingsForm(settings);
   const [activeTab, setActiveTab] = useState<SettingsTab>("boutique");
 
@@ -30,7 +33,7 @@ export function SettingsClient({ settings, testimonials, heroBanner }: SettingsC
     <AdminPage
       eyebrow="Configuration"
       title="Réglages"
-      description="Identité, contact, livraison et apparence de votre boutique."
+      description="Identité, contact, livraison, apparence et automatisations de votre boutique."
     >
       <Tabs items={SETTINGS_TABS} value={activeTab} onChange={setActiveTab} label="Sections des réglages" />
 
@@ -48,6 +51,8 @@ export function SettingsClient({ settings, testimonials, heroBanner }: SettingsC
         {activeTab === "hero" && <HeroBannerForm data={heroBanner} />}
 
         {activeTab === "temoignages" && <TestimonialsManager initialData={testimonials} />}
+
+        {activeTab === "automatisations" && <AutomationsTab overview={automations} />}
       </div>
     </AdminPage>
   );

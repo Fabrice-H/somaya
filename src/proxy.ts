@@ -13,7 +13,7 @@ import { getLoginPath } from "@/features/auth/login-path";
 
 const startsWithPath = (pathname: string, base: string) => pathname === base || pathname.startsWith(`${base}/`);
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const loginPath = getLoginPath();
   const isLoginPath = pathname === loginPath;

@@ -159,6 +159,7 @@ export const customers = pgTable(
     notes: text("notes"),
     passwordHash: varchar("password_hash", { length: 255 }),
     isGuest: boolean("is_guest").default(false).notNull(),
+    inactiveNotifiedAt: timestamp("inactive_notified_at", { withTimezone: true }),
     accountCreatedAt: timestamp("account_created_at", { withTimezone: true }),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
     address: text("address"),
@@ -298,6 +299,26 @@ export const paymentWebhookEvents = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [uniqueIndex("uq_payment_webhook_events").on(table.provider, table.eventId)]
+);
+
+export const automationSettings = pgTable("automation_settings", {
+  key: varchar("key", { length: 60 }).primaryKey(),
+  enabled: boolean("enabled").default(true).notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const automationRuns = pgTable(
+  "automation_runs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    automationKey: varchar("automation_key", { length: 60 }).notNull(),
+    eventType: varchar("event_type", { length: 60 }).notNull(),
+    aggregateId: uuid("aggregate_id"),
+    status: varchar("status", { length: 20 }).notNull(),
+    message: varchar("message", { length: 500 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index("idx_automation_runs_created").on(table.createdAt)]
 );
 
 export const domainEvents = pgTable(
@@ -550,6 +571,7 @@ export type LoyaltySettings = typeof loyaltySettings.$inferSelect;
 export type LoyaltyTransaction = typeof loyaltyTransactions.$inferSelect;
 
 export type DomainEventRow = typeof domainEvents.$inferSelect;
+export type AutomationRun = typeof automationRuns.$inferSelect;
 
 export type Payment = typeof payments.$inferSelect;
 export type NewPayment = typeof payments.$inferInsert;

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getAutomationsOverview } from "@/features/automations/server/queries";
 import { getSettings } from "@/features/settings/server/queries";
 import { getTestimonials } from "@/features/testimonials/server/queries";
 import { getHeroBanner } from "@/features/home/server/queries";
@@ -12,8 +13,15 @@ export const metadata = {
 };
 
 async function SettingsContent() {
-  const [settings, testimonials, heroBanner] = await Promise.all([getSettings(), getTestimonials(), getHeroBanner()]);
-  return <SettingsClient settings={settings} testimonials={testimonials} heroBanner={heroBanner} />;
+  const [settings, testimonials, heroBanner, automations] = await Promise.all([
+    getSettings(),
+    getTestimonials(),
+    getHeroBanner(),
+    getAutomationsOverview(),
+  ]);
+  return (
+    <SettingsClient settings={settings} testimonials={testimonials} heroBanner={heroBanner} automations={automations} />
+  );
 }
 
 export default function SettingsPage() {
