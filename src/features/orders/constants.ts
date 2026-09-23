@@ -26,6 +26,7 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
 
 export const ORDER_STATUS_FILTERS: { value: OrderStatusFilter; label: string }[] = [
   { value: "all", label: "Toutes" },
+  { value: "awaiting_payment", label: "Paiement en attente" },
   ...ORDER_STATUSES.map((value) => ({
     value,
     label: ORDER_STATUS_LABELS[value],
@@ -63,6 +64,7 @@ export const EMPTY_ORDERS_STATS: OrdersStats = {
   shipped: 0,
   delivered: 0,
   cancelled: 0,
+  awaiting_payment: 0,
 };
 
 export const ORDER_FILTER_KEYS = ["status", "search", "dateFrom", "dateTo"] as const;

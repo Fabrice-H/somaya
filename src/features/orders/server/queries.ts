@@ -1,5 +1,5 @@
 import "server-only";
-import { and, count, desc, eq, gte, ilike, lt, or, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, gte, ilike, inArray, lt, ne, or, sql, type SQL } from "drizzle-orm";
 import { db, orders } from "@/shared/lib/db";
 import { assertAdmin } from "@/features/auth/server/session";
 import { EMPTY_ORDERS_STATS, ORDERS_PAGE_SIZE } from "../constants";
@@ -8,10 +8,19 @@ import { escapeLikePattern } from "../utils";
 import { toOrderDetail, toOrderSummary } from "./mappers";
 import type { OrderDetail, OrdersFilter, OrdersStats, PaginatedOrders } from "../types";
 
+export function awaitingPaymentCondition(): SQL {
+  return and(
+    eq(orders.paymentMethod, "online"),
+    inArray(orders.paymentStatus, ["pending", "processing", "failed", "cancelled"]),
+    ne(orders.status, "cancelled")
+  )!;
+}
+
 function buildOrdersWhere({ status, search, dateFrom, dateTo }: OrdersFilter): SQL | undefined {
   const conditions: (SQL | undefined)[] = [];
 
-  if (status !== "all") conditions.push(eq(orders.status, status));
+  if (status === "awaiting_payment") conditions.push(awaitingPaymentCondition());
+  else if (status !== "all") conditions.push(eq(orders.status, status));
 
   if (search) {
     const term = `%${escapeLikePattern(search)}%`;
@@ -81,12 +90,24 @@ export async function getOrdersStats(): Promise<OrdersStats> {
   await assertAdmin();
 
   try {
-    const rows = await db.select({ status: orders.status, count: count() }).from(orders).groupBy(orders.status);
+    const [rows, [awaiting]] = await Promise.all([
+      db.select({ status: orders.status, count: count() }).from(orders).groupBy(orders.status),
+      db
+        .select({
+          total: count(),
+          pending: sql<number>`count(*) filter (where ${orders.status} = 'pending')`.mapWith(Number),
+        })
+        .from(orders)
+        .where(awaitingPaymentCondition()),
+    ]);
 
-    return rows.reduce<OrdersStats>(
-      (stats, row) => ({ ...stats, [row.status]: row.count, total: stats.total + row.count }),
+    const stats = rows.reduce<OrdersStats>(
+      (acc, row) => ({ ...acc, [row.status]: row.count, total: acc.total + row.count }),
       { ...EMPTY_ORDERS_STATS }
     );
+    stats.awaiting_payment = awaiting?.total ?? 0;
+    stats.pending = Math.max(0, stats.pending - (awaiting?.pending ?? 0));
+    return stats;
   } catch (error) {
     console.error("getOrdersStats failed", error);
     return { ...EMPTY_ORDERS_STATS };

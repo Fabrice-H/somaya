@@ -9,7 +9,10 @@ import type { OnlineOperator } from "../types";
 import type { StartPaymentResult } from "../types";
 import { getConfiguredProviderId } from "./config";
 import { recordFakeOutcome } from "./providers/fake";
-import { applyProviderState, startPayment, syncPaymentByReference } from "./service";
+import { applyProviderState, resumePayment, startPayment, syncPaymentByReference } from "./service";
+import { getCustomerSession } from "@/features/account/server/session";
+import { visibleOrdersWhere } from "@/features/account/server/queries";
+import { and } from "drizzle-orm";
 import { requireAdmin } from "@/features/auth/server/session";
 import { revalidatePath } from "next/cache";
 import { ORDERS_PATH } from "@/features/orders/constants";
@@ -70,4 +73,22 @@ export async function syncOrderPaymentAction(
   const payment = await syncPaymentByReference(order.orderNumber);
   revalidatePath(`${ORDERS_PATH}/${orderId}`);
   return payment ? { ok: true, status: payment.status } : { ok: false, error: "Aucun paiement à vérifier" };
+}
+
+export async function resumeOrderPaymentAction(orderId: string): Promise<StartPaymentResult> {
+  const customer = await getCustomerSession();
+  if (!customer) return { ok: false, error: "Session expirée. Reconnectez-vous." };
+  const ip = await getClientIp();
+  if (!consumeRateLimit(`payment-resume:${ip}`, PAYMENT_RATE_LIMIT)) {
+    return { ok: false, error: "Trop de tentatives. Réessayez dans quelques minutes." };
+  }
+  const order = await db.query.orders.findFirst({
+    where: and(eq(orders.id, String(orderId)), visibleOrdersWhere(customer)),
+    columns: { id: true, status: true, paymentStatus: true, paymentMethod: true },
+  });
+  if (!order || order.paymentMethod !== "online") return { ok: false, error: "Commande introuvable" };
+  if (order.paymentStatus === "paid") return { ok: false, error: "Cette commande est déjà payée." };
+  if (order.status === "cancelled")
+    return { ok: false, error: "Cette commande a été annulée. Passez une nouvelle commande." };
+  return resumePayment(order.id);
 }

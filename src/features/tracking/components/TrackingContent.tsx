@@ -9,6 +9,7 @@ import { formatDateTime } from "@/shared/lib/format";
 import { trackOrder, type TrackOrderResult } from "../server/actions";
 import { OrderItemsSummary } from "./OrderItemsSummary";
 import { OrderStatusTimeline } from "./OrderStatusTimeline";
+import { PaymentRetryForm } from "@/features/payments/components/PaymentRetryForm";
 
 export function TrackingContent({ initialOrderNumber = "" }: { initialOrderNumber?: string }) {
   const [orderNumber, setOrderNumber] = useState(initialOrderNumber);
@@ -98,6 +99,18 @@ export function TrackingContent({ initialOrderNumber = "" }: { initialOrderNumbe
               Passée le {formatDateTime(result.order.created_at)}
             </p>
           </div>
+          {result.order.payment_method === "online" &&
+            result.order.payment_status !== "paid" &&
+            result.order.status !== "cancelled" && (
+              <div className="mt-8 border border-[#e6c28b] bg-[#fbf1e3] p-5">
+                <p className="m-0 text-[11px] uppercase tracking-[0.24em] text-[#8a5a14]">Paiement en attente</p>
+                <p className="m-0 mt-2 text-[13px] font-light leading-relaxed text-[#4a4a4a]">
+                  Cette commande n&apos;est pas encore payée : elle sera préparée dès réception du paiement et annulée
+                  après 24 h sans paiement.
+                </p>
+                <PaymentRetryForm orderNumber={result.order.order_number} />
+              </div>
+            )}
           <div className="mt-8">
             <OrderStatusTimeline status={result.order.status} />
           </div>

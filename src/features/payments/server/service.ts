@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, inArray, isNotNull, isNull, lt } from "drizzle-orm";
+import { and, desc, eq, inArray, isNotNull, isNull, lt, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import { db, orders, payments, paymentWebhookEvents } from "@/shared/lib/db";
 import type { Payment } from "@/shared/lib/db/schema";
@@ -139,7 +139,14 @@ export async function applyProviderState(payment: Payment, state: ProviderPaymen
   if (next === "paid") {
     const [order] = await db
       .update(orders)
-      .set({ paymentStatus: "paid", paymentMethod: "online", orderChannel: "online", paidAt: now, updatedAt: now })
+      .set({
+        paymentStatus: "paid",
+        paymentMethod: "online",
+        orderChannel: "online",
+        paidAt: now,
+        updatedAt: now,
+        status: sql`case when ${orders.status} = 'cancelled' then 'pending' else ${orders.status} end`,
+      })
       .where(
         and(
           eq(orders.id, payment.orderId),
@@ -240,17 +247,19 @@ export async function handleWebhook(provider: PaymentProvider, webhook: ParsedWe
 
 const STALE_PENDING_MS = 2 * 60 * 1000;
 const ABANDONED_ATTEMPT_MS = 60 * 60 * 1000;
+export const PAYMENT_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
 export type ReconcileReport = {
   paymentsChecked: number;
   paymentsUpdated: number;
   attemptsAbandoned: number;
+  ordersExpired: number;
   stockApplied: number;
   loyaltyCredited: number;
 };
 
 export async function reconcilePayments(): Promise<
-  Pick<ReconcileReport, "paymentsChecked" | "paymentsUpdated" | "attemptsAbandoned">
+  Pick<ReconcileReport, "paymentsChecked" | "paymentsUpdated" | "attemptsAbandoned" | "ordersExpired">
 > {
   const now = Date.now();
   const abandoned = await db
@@ -286,5 +295,58 @@ export async function reconcilePayments(): Promise<
       console.error("reconcile verify failed", { paymentId: payment.id, error });
     }
   }
-  return { paymentsChecked: pending.length, paymentsUpdated: updated, attemptsAbandoned: abandoned.length };
+  const ordersExpired = await expireUnpaidOrders(now);
+  return {
+    paymentsChecked: pending.length,
+    paymentsUpdated: updated,
+    attemptsAbandoned: abandoned.length,
+    ordersExpired,
+  };
+}
+
+async function expireUnpaidOrders(now: number): Promise<number> {
+  const stale = await db.query.orders.findMany({
+    where: and(
+      eq(orders.paymentMethod, "online"),
+      eq(orders.status, "pending"),
+      inArray(orders.paymentStatus, ["pending", "processing", "failed", "cancelled"]),
+      lt(orders.createdAt, new Date(now - PAYMENT_EXPIRY_MS))
+    ),
+    columns: { id: true, orderNumber: true, customerId: true },
+    limit: 100,
+  });
+
+  let expired = 0;
+  for (const order of stale) {
+    const latest = await syncPaymentByReference(order.orderNumber);
+    if (latest?.status === "paid") continue;
+    const stamp = new Date();
+    const [updated] = await db
+      .update(orders)
+      .set({ status: "cancelled", paymentStatus: "cancelled", updatedAt: stamp })
+      .where(and(eq(orders.id, order.id), eq(orders.status, "pending"), sql`${orders.paymentStatus} <> 'paid'`))
+      .returning({ id: orders.id });
+    if (!updated) continue;
+    await db
+      .update(payments)
+      .set({ status: "cancelled", failureReason: "Paiement non finalisé sous 24 h", updatedAt: stamp })
+      .where(and(eq(payments.orderId, order.id), inArray(payments.status, [...REUSABLE_STATUSES])));
+    await emitEvent({
+      type: "order.cancelled",
+      orderId: order.id,
+      customerId: order.customerId,
+      previousStatus: "pending",
+    });
+    expired += 1;
+  }
+  return expired;
+}
+
+export async function resumePayment(orderId: string): Promise<StartPaymentResult> {
+  const last = await db.query.payments.findFirst({
+    where: eq(payments.orderId, orderId),
+    orderBy: [desc(payments.createdAt)],
+  });
+  const operator = (last?.paymentMethod ?? "wave") as OnlineOperator;
+  return startPayment(orderId, operator);
 }

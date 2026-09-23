@@ -4,7 +4,7 @@ import type { OrderChannel, PaymentDto } from "@/features/payments/types";
 export type OrderStatus = DbOrder["status"];
 export type PaymentMethod = DbOrder["paymentMethod"];
 export type PaymentStatus = DbOrder["paymentStatus"];
-export type OrderStatusFilter = OrderStatus | "all";
+export type OrderStatusFilter = OrderStatus | "all" | "awaiting_payment";
 
 export interface OrderItem {
   id: string;
@@ -51,7 +51,7 @@ export type OrderNotificationData = Pick<
   "status" | "order_number" | "customer_first_name" | "customer_phone" | "total"
 >;
 
-export type OrdersStats = Record<OrderStatus | "total", number>;
+export type OrdersStats = Record<OrderStatus | "total" | "awaiting_payment", number>;
 
 export interface OrdersFilter {
   status: OrderStatusFilter;

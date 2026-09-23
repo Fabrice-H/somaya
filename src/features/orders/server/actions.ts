@@ -23,7 +23,7 @@ export async function updateOrderStatus(input: unknown): Promise<OrderActionResu
 
   const current = await db.query.orders.findFirst({
     where: eq(orders.id, id),
-    columns: { status: true, customerId: true },
+    columns: { status: true, customerId: true, paymentMethod: true, paymentStatus: true },
   });
   if (!current) return { ok: false, error: "Commande introuvable" };
   if (current.status === status) return { ok: true, warnings: [] };
@@ -50,6 +50,10 @@ export async function updateOrderStatus(input: unknown): Promise<OrderActionResu
     customerId: current.customerId,
     previousStatus: current.status,
   });
+
+  if (current.paymentMethod === "online" && current.paymentStatus !== "paid" && status !== "cancelled") {
+    warnings.unshift("Paiement en ligne non reçu pour cette commande : vérifiez le paiement avant de la traiter.");
+  }
 
   updateTag(ORDERS_CACHE_TAG);
   revalidatePath("/admin", "layout");

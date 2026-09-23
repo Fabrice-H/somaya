@@ -13,7 +13,7 @@ export const updateOrderStatusSchema = z.object({
 });
 
 export const ordersFilterSchema = z.object({
-  status: orderStatusSchema.or(z.literal("all")).catch("all"),
+  status: orderStatusSchema.or(z.literal("all")).or(z.literal("awaiting_payment")).catch("all"),
   search: z.string().trim().max(100).catch(""),
   dateFrom: isoDate.optional().catch(undefined),
   dateTo: isoDate.optional().catch(undefined),

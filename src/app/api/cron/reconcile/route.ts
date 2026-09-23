@@ -25,6 +25,7 @@ export async function GET(request: Request) {
     paymentsChecked: 0,
     paymentsUpdated: 0,
     attemptsAbandoned: 0,
+    ordersExpired: 0,
     stockApplied: 0,
     loyaltyCredited: 0,
   };

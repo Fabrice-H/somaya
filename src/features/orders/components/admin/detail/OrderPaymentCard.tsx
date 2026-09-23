@@ -36,6 +36,12 @@ export function OrderPaymentCard({ order }: { order: OrderDetail }) {
   return (
     <AdminCard title="Paiement" action={<Badge tone={status.tone}>{status.label}</Badge>}>
       <div className="space-y-4">
+        {order.payment_method === "online" && order.payment_status !== "paid" && order.status !== "cancelled" && (
+          <p className="m-0 border border-[#e6c28b] bg-[#fbf1e3] px-4 py-3 text-[13px] leading-relaxed text-[#8a5a14]">
+            Aucun paiement reçu de Jèko pour cette commande. Ne la traitez pas sur la seule parole de la cliente :
+            vérifiez le paiement ci-dessous ou demandez-lui de le reprendre.
+          </p>
+        )}
         <InfoLine icon={PAYMENT_METHOD_ICONS[order.payment_method]} label="Mode de paiement">
           <p className="m-0">{PAYMENT_METHOD_LABELS[order.payment_method]}</p>
           <p className="m-0 mt-0.5 text-[12px] font-light text-[var(--som-gray)]">

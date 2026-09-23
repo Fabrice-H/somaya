@@ -386,6 +386,7 @@ Webhook        → POST /api/payments/jeko/webhook → vérif. Jeko-Signature �
   7. `payment_status = paid`, `paid_at`, événement `order.paid` (→ stock décrémenté) ;
   8. écran de confirmation, bouton WhatsApp conservé pour le suivi.
 - **Statut de commande indépendant** (validé) : un paiement réussi ne change pas `status` ; l'admin confirme comme aujourd'hui.
+- **Paiement non finalisé (cliente qui ferme la page Jèko)** : la commande reste « En attente de paiement » (onglet dédié, exclue des commandes à traiter, stock non déduit) ; bandeau orange et avertissement dans l'admin (le statut vient de Jèko, jamais de la parole de la cliente) ; « Reprendre le paiement » depuis l'espace client et le suivi ; annulation automatique après 24 h sans paiement (réconciliation horaire) ; un paiement tardif rouvre la commande et la marque payée.
 - **Protections** :
   - un seul paiement `pending` / `paid` par commande (réutilisé si la cliente revient) ;
   - `reference` et `provider_reference` uniques ;

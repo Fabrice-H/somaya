@@ -4,6 +4,7 @@ import { formatDateTime } from "@/shared/lib/format";
 import { whatsappHref } from "@/shared/lib/phone";
 import { PAYMENT_METHOD_LABELS } from "@/features/orders/constants";
 import { PAYMENT_STATUS_BADGES } from "@/features/payments/constants";
+import { ResumePaymentButton } from "@/features/payments/components/ResumePaymentButton";
 import { OrderItemsSummary } from "@/features/tracking/components/OrderItemsSummary";
 import { OrderStatusTimeline } from "@/features/tracking/components/OrderStatusTimeline";
 import { ACCOUNT_ORDERS_PATH } from "../constants";
@@ -29,6 +30,9 @@ export function AccountOrderDetailView({ order, whatsapp }: { order: AccountOrde
           Passée le {formatDateTime(order.created_at)}
         </p>
       </div>
+      {order.payment_method === "online" && order.payment_status !== "paid" && order.status !== "cancelled" && (
+        <ResumePaymentButton orderId={order.id} />
+      )}
       <OrderStatusTimeline status={order.status} />
       <OrderItemsSummary order={order} />
       <dl className="m-0 grid gap-4 border border-[var(--som-border)] p-5 text-[13px] sm:grid-cols-2">

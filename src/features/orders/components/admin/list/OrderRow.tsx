@@ -35,7 +35,7 @@ export function OrderRow({ order, onOpen }: { order: OrderSummary; onOpen: (href
           )}
           {order.payment_method === "online" && order.payment_status !== "paid" && (
             <span className="text-[10px] uppercase tracking-[0.12em] text-[#8a5a14]">
-              {order.payment_status === "failed" ? "Échec" : "Non payée"}
+              {order.payment_status === "failed" ? "Échec" : "Paiement en attente"}
             </span>
           )}
         </span>
