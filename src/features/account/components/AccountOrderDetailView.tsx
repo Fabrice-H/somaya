@@ -35,7 +35,7 @@ export function AccountOrderDetailView({ order, whatsapp }: { order: AccountOrde
       )}
       <OrderStatusTimeline status={order.status} />
       <OrderItemsSummary order={order} />
-      <dl className="m-0 grid gap-4 border border-[var(--som-border)] p-5 text-[13px] sm:grid-cols-2">
+      <dl className="grid gap-4 border border-[var(--som-border)] p-5 text-[13px] sm:grid-cols-2">
         <div>
           <dt className="text-[11px] uppercase tracking-[0.18em] text-[var(--som-gray)]">Livraison</dt>
           <dd className="m-0 mt-1 font-light text-[#4a4a4a]">
