@@ -7,9 +7,9 @@ import { useModalBehavior } from "@/shared/hooks/useModalBehavior";
 import { ACCOUNT_LOGIN_PATH } from "../constants";
 import { continueAsGuestAction } from "../server/actions";
 
-type GuestDialogProps = { open: boolean; onClose: () => void; next?: string };
+type GuestDialogProps = { open: boolean; onClose: () => void; next?: string; onBeforeNavigate?: () => void };
 
-export function GuestDialog({ open, onClose, next = "/commande" }: GuestDialogProps) {
+export function GuestDialog({ open, onClose, next = "/commande", onBeforeNavigate }: GuestDialogProps) {
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [hasAccount, setHasAccount] = useState(false);
@@ -27,6 +27,7 @@ export function GuestDialog({ open, onClose, next = "/commande" }: GuestDialogPr
         setHasAccount(result.reason === "has_account");
         return;
       }
+      onBeforeNavigate?.();
       window.location.assign(next);
     });
   };

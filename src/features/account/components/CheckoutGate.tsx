@@ -3,12 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ACCOUNT_LOGIN_PATH, ACCOUNT_REGISTER_PATH } from "../constants";
+import { useCartStore } from "@/features/cart/store";
 import { GuestDialog } from "./GuestDialog";
 
 type CheckoutGateProps = { compact?: boolean; onDismiss?: () => void; next?: string };
 
 export function CheckoutGate({ compact = false, onDismiss, next = "/commande" }: CheckoutGateProps) {
   const [guestOpen, setGuestOpen] = useState(false);
+  const closeCart = useCartStore((state) => state.closeCart);
   const query = `?next=${encodeURIComponent(next)}`;
 
   return (
@@ -21,7 +23,7 @@ export function CheckoutGate({ compact = false, onDismiss, next = "/commande" }:
           Connectez-vous pour retrouver vos commandes et vos points fidélité, ou continuez sans créer de compte.
         </p>
         <div className="mt-5 flex flex-col gap-2">
-          <Link href={`${ACCOUNT_LOGIN_PATH}${query}`} className="btn-primary w-full">
+          <Link href={`${ACCOUNT_LOGIN_PATH}${query}`} onClick={closeCart} className="btn-primary w-full">
             Se connecter
           </Link>
           <button type="button" onClick={() => setGuestOpen(true)} className="btn-secondary w-full">
@@ -32,6 +34,7 @@ export function CheckoutGate({ compact = false, onDismiss, next = "/commande" }:
           Pas encore de compte ?{" "}
           <Link
             href={`${ACCOUNT_REGISTER_PATH}${query}`}
+            onClick={closeCart}
             className="underline underline-offset-4 hover:text-[var(--som-primary)]"
           >
             Créer mon compte
@@ -50,7 +53,7 @@ export function CheckoutGate({ compact = false, onDismiss, next = "/commande" }:
           )}
         </p>
       </div>
-      <GuestDialog open={guestOpen} onClose={() => setGuestOpen(false)} next={next} />
+      <GuestDialog open={guestOpen} onClose={() => setGuestOpen(false)} next={next} onBeforeNavigate={closeCart} />
     </>
   );
 }
