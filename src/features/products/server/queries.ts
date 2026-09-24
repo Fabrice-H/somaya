@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
-import { and, asc, desc, eq, ne } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, ne } from "drizzle-orm";
 import { db, productLots, products } from "@/shared/lib/db";
 import { sanitizeRichText } from "@/shared/lib/rich-text";
 import { assertAdmin } from "@/features/auth/server/session";
@@ -78,6 +78,16 @@ export async function getRelatedProducts(productId: string, categoryId: string |
     limit,
   });
   return rows.map(toProductSummary);
+}
+
+export async function getProductsByIds(ids: string[]) {
+  if (ids.length === 0) return [];
+  const rows = await db.query.products.findMany({
+    where: and(inArray(products.id, ids), eq(products.isActive, true)),
+    with: summaryRelations(),
+  });
+  const byId = new Map(rows.map((row) => [row.id, toProductSummary(row)]));
+  return ids.flatMap((id) => byId.get(id) ?? []);
 }
 
 export async function getActiveProductSlugs() {

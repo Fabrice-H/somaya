@@ -23,6 +23,7 @@ export const MOBILE_NAV_AFTER = [
   { label: "Par budget", href: "/lots" },
   { label: "La marque", href: "/a-propos" },
   { label: "Programme fidélité", href: "/fidelite" },
+  { label: "Mes favoris", href: "/favoris" },
   { label: "Mon compte", href: "/compte" },
   { label: "Contact", href: "/contact" },
 ];
