@@ -229,6 +229,7 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "somaya-cart",
+      partialize: (state) => ({ items: state.items }),
       version: 3, // Bump version for new itemId field
       migrate: (persistedState: unknown, version: number) => {
         if (version < 3) {
