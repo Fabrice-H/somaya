@@ -52,6 +52,16 @@ export const AUTOMATIONS: AutomationDefinition[] = [
     available: true,
   },
   {
+    key: "whatsapp.auto_reply",
+    label: "Répondre automatiquement sur WhatsApp",
+    description:
+      "Au premier message d'une cliente, envoie le message d'accueil ou d'absence (réglé dans Conversations), une fois par 12 h.",
+    group: "Notifications",
+    on: [],
+    defaultEnabled: true,
+    available: true,
+  },
+  {
     key: "notify.order_confirmed",
     label: "Prévenir la cliente : commande confirmée",
     description: "Message automatique dès qu'une commande est confirmée.",

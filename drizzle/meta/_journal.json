@@ -120,6 +120,13 @@
       "when": 1790145570193,
       "tag": "0016_automations",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1791179457221,
+      "tag": "0017_whatsapp",
+      "breakpoints": true
     }
   ]
 }

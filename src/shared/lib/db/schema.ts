@@ -301,6 +301,56 @@ export const paymentWebhookEvents = pgTable(
   (table) => [uniqueIndex("uq_payment_webhook_events").on(table.provider, table.eventId)]
 );
 
+export const whatsappConversations = pgTable(
+  "whatsapp_conversations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    waId: varchar("wa_id", { length: 32 }).notNull().unique(),
+    phone: varchar("phone", { length: 20 }),
+    profileName: varchar("profile_name", { length: 255 }),
+    customerId: uuid("customer_id").references(() => customers.id, { onDelete: "set null" }),
+    mode: varchar("mode", { length: 10 }).default("auto").notNull(),
+    status: varchar("status", { length: 10 }).default("open").notNull(),
+    unreadCount: integer("unread_count").default(0).notNull(),
+    lastInboundAt: timestamp("last_inbound_at", { withTimezone: true }),
+    lastMessageAt: timestamp("last_message_at", { withTimezone: true }),
+    lastAutoReplyAt: timestamp("last_auto_reply_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index("idx_whatsapp_conversations_last").on(table.lastMessageAt)]
+);
+
+export const whatsappMessages = pgTable(
+  "whatsapp_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    conversationId: uuid("conversation_id")
+      .notNull()
+      .references(() => whatsappConversations.id, { onDelete: "cascade" }),
+    waMessageId: varchar("wa_message_id", { length: 255 }).unique(),
+    direction: varchar("direction", { length: 10 }).notNull(),
+    type: varchar("type", { length: 30 }).notNull(),
+    body: text("body"),
+    mediaUrl: varchar("media_url", { length: 1000 }),
+    author: varchar("author", { length: 20 }).default("customer").notNull(),
+    status: varchar("status", { length: 20 }).default("received").notNull(),
+    raw: jsonb("raw"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index("idx_whatsapp_messages_conversation").on(table.conversationId, table.createdAt)]
+);
+
+export const whatsappSettings = pgTable("whatsapp_settings", {
+  id: uuid("id").primaryKey().default("00000000-0000-0000-0000-000000000005"),
+  autoReplyEnabled: boolean("auto_reply_enabled").default(true).notNull(),
+  hoursStart: integer("hours_start").default(9).notNull(),
+  hoursEnd: integer("hours_end").default(19).notNull(),
+  welcomeMessage: text("welcome_message"),
+  awayMessage: text("away_message"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const automationSettings = pgTable("automation_settings", {
   key: varchar("key", { length: 60 }).primaryKey(),
   enabled: boolean("enabled").default(true).notNull(),
@@ -510,6 +560,18 @@ export const loyaltyTransactionsRelations = relations(loyaltyTransactions, ({ on
   order: one(orders, { fields: [loyaltyTransactions.orderId], references: [orders.id] }),
 }));
 
+export const whatsappConversationsRelations = relations(whatsappConversations, ({ one, many }) => ({
+  customer: one(customers, { fields: [whatsappConversations.customerId], references: [customers.id] }),
+  messages: many(whatsappMessages),
+}));
+
+export const whatsappMessagesRelations = relations(whatsappMessages, ({ one }) => ({
+  conversation: one(whatsappConversations, {
+    fields: [whatsappMessages.conversationId],
+    references: [whatsappConversations.id],
+  }),
+}));
+
 export const paymentsRelations = relations(payments, ({ one }) => ({
   order: one(orders, { fields: [payments.orderId], references: [orders.id] }),
 }));
@@ -572,6 +634,9 @@ export type LoyaltyTransaction = typeof loyaltyTransactions.$inferSelect;
 
 export type DomainEventRow = typeof domainEvents.$inferSelect;
 export type AutomationRun = typeof automationRuns.$inferSelect;
+export type WhatsappConversation = typeof whatsappConversations.$inferSelect;
+export type WhatsappMessage = typeof whatsappMessages.$inferSelect;
+export type WhatsappSettings = typeof whatsappSettings.$inferSelect;
 
 export type Payment = typeof payments.$inferSelect;
 export type NewPayment = typeof payments.$inferInsert;

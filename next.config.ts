@@ -9,7 +9,7 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://vercel.live https://vercel.com",
   "media-src 'self' blob: https://res.cloudinary.com",
   "font-src 'self' data: https://vercel.live",
-  "connect-src 'self' https://api.cloudinary.com https://vercel.live wss://ws-us3.pusher.com",
+  "connect-src 'self' https://api.cloudinary.com https://graph.facebook.com https://vercel.live wss://ws-us3.pusher.com",
   "frame-src https://www.google.com https://vercel.live",
   "object-src 'none'",
   "base-uri 'self'",

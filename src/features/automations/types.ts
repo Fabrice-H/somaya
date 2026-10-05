@@ -9,7 +9,8 @@ export type AutomationKey =
   | "notify.order_confirmed"
   | "notify.order_shipped"
   | "notify.customer_inactive"
-  | "notify.admin";
+  | "notify.admin"
+  | "whatsapp.auto_reply";
 
 export type AutomationGroup = "Commandes" | "Fidélité" | "Clientes" | "Notifications";
 

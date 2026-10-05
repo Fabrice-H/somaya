@@ -535,7 +535,7 @@ Graphiques simples **sans nouvelle dépendance** (barres SVG / CSS) : chiffre d'
 | 1 Clients / CRM | terminé (22/09/2026) |
 | 2 Événements + Stock | terminé (22/09/2026) |
 | 3 Fidélité | terminé (22/09/2026) |
-| 4 Notifications | reporté (canal d'envoi à choisir) |
+| 4 Notifications | en cours : webhook WhatsApp Cloud API, journal des conversations, réponse d'absence (05/10/2026) ; assistante IA à venir |
 | 5 Automatisations | terminé (23/09/2026) — notifications à venir |
 | 6 Paiement Jèko | code terminé (idempotence, anti-doublon, réconciliation cron) ; test réel sur Vercel à faire |
 | 7 Espace client | terminé (22/09/2026) |
