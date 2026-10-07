@@ -256,6 +256,8 @@ export type ReconcileReport = {
   ordersExpired: number;
   stockApplied: number;
   loyaltyCredited: number;
+  vendiaRetried: number;
+  vendiaSent: number;
 };
 
 export async function reconcilePayments(): Promise<

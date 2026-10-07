@@ -97,8 +97,8 @@ export function AutomationsTab({ overview }: { overview: AutomationsOverview }) 
           );
         })}
         <p className="m-0 text-[12px] font-light leading-relaxed text-[var(--som-gray)]">
-          Les notifications automatiques (clientes et équipe) seront activables ici dès qu&apos;un canal d&apos;envoi
-          sera configuré.
+          Les messages WhatsApp aux clientes sont envoyés par Vendia à partir des événements transmis. Les alertes
+          équipe seront activables ici dès qu&apos;un canal sera configuré.
         </p>
       </div>
       <AdminCard title="Dernières exécutions" padded={false}>

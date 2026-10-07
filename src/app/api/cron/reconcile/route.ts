@@ -6,6 +6,7 @@ import { creditDeliveredOrder, listDeliveredOrdersWithoutPoints } from "@/featur
 import { LOYALTY_REASONS } from "@/features/loyalty/constants";
 import { reconcilePayments, type ReconcileReport } from "@/features/payments/server/service";
 import { applyOrderStock } from "@/features/stock/server/service";
+import { retryVendiaDeliveries } from "@/features/vendia/server/service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,6 +29,8 @@ export async function GET(request: Request) {
     ordersExpired: 0,
     stockApplied: 0,
     loyaltyCredited: 0,
+    vendiaRetried: 0,
+    vendiaSent: 0,
   };
 
   try {
@@ -49,6 +52,10 @@ export async function GET(request: Request) {
       report.loyaltyCredited += 1;
       await emitEvent({ type: "loyalty.points_added", customerId: result.customerId, orderId, points: result.points });
     }
+
+    const vendia = await retryVendiaDeliveries();
+    report.vendiaRetried = vendia.checked;
+    report.vendiaSent = vendia.sent;
   } catch (error) {
     console.error("reconcile failed", error);
     return NextResponse.json({ ok: false, report }, { status: 500 });

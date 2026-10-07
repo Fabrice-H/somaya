@@ -383,6 +383,27 @@ export const domainEvents = pgTable(
   (table) => [index("idx_domain_events_type_created").on(table.type, table.createdAt)]
 );
 
+export const vendiaDeliveries = pgTable(
+  "vendia_deliveries",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    idempotencyKey: varchar("idempotency_key", { length: 120 }).notNull().unique(),
+    event: varchar("event", { length: 40 }).notNull(),
+    aggregateId: uuid("aggregate_id"),
+    payload: jsonb("payload").notNull(),
+    status: varchar("status", { length: 20 }).default("pending").notNull(),
+    attempts: integer("attempts").default(0).notNull(),
+    responseStatus: integer("response_status"),
+    outcome: varchar("outcome", { length: 120 }),
+    lastError: varchar("last_error", { length: 500 }),
+    nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true }).defaultNow().notNull(),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index("idx_vendia_deliveries_status_next").on(table.status, table.nextAttemptAt)]
+);
+
 export const storeSettings = pgTable("store_settings", {
   id: uuid("id").primaryKey().default("00000000-0000-0000-0000-000000000001"),
   storeName: varchar("store_name", { length: 255 }).default("SO'MAYA").notNull(),

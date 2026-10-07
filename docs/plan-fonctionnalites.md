@@ -535,8 +535,8 @@ Graphiques simples **sans nouvelle dépendance** (barres SVG / CSS) : chiffre d'
 | 1 Clients / CRM | terminé (22/09/2026) |
 | 2 Événements + Stock | terminé (22/09/2026) |
 | 3 Fidélité | terminé (22/09/2026) |
-| 4 Notifications | en cours : webhook WhatsApp Cloud API, journal des conversations, réponse d'absence (05/10/2026) ; assistante IA à venir |
-| 5 Automatisations | terminé (23/09/2026) — notifications à venir |
+| 4 Notifications | en cours : webhook WhatsApp Cloud API, journal des conversations, réponse d'absence (05/10/2026) ; connecteur Vendia (07/10/2026) : commandes créée/confirmée/expédiée/livrée et nouvelle cliente envoyées signées (HMAC + horodatage + clé d'idempotence) au webhook boutique, journal `vendia_deliveries`, reprise des échecs par le cron `reconcile` ; alertes équipe et assistante IA à venir |
+| 5 Automatisations | terminé (23/09/2026) — `notify.vendia` activable dans Réglages (07/10/2026) |
 | 6 Paiement Jèko | code terminé (idempotence, anti-doublon, réconciliation cron) ; test réel sur Vercel à faire |
 | 7 Espace client | terminé (22/09/2026) |
 | 8 Dashboard | terminé (23/09/2026) |

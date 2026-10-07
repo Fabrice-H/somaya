@@ -4,6 +4,7 @@ import type { EventBus } from "@/features/events/bus";
 import { isOrderEvent, type DomainEvent } from "@/features/events/types";
 import { creditDeliveredOrder, revokeOrderPoints } from "@/features/loyalty/server/service";
 import { applyOrderStock, restoreOrderStock } from "@/features/stock/server/service";
+import { queueVendiaEvent } from "@/features/vendia/server/service";
 import { AUTOMATIONS } from "../constants";
 import type { AutomationKey, AutomationRunResult } from "../types";
 import { isAutomationEnabled } from "./settings";
@@ -48,6 +49,18 @@ const RUNNERS: Partial<Record<AutomationKey, Runner>> = {
       ? { status: "ok", message: `${result.points} points retirés` }
       : { status: "skipped", message: "Aucun point à retirer" };
   }),
+  "notify.vendia": async (event) => {
+    const queued = await queueVendiaEvent(event);
+    if (!queued.queued) return { status: "skipped", message: queued.reason };
+    const result = queued.result;
+    if (!result || result.status === "sent") {
+      return { status: "ok", message: result?.outcome ? `Transmis (${result.outcome})` : "Transmis à Vendia" };
+    }
+    return {
+      status: result.status === "failed" ? "error" : "ok",
+      message: result.status === "failed" ? `Abandonné : ${result.error}` : `En attente de reprise : ${result.error}`,
+    };
+  },
 };
 
 export async function recordRun(

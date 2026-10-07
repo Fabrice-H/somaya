@@ -1,3 +1,4 @@
+import { VENDIA_SOURCE_EVENTS } from "@/features/vendia/constants";
 import type { AutomationDefinition } from "./types";
 
 export const AUTOMATIONS_PATH = "/admin/reglages";
@@ -62,22 +63,14 @@ export const AUTOMATIONS: AutomationDefinition[] = [
     available: true,
   },
   {
-    key: "notify.order_confirmed",
-    label: "Prévenir la cliente : commande confirmée",
-    description: "Message automatique dès qu'une commande est confirmée.",
+    key: "notify.vendia",
+    label: "Envoyer les événements à Vendia",
+    description:
+      "Nouvelle commande, confirmation, expédition, livraison et nouvelle cliente sont transmis à Vendia, qui envoie les messages WhatsApp. Les envois échoués sont retentés automatiquement.",
     group: "Notifications",
-    on: ["order.confirmed"],
-    defaultEnabled: false,
-    available: false,
-  },
-  {
-    key: "notify.order_shipped",
-    label: "Prévenir la cliente : commande expédiée",
-    description: "Message automatique dès qu'une commande est expédiée.",
-    group: "Notifications",
-    on: ["order.shipped"],
-    defaultEnabled: false,
-    available: false,
+    on: VENDIA_SOURCE_EVENTS,
+    defaultEnabled: true,
+    available: true,
   },
   {
     key: "notify.customer_inactive",

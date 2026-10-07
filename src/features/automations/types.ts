@@ -6,8 +6,7 @@ export type AutomationKey =
   | "loyalty.credit"
   | "loyalty.revoke"
   | "customers.inactive"
-  | "notify.order_confirmed"
-  | "notify.order_shipped"
+  | "notify.vendia"
   | "notify.customer_inactive"
   | "notify.admin"
   | "whatsapp.auto_reply";
