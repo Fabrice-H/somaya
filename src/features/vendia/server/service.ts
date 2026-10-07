@@ -1,6 +1,7 @@
 import "server-only";
 import { and, eq, lte } from "drizzle-orm";
 import { customers, db, orderItems, orders, vendiaDeliveries } from "@/shared/lib/db";
+import { normalizePhone } from "@/shared/lib/phone";
 import { isOrderEvent, type DomainEvent } from "@/features/events/types";
 import { VENDIA_CURRENCY, VENDIA_EVENT_MAP, VENDIA_REQUEST_TIMEOUT_MS, VENDIA_RETRY_BATCH } from "../constants";
 import { buildVendiaHeaders, hasAttemptsLeft, isRetryable, retryDelayMs } from "../signature";
@@ -13,6 +14,7 @@ export type QueueResult =
   { queued: false; reason: string } | { queued: true; deliveryId: string; result: DeliveryResult | null };
 
 const fullName = (first: string, last: string) => `${first} ${last}`.trim();
+const internationalPhone = (value: string) => normalizePhone(value) ?? value;
 
 async function buildPayload(event: DomainEvent): Promise<VendiaPayload | null> {
   const target = VENDIA_EVENT_MAP[event.type];
@@ -30,7 +32,7 @@ async function buildPayload(event: DomainEvent): Promise<VendiaPayload | null> {
       id: `${target}:${order.id}`,
       customer: {
         name: fullName(order.customerFirstName, order.customerLastName),
-        phone: order.customerPhone,
+        phone: internationalPhone(order.customerPhone),
         email: order.customerEmail ?? undefined,
       },
       order: {
@@ -50,7 +52,7 @@ async function buildPayload(event: DomainEvent): Promise<VendiaPayload | null> {
     id: `${target}:${customer.id}`,
     customer: {
       name: fullName(customer.firstName, customer.lastName),
-      phone: customer.phone,
+      phone: internationalPhone(customer.phone),
       email: customer.email ?? undefined,
     },
     metadata: { customerId: customer.id, guest: customer.isGuest },
