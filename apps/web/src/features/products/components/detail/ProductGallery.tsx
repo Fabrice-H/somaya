@@ -32,10 +32,10 @@ export function ProductGallery({ images, alt, soldOut = false }: ProductGalleryP
     };
   }, [zoomed, images.length]);
 
-  if (images.length === 0) return <div className="aspect-[4/5] w-full bg-[var(--som-primary-50)]" />;
+  if (images.length === 0) return <div className="aspect-[4/5] w-full min-w-0 bg-[var(--som-primary-50)]" />;
 
   return (
-    <div>
+    <div className="min-w-0">
       <button
         type="button"
         onClick={() => setZoomed(true)}
