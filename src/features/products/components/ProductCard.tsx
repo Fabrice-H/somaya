@@ -39,6 +39,8 @@ export function ProductCard({
   const outOfStock = isOutOfStock(product);
   const onSale = isOnSale(product);
   const badges = productBadges(product);
+  const statusBadges = badges.filter((badge) => badge.tone !== "accent");
+  const promoBadge = badges.find((badge) => badge.tone === "accent");
   const productUrl = `/produit/${product.slug || product.id}`;
 
   const handleAddToCart = (event: React.MouseEvent) => {
@@ -99,25 +101,28 @@ export function ProductCard({
             />
           )}
         </MediaLink>
-        {showBadge && (badges.length > 0 || outOfStock) && (
+        {showBadge && (statusBadges.length > 0 || outOfStock) && (
           <ul className="pointer-events-none absolute right-2.5 top-2.5 m-0 flex list-none flex-col items-end gap-1.5 p-0 md:right-3 md:top-3">
             {outOfStock ? (
               <li className="bg-white px-2 py-[5px] text-[9px] font-normal uppercase leading-none tracking-[0.12em] text-[#6b6b6b]">
                 Épuisé
               </li>
             ) : (
-              badges.map((badge) => (
+              statusBadges.map((badge) => (
                 <li
                   key={badge.text}
-                  className={`bg-white px-2 py-[5px] text-[9px] font-normal uppercase leading-none tracking-[0.12em] tabular-nums ${
-                    badge.tone === "accent" ? "text-[var(--som-accent-deep)]" : "text-[var(--som-ink)]"
-                  }`}
+                  className="bg-white px-2 py-[5px] text-[9px] font-normal uppercase leading-none tracking-[0.12em] text-[var(--som-ink)]"
                 >
                   {badge.text}
                 </li>
               ))
             )}
           </ul>
+        )}
+        {showBadge && !outOfStock && promoBadge && (
+          <span className="pointer-events-none absolute bottom-2.5 left-2.5 bg-white px-2 py-[5px] text-[9px] font-normal uppercase leading-none tracking-[0.12em] tabular-nums text-[var(--som-accent-deep)] md:bottom-3 md:left-3">
+            {promoBadge.text}
+          </span>
         )}
         {!outOfStock && (
           <button

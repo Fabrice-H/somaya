@@ -180,7 +180,5 @@ export function productBadges(product: ProductSummary): ProductBadge[] {
   if (status) badges.push({ text: status, tone: "light" });
   const discount = isOnSale(product) ? discountPercent(effectivePrice(product), product.oldPrice) : 0;
   if (discount > 0) badges.push({ text: `−${discount} %`, tone: "accent" });
-  const lowStock = product.lots.length === 0 && product.stock !== undefined && product.stock > 0 && product.stock <= 3;
-  if (lowStock) badges.push({ text: `Plus que ${product.stock}`, tone: "light" });
   return badges;
 }
